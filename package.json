@@ -1,0 +1,28 @@
+{
+  "name": "everyword-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "EveryWord: karaoke word-by-word subtitles that turn watching into reading. Same Language Subtitling, proven on 200 million readers, brought to the living room screen.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc -b packages/captions-core packages/karaoke-captions-react apps/pipeline",
+    "pipeline": "npm run pipeline -w @everyword/pipeline",
+    "web:dev": "npm run dev -w @everyword/web",
+    "web:build": "npm run build -w @everyword/web"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

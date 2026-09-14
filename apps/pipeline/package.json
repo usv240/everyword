@@ -1,0 +1,17 @@
+{
+  "name": "@everyword/pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Caption pipeline: media in, word-timed EveryWord captions out, via Amazon Transcribe word-level timestamps.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "pipeline": "tsx src/transcribe.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1123.0",
+    "@aws-sdk/client-transcribe": "^3.1123.0",
+    "@everyword/captions-core": "0.1.0"
+  }
+}
