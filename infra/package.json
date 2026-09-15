@@ -1,0 +1,12 @@
+{
+  "name": "@everyword/infra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CDK stack: S3 and CloudFront for the EveryWord reader. Documented in docs/AWS.md.",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "aws-cdk-lib": "^2.170.0",
+    "constructs": "^10.4.2"
+  }
+}

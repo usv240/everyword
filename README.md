@@ -6,6 +6,11 @@ Same Language Subtitling (SLS), karaoke-style same-language captions on ordinary
 
 Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plus the AWS Builder and Open Source mini challenges).
 
+## Live
+
+- Reader: https://d34emfdcezeszz.cloudfront.net (real content, press Play)
+- Deployed by the CDK stack in `infra/` (S3 and CloudFront); the caption pipeline runs on Amazon Transcribe
+
 ## What is here
 
 - `packages/captions-core`: the EveryWord caption format (docs/FORMAT.md) and engine: an Amazon Transcribe normalizer with 42-character lines, clause-aware line breaks, and gap tiling so highlighting never flickers, plus the pure binary-search word-index math that drives the karaoke cursor. Fully unit tested.
