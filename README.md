@@ -9,6 +9,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 ## Live
 
 - Reader: https://d34emfdcezeszz.cloudfront.net (real content, press Play)
+- Fire TV APK: https://github.com/usv240/everyword/releases/tag/v0.1.0 (self-contained; sideload instructions and 58s of emulator footage on the release)
 - Deployed by the CDK stack in `infra/` (S3 and CloudFront); the caption pipeline runs on Amazon Transcribe
 
 ## What is here

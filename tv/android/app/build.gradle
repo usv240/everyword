@@ -7,6 +7,10 @@ apply plugin: "com.facebook.react"
  * By default you don't need to apply any configuration, just uncomment the lines you need.
  */
 react {
+    // Ship the manually generated JS bundle: the RN plugin skips its own
+    // bundling for these variants, avoiding the Metro/subst file-identity
+    // clash recorded in FRICTION_LOG.md entry 4.
+    debuggableVariants = ["debug", "release"]
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '../..'
     // root = file("../../")
