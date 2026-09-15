@@ -18,6 +18,7 @@ import {
   docDuration,
   normalizeTranscribe,
   type TranscribeResult,
+  toWebVTT,
 } from "@everyword/captions-core";
 
 /**
@@ -148,6 +149,11 @@ async function main(): Promise<void> {
   const captionsOut = path.join(CONTENT_DIR, `${args.name}.captions.json`);
   fs.writeFileSync(mediaOut, bytes);
   fs.writeFileSync(captionsOut, JSON.stringify(doc, null, 1));
+  // Standard WebVTT alongside our format: plain for any player, and
+  // karaoke (inline timestamp tags) for word-level rendering. Our format
+  // is a superset, not a silo.
+  fs.writeFileSync(path.join(CONTENT_DIR, `${args.name}.vtt`), toWebVTT(doc));
+  fs.writeFileSync(path.join(CONTENT_DIR, `${args.name}.karaoke.vtt`), toWebVTT(doc, { karaoke: true }));
 
   // Manifest: what the reader app lists, with license provenance.
   const manifestPath = path.join(CONTENT_DIR, "manifest.json");

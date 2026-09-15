@@ -36,3 +36,10 @@ npm run pipeline -- --input <url|file> --name my-story ...   # Transcribe pipeli
 npm run librispeech -w @everyword/eval                       # the external evaluation
 cd infra && npx cdk deploy                                   # the site
 ```
+
+## Amazon Devices Builder Tools (MCP server)
+
+- Where: evaluated and used during development; findings and feedback in `docs/BUILDER_TOOLS.md`.
+- What for: Vega OS documentation search and retrieval. It surfaced the Vega caption-rendering workflow document, which established that the platform caption path (KeplerCaptionsView plus W3C VTTCue) carries one start and end time per cue and therefore cannot render word-level highlighting. That validated EveryWord shipping its own renderer, and produced our clearest platform feature request.
+- It also prompted the WebVTT interop work: EveryWord now exports standard WebVTT in plain and karaoke (inline timestamp tag) forms alongside its own format.
+- Three reproducible issues filed as friction log entries 9 to 11.

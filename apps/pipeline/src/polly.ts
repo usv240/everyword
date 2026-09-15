@@ -14,6 +14,7 @@ import {
   segmentWords,
   type CaptionDoc,
   type CaptionWord,
+  toWebVTT,
 } from "@everyword/captions-core";
 
 /**
@@ -226,6 +227,11 @@ async function main(): Promise<void> {
     segments: segmentWords(allWords),
   };
   fs.writeFileSync(path.join(CONTENT_DIR, `${name}.captions.json`), JSON.stringify(doc, null, 1));
+  // Standard WebVTT alongside our format: plain for any player, and
+  // karaoke (inline timestamp tags) for word-level rendering. Our format
+  // is a superset, not a silo.
+  fs.writeFileSync(path.join(CONTENT_DIR, `${name}.vtt`), toWebVTT(doc));
+  fs.writeFileSync(path.join(CONTENT_DIR, `${name}.karaoke.vtt`), toWebVTT(doc, { karaoke: true }));
 
   const manifestPath = path.join(CONTENT_DIR, "manifest.json");
   const manifest: { items: Array<Record<string, unknown>> } = fs.existsSync(manifestPath)

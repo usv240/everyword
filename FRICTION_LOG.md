@@ -81,4 +81,34 @@ Format per entry: task attempted, steps taken, expected vs actual, severity (low
 - Workaround: ignore the value field and slice the source text using the byte offsets the marks carry, extending left through opening punctuation and right through closing punctuation without re-consuming a previous word's characters.
 - Suggestion: document the offsets-are-the-source-of-truth pattern in the speech marks guide; it is the difference between a normalized token stream and the author's text.
 
+## Entry 9: Builder Tools init-context cannot run non-interactively (2026-09-15)
+
+- Task: install the Amazon Devices Builder Tools, the hackathon's first "Start here" resource, into an agent-driven workflow.
+- Steps: `init-context --agent claude-code-cli`, then again with the documented `--skip-mcp-config`, then with input piped to the prompt.
+- Expected: the documented non-interactive flags (`--agent`, `--skip-mcp-config`, `--skip-context-document`, `--context-document-path`) make a scripted install possible.
+- Actual: it prompts regardless ("Update Claude Code MCP Config Path: C:\Users\...\.claude.json? (y/n)"), and when stdin is not a TTY it crashes: `Error [ERR_USE_AFTER_CLOSE]: readline was closed`, with a stack trace and "contact support". `--skip-mcp-config` does not skip the prompt. That rules out CI, scripted onboarding, containers, and headless agent environments, which is a large share of the audience for a tool whose whole purpose is automation.
+- Severity: high for automated setups; the crash also looks like a product failure rather than a missing TTY.
+- Workaround: none for automation. We evaluated the MCP server by speaking MCP to it over stdio directly.
+- Suggestion: when stdin is not a TTY, take the documented flag values and safe defaults instead of prompting, and never surface `ERR_USE_AFTER_CLOSE` to a user. Add `--yes` for good measure.
+
+## Entry 10: init-context offers only a global agent config change (2026-09-15)
+
+- Task: try the Builder Tools MCP server on one project without altering machine-wide configuration.
+- Steps: run init-context and read the prompt.
+- Expected: a project-scoped option, since MCP clients support project-level server config.
+- Actual: the only offered path is the user's global agent config file. A developer evaluating the tool on one hackathon project has to change the configuration of every project on the machine.
+- Severity: medium (trust and blast radius, not correctness).
+- Workaround: decline, and run the server directly.
+- Suggestion: prompt for scope (project or global) and default to project. It would also make the tool safe to recommend inside sample repositories.
+
+## Entry 11: MCP argument validation errors do not name the missing argument (2026-09-15)
+
+- Task: call `search_documentation` and `list_documents` from an MCP client.
+- Steps: call with `{ query }`, the obvious minimum.
+- Expected: an error naming the missing required field, as the tool's own JSON schema declares `target_platform` required and describes its shape.
+- Actual: `Invalid arguments provided for tool search_documentation`, with no indication of which argument, and no hint that `target_platform` is a nested object (`{ device_os: ["vega_os"] }`) rather than a string. We recovered by dumping the input schema from `tools/list`, which an agent can do but a human debugging by hand will not think to.
+- Severity: low, but it is per-call friction on the two most used tools in the server.
+- Workaround: read `inputSchema` from `tools/list` and construct arguments from it.
+- Suggestion: echo the failing field path and expected type, the way `set_project_context` already does. That tool returns `PROJECT_CONTEXT_REQUIRED` with the exact call to make next, which is genuinely the best error message we saw in this hackathon; the validation errors should meet the same bar.
+
 <!-- Add new entries above this line as they happen. -->

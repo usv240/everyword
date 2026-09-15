@@ -4,6 +4,7 @@ import {
   countWords,
   normalizeTranscribe,
   segmentWords,
+  toWebVTT,
   transcribeItemsToWords,
   type CaptionWord,
   type TranscribeResult,
@@ -143,5 +144,38 @@ describe("computeWordIndex", () => {
 
   it("counts words for the exposure meter", () => {
     expect(countWords(doc)).toBe(4);
+  });
+});
+
+describe("WebVTT export", () => {
+  const doc = normalizeTranscribe({
+    results: {
+      items: [
+        { type: "pronunciation", start_time: "1.0", end_time: "1.3", alternatives: [{ content: "First" }] },
+        { type: "pronunciation", start_time: "1.35", end_time: "1.7", alternatives: [{ content: "line" }] },
+        { type: "punctuation", alternatives: [{ content: "." }] },
+      ],
+    },
+  });
+
+  it("writes a valid plain WebVTT file", () => {
+    const vtt = toWebVTT(doc);
+    expect(vtt.startsWith("WEBVTT")).toBe(true);
+    expect(vtt).toContain("00:00:01.000 --> 00:00:01.700");
+    expect(vtt).toContain("First line.");
+    expect(vtt).not.toContain("<00:00:01.350>");
+  });
+
+  it("writes karaoke inline timestamps, first word untagged", () => {
+    const vtt = toWebVTT(doc, { karaoke: true });
+    expect(vtt).toContain("First <00:00:01.350>line.");
+  });
+
+  it("formats hours correctly for long media", () => {
+    const long: typeof doc = {
+      ...doc,
+      segments: [{ id: 0, start: 3723.5, end: 3725, text: "late", words: [{ w: "late", s: 3723.5, e: 3725 }] }],
+    };
+    expect(toWebVTT(long)).toContain("01:02:03.500 --> 01:02:05.000");
   });
 });
