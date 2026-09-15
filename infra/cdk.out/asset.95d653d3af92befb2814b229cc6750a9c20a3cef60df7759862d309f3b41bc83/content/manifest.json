@@ -1,0 +1,53 @@
+{
+ "items": [
+  {
+   "slug": "crow-and-pitcher",
+   "title": "The Crow and the Pitcher",
+   "attribution": "Aesop, from Project Gutenberg (public domain). Narrated by Amazon Polly; captions timed from Polly speech marks.",
+   "media": "crow-and-pitcher.mp3",
+   "captions": "crow-and-pitcher.captions.json",
+   "words": 97,
+   "durationSec": 28,
+   "source": "polly"
+  },
+  {
+   "slug": "hare-and-tortoise",
+   "title": "The Hare and the Tortoise",
+   "attribution": "Aesop, from Project Gutenberg (public domain). Narrated by Amazon Polly; captions timed from Polly speech marks.",
+   "media": "hare-and-tortoise.mp3",
+   "captions": "hare-and-tortoise.captions.json",
+   "words": 153,
+   "durationSec": 42,
+   "source": "polly"
+  },
+  {
+   "slug": "lion-and-mouse",
+   "title": "The Lion and the Mouse",
+   "attribution": "Aesop, from Project Gutenberg (public domain). Narrated by Amazon Polly; captions timed from Polly speech marks.",
+   "media": "lion-and-mouse.mp3",
+   "captions": "lion-and-mouse.captions.json",
+   "words": 180,
+   "durationSec": 48,
+   "source": "polly"
+  },
+  {
+   "slug": "north-wind-and-sun",
+   "title": "The North Wind and the Sun",
+   "attribution": "Aesop, from Project Gutenberg (public domain). Narrated by Amazon Polly; captions timed from Polly speech marks.",
+   "media": "north-wind-and-sun.mp3",
+   "captions": "north-wind-and-sun.captions.json",
+   "words": 168,
+   "durationSec": 56,
+   "source": "polly"
+  },
+  {
+   "slug": "two-pots",
+   "title": "The Two Pots",
+   "attribution": "Aesop, read by LibriVox volunteers. Public domain recording (archive.org: fables_of_aesop_2003_librivox).",
+   "media": "two-pots.mp3",
+   "captions": "two-pots.captions.json",
+   "words": 298,
+   "durationSec": 108
+  }
+ ]
+}
