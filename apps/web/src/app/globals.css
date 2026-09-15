@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/*
+  EveryWord design tokens. Light values on :root; dark values defined for
+  the system preference (guarded so an explicit light choice wins) and
+  again for the explicit choice, so the toggle wins in both directions.
+  The highlight pill is the product's visual signature.
+*/
+
+:root {
+  --bg: #fbf7ee;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --text: #21242b;
+  --text-muted: #5a6169;
+  --border: #e6e0d2;
+  --focus-ring: #3d4cb0;
+
+  --primary: #3d4cb0;
+  --primary-contrast: #ffffff;
+  --kc-highlight: #ffd34d;
+  --kc-highlight-ink: #21242b;
+  --kc-done-ink: #21242b;
+  --kc-upcoming-ink: #5a6169;
+  --success: #2e7d5b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14161c;
+    --surface: #1c1f27;
+    --surface-raised: #232733;
+    --text: #f0f3f6;
+    --text-muted: #9aa4af;
+    --border: #2e3340;
+    --focus-ring: #93a0f2;
+
+    --primary: #93a0f2;
+    --primary-contrast: #14161c;
+    --kc-highlight: #ffd34d;
+    --kc-highlight-ink: #21242b;
+    --kc-done-ink: #f0f3f6;
+    --kc-upcoming-ink: #9aa4af;
+    --success: #5bbd94;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #14161c;
+  --surface: #1c1f27;
+  --surface-raised: #232733;
+  --text: #f0f3f6;
+  --text-muted: #9aa4af;
+  --border: #2e3340;
+  --focus-ring: #93a0f2;
+
+  --primary: #93a0f2;
+  --primary-contrast: #14161c;
+  --kc-highlight: #ffd34d;
+  --kc-highlight-ink: #21242b;
+  --kc-done-ink: #f0f3f6;
+  --kc-upcoming-ink: #9aa4af;
+  --success: #5bbd94;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--text);
+  --color-muted: var(--text-muted);
+  --color-line: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-contrast: var(--primary-contrast);
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
