@@ -17,7 +17,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 - `packages/karaoke-captions-react`: the renderer, published standalone under MIT. Feed it a caption document and a currentTime; theme it with four CSS variables. The web reader and the Fire TV app share it.
 - `apps/pipeline`: media in, captions out. Uploads to S3, runs Amazon Transcribe (word-level timestamps), normalizes, and drops media plus captions plus a manifest entry into the reader's content directory.
 - `apps/web`: the reader. Real public-domain content (an Aesop fable read by LibriVox volunteers) with real generated captions: play, read-that-line-again, slow mode with pitch preservation, reading-optimized Lexend type, adjustable size, light and dark themes, and a words-read-along meter.
-- Fire TV app (React Native for TV, sharing karaoke-captions-react): next milestone.
+- `tv/`: the Fire TV app (react-native-tvos). Same karaoke renderer, same real content, 10-foot UI with D-pad focus, running on the Android TV emulator: see docs/screenshots/tv-emulator-karaoke.png. Lives outside the npm workspaces on purpose; metro.config.js documents the monorepo wiring.
 
 ## Run it
 

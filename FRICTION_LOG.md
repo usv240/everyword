@@ -21,4 +21,34 @@ Format per entry: task attempted, steps taken, expected vs actual, severity (low
 - Severity: none (positive entry).
 - Suggestion: an option to deliver the transcript directly in the StartTranscriptionJob response for short media would remove the polling loop for the common small-file case.
 
+## Entry 3: React Native TV native builds hit Windows MAX_PATH under a real-world project path (2026-09-14)
+
+- Task: first Gradle build of the React Native TV app (react-native-tvos template).
+- Steps: gradlew assembleDebug from the repo path C:\Hackathons\Build, Ship, Shape Amazon Developer Hackathon\everyword\tv.
+- Expected: the template builds from wherever the developer cloned it.
+- Actual: the CMake/ninja step fails with "Filename longer than 260 characters" because codegen object paths embed the full mangled project path. Any hackathon participant whose folder is named after the hackathon will hit this.
+- Severity: high (hard build failure, cryptic to newcomers).
+- Workaround: map the repo to a short drive with subst (X:) and build from there; also trimmed reactNativeArchitectures to x86_64 for emulator iteration.
+- Suggestion: the React Native Gradle plugin could detect Windows path-length risk at configure time and suggest subst or a shorter build staging dir; Amazon's Fire TV onboarding docs for Windows could carry a one-line warning.
+
+## Entry 4: Metro and subst drives disagree about file identity (2026-09-14)
+
+- Task: let Gradle's createBundleReleaseJsAndAssets bundle JS while building from the subst drive.
+- Steps: gradlew assembleRelease from X: (the subst mapping added for entry 3).
+- Expected: bundling works the same as from the original path.
+- Actual: Metro fails with "Failed to get the SHA-1 for" a file it resolved via realpath back to C:, outside its X:-rooted file map. The two spellings of the same directory never reconcile.
+- Severity: medium.
+- Workaround: bundle manually from the real C: path (npx react-native bundle, which handles long paths fine) and, for dev, run Metro from C: while Gradle builds native code from X:.
+- Suggestion: Metro could realpath its roots and requests consistently so a subst or junction alias of the project just works; this is the standard Windows workaround for entry 3, so the two failures compound.
+
+## Entry 5: monorepo duplicate React needs the blocklist hammer (2026-09-14)
+
+- Task: share the caption packages between the web app and the TV app in one repo.
+- Steps: watchFolders plus extraNodeModules in metro.config; later a resolveRequest origin-redirect.
+- Expected: extraNodeModules pins react to the app's copy.
+- Actual: upward node_modules resolution from the shared packages found the repo root's React first and the app crashed with "Cannot read property 'useMemo' of null" (two Reacts). The resolveRequest origin trick did not take either; only resolver.blockList on the parent copies plus extraNodeModules fixed it deterministically.
+- Severity: medium (well-known in the ecosystem, still a half-hour of a hackathon).
+- Workaround: blockList the repo root's react, react-dom, and react-native, and pin extraNodeModules to the app's node_modules.
+- Suggestion: a metro-config recipe for exactly this shape (app outside the workspaces, shared packages inside) in the React Native monorepo docs.
+
 <!-- Add new entries above this line as they happen. -->
