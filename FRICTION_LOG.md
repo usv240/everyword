@@ -61,4 +61,24 @@ Format per entry: task attempted, steps taken, expected vs actual, severity (low
 - Workaround: decode-validate every download by transcoding it (ffmpeg to 16k mono wav), retry once on failure, drop and count the rest; the match rate went to 97.2 percent.
 - Suggestion: datasets-server could send content-length or a checksum header for audio rows so clients can verify integrity without a decode pass.
 
+## Entry 7: Polly's best-sounding engine cannot produce word speech marks (2026-09-15)
+
+- Task: synthesize public-domain stories into read-alongs, using Polly word speech marks as the caption timing source.
+- Steps: SynthesizeSpeech with OutputFormat json and SpeechMarkTypes ["word"], engine generative (Danielle), then neural.
+- Expected: speech marks available across engines. Generative is the most natural-sounding option, and read-along narration for early readers is exactly where voice quality matters most.
+- Actual: "ValidationException: The selected speech mark type - word - is not supported for this engine: generative". Neural and standard work. The restriction is not surfaced in describe-voices, which lists generative among a voice's SupportedEngines with no mention that speech marks are unavailable there, so the failure arrives only at synthesis time.
+- Severity: medium. It forces a voice-quality tradeoff in the exact product category (reading tools, accessibility, karaoke captions) that most needs both the best voice and word timings.
+- Workaround: pin neural voices (Joanna, Matthew, Ivy, Kendra) and fail fast with an explanatory message before spending a synthesis call.
+- Suggestion: support word speech marks on the generative engine, or at minimum expose per-engine speech-mark support in describe-voices so a client can choose correctly before the request.
+
+## Entry 8: Polly speech marks exclude attached punctuation (2026-09-15)
+
+- Task: render the author's exact text in captions, quotation marks and all.
+- Steps: build display words from each mark's value field.
+- Expected: tokens usable directly as display text.
+- Actual: marks cover the spoken token only, so a line of dialogue renders without its quotation marks. Dialogue-heavy children's stories lose every quote, which matters when part of the point is teaching people to read punctuation.
+- Severity: low, once understood.
+- Workaround: ignore the value field and slice the source text using the byte offsets the marks carry, extending left through opening punctuation and right through closing punctuation without re-consuming a previous word's characters.
+- Suggestion: document the offsets-are-the-source-of-truth pattern in the speech marks guide; it is the difference between a normalized token stream and the author's text.
+
 <!-- Add new entries above this line as they happen. -->

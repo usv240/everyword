@@ -7,9 +7,11 @@
   "type": "module",
   "scripts": {
     "pipeline": "tsx src/transcribe.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "polly": "tsx src/polly.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-polly": "^3.1133.0",
     "@aws-sdk/client-s3": "^3.1123.0",
     "@aws-sdk/client-transcribe": "^3.1123.0",
     "@everyword/captions-core": "0.1.0"

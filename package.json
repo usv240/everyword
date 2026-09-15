@@ -15,7 +15,8 @@
     "typecheck": "tsc -b packages/captions-core packages/karaoke-captions-react apps/pipeline",
     "pipeline": "npm run pipeline -w @everyword/pipeline",
     "web:dev": "npm run dev -w @everyword/web",
-    "web:build": "npm run build -w @everyword/web"
+    "web:build": "npm run build -w @everyword/web",
+    "polly": "npm run polly -w @everyword/pipeline"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

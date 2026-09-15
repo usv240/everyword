@@ -9,6 +9,15 @@ Documented-integrations record for the AWS Builder mini challenge. Every service
 - Measured, not assumed: against gold LibriSpeech forced alignments (27 speakers, 788 words we did not record), the end-to-end highlight lands at 30 ms median onset error, p90 85 ms, with 0 of 766 matched words lighting early beyond 150 ms. Method and limits in `docs/EVAL.md`; committed run in `apps/eval/results/librispeech.json`.
 - Cost posture: batch jobs at roughly 2.4 cents per audio minute; the whole evaluation cost under a dollar.
 
+
+## Amazon Polly (the text pipeline)
+
+- Where: `apps/pipeline/src/polly.ts`
+- What for: turning any public-domain text into a word-perfect read-along. Polly returns **speech marks**: per-word timings for the speech it is about to synthesize, each carrying byte offsets into the source text. The words are therefore known rather than recognized, so these captions have zero word error by construction and reproduce the author's punctuation exactly.
+- Why it matters to the product: it is how a reading tool gets a library instead of a demo. Four of the five stories in the reader were generated this way from Project Gutenberg text, each with a different neural voice, for a few cents.
+- Both pipelines converge on the same open caption format and the same segmentation engine, so the renderer cannot tell them apart.
+- Two real limitations found and filed: the generative engine does not support word speech marks (FRICTION_LOG.md entry 7), and marks exclude attached punctuation, which the byte offsets let us recover (entry 8).
+
 ## Amazon S3
 
 - Where: `apps/pipeline/src/transcribe.ts`, `apps/eval/src/run-librispeech.ts`, `infra/bin/app.ts`.

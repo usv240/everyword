@@ -29,7 +29,7 @@ export interface CaptionDoc {
   version: "1.0";
   language: string;
   source: {
-    kind: "transcribe" | "manual" | "aligned";
+    kind: "transcribe" | "manual" | "aligned" | "polly";
     generatedAt: string;
     model?: string;
   };
