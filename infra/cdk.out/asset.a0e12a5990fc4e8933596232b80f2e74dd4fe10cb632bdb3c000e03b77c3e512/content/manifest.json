@@ -1,0 +1,13 @@
+{
+ "items": [
+  {
+   "slug": "two-pots",
+   "title": "The Two Pots",
+   "attribution": "Aesop, read by LibriVox volunteers. Public domain recording (archive.org: fables_of_aesop_2003_librivox).",
+   "media": "two-pots.mp3",
+   "captions": "two-pots.captions.json",
+   "words": 298,
+   "durationSec": 108
+  }
+ ]
+}

@@ -1,0 +1,28 @@
+{
+ "reference": "LibriSpeech dev-clean with Montreal Forced Aligner gold word alignments (HF gilkeyio/librispeech-alignments); audio and alignments not authored by us",
+ "utterances": 45,
+ "speakersApprox": 27,
+ "goldWords": 788,
+ "matchedWords": 766,
+ "matchRatePercent": 97.2,
+ "highlightOnset": {
+  "medianAbsMs": 30,
+  "p90AbsMs": 85
+ },
+ "negativeControl": {
+  "earlyToleranceMs": 150,
+  "wordsLitEarlyBeyondTolerance": 0,
+  "ofMatchedWords": 766
+ },
+ "lineBreaksOnRealPauses": {
+  "everyword": {
+   "breaks": 119,
+   "onPausePercent": 42
+  },
+  "naiveFixedWidth": {
+   "breaks": 101,
+   "onPausePercent": 2
+  }
+ },
+ "linesOver42Chars": 0
+}

@@ -51,4 +51,14 @@ Format per entry: task attempted, steps taken, expected vs actual, severity (low
 - Workaround: blockList the repo root's react, react-dom, and react-native, and pin extraNodeModules to the app's node_modules.
 - Suggestion: a metro-config recipe for exactly this shape (app outside the workspaces, shared packages inside) in the React Native monorepo docs.
 
+## Entry 6: streamed dataset audio must be decode-validated (2026-09-15)
+
+- Task: fetch LibriSpeech utterances via the Hugging Face datasets-server rows API for the timing evaluation.
+- Steps: sequential fetches of 45 audio files, saved as received, stitched with ffmpeg.
+- Expected: HTTP 200 means a usable file.
+- Actual: several bodies arrived truncated (flac decode failures mid-stream), silently shifting the stitched timeline and collapsing the first eval run to an 11.5 percent word match. Nothing errored until the numbers were nonsense.
+- Severity: medium, because the failure mode poisons results rather than crashing.
+- Workaround: decode-validate every download by transcoding it (ffmpeg to 16k mono wav), retry once on failure, drop and count the rest; the match rate went to 97.2 percent.
+- Suggestion: datasets-server could send content-length or a checksum header for audio rows so clients can verify integrity without a decode pass.
+
 <!-- Add new entries above this line as they happen. -->

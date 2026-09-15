@@ -1,0 +1,16 @@
+{
+  "name": "@everyword/eval",
+  "version": "0.1.0",
+  "private": true,
+  "description": "External evaluation: measures EveryWord's karaoke timing against gold-standard LibriSpeech forced alignments (speech and alignments we did not author), and its line segmentation against a naive fixed-width chunker.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "librispeech": "tsx src/run-librispeech.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1123.0",
+    "@aws-sdk/client-transcribe": "^3.1123.0",
+    "@everyword/captions-core": "0.1.0"
+  }
+}

@@ -1,6 +1,6 @@
 # EveryWord
 
-Subtitles that light up word by word as they are spoken. Watching becomes reading.
+Subtitles that light up word by word as they are spoken. Watching becomes reading. Measured against gold LibriSpeech alignments (speech we did not record): the highlight lands within 30 ms of the spoken word (median, p90 85 ms), never lights a word early beyond 150 ms across 766 matched words, and breaks lines at real pauses 42 percent of the time where timing-blind chunking manages 2 (docs/EVAL.md).
 
 Same Language Subtitling (SLS), karaoke-style same-language captions on ordinary entertainment, is one of the most proven literacy interventions ever measured: two decades on Indian national television, over 200 million weak readers receiving what researchers call automatic and inescapable reading practice, and a 100-plus-study evidence base showing captions improve reading with at-risk readers gaining most. Amazon already ships exactly this mechanic for books (Immersion Reading and Read and Listen). No TV platform has ever shipped it for video. EveryWord is that product: Immersion Reading, for television.
 
