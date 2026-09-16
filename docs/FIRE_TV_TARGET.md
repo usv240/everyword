@@ -32,13 +32,38 @@ Vega OS is the other Fire TV target, and it was not a realistic option here for 
 
 Fire OS was therefore the correct and only available target, and it is a first-class one.
 
+## The APK is built for real Fire TV hardware, and was not always
+
+Worth recording because we got this wrong and only caught it by checking.
+
+The v0.1.0 release originally shipped an APK containing `lib/x86_64/` only, because `reactNativeArchitectures` had been pinned to `x86_64` to keep emulator builds fast. Fire TV devices are ARM. That APK would have failed to install on every real Fire TV with `INSTALL_FAILED_NO_MATCHING_ABIS`, while the README cheerfully invited people to sideload it onto a Fire TV stick. An x86_64-only build is exactly the artifact you end up with if you only ever test on an emulator, which is the trap this whole document is about.
+
+The published APK now carries all three ABIs:
+
+```
+lib/arm64-v8a/      newer Fire TV Stick, Fire TV Cube
+lib/armeabi-v7a/    older 32-bit Fire TV Stick
+lib/x86_64/         the Android Virtual Device
+```
+
+Verified with `aapt2 dump badging`, which also confirms the app is correctly shaped for a TV:
+
+```
+leanback-launchable-activity: com.everywordtv.MainActivity
+uses-feature-not-required: android.hardware.touchscreen
+uses-feature-not-required: android.hardware.faketouch
+minSdkVersion: 24        Fire OS 6 and later
+```
+
+The leanback launcher entry is what puts the app on the Fire TV home screen, and declaring touchscreen not required is what stops Fire TV filtering the app out.
+
 ## What would close the gap
 
-One Fire TV Stick and about five minutes. The APK is built, ADB is configured, and the sideload is a single command:
+One Fire TV Stick and about five minutes:
 
 ```
 adb connect <fire-tv-ip>:5555
 adb install tv/android/app/build/outputs/apk/release/app-release.apk
 ```
 
-Nothing in the app needs to change for that to work. Only the footage would.
+Nothing in the app needs to change for that to work, and now nothing in the build does either. Only the footage would.
