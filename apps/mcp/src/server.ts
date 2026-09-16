@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import { loadLibrary, type Story } from "./library";
 import { registerMcp } from "./mcp";
 import { MemoryProgressStore, type ProgressStore } from "./progress";
+import { MODEL_LADDER } from "./explain";
 
 /**
  * The EveryWord MCP server.
@@ -13,7 +14,13 @@ import { MemoryProgressStore, type ProgressStore } from "./progress";
  */
 
 export function buildServer(
-  opts: { library?: Story[]; progress?: ProgressStore; contentDir?: string } = {},
+  opts: {
+    library?: Story[];
+    progress?: ProgressStore;
+    contentDir?: string;
+    explain?: import("./explain").ExplainDeps;
+    librarySource?: "remote" | "local";
+  } = {},
 ) {
   const app = Fastify({ logger: false });
   const library = opts.library ?? loadLibrary(opts.contentDir);
@@ -53,7 +60,41 @@ export function buildServer(
     protocol: "2025-11-25",
   }));
 
-  registerMcp(app, { library, progress });
+  /**
+   * Resilience posture: what this deployment does when things fail.
+   * Exposed because a fallback nobody can see is indistinguishable from one
+   * that does not exist.
+   */
+  app.get("/api/resilience", async () => ({
+    catalogue: {
+      source: opts.librarySource ?? "local",
+      remote: "the deployed content directory on CloudFront, retried with backoff",
+      onRemoteFailure: "serve the bundled copy and report it",
+      rationale:
+        "The remote copy is authoritative because it is what the reader serves. But a server that cannot start because a CDN had a bad minute is worse than one running a catalogue a deploy behind, with the degradation reported rather than hidden.",
+    },
+    progress: {
+      store: progress instanceof MemoryProgressStore ? "in-memory" : "dynamodb",
+      design: "append-only session log; every reported number is derived, never stored pre-aggregated",
+      rationale: "A summary cannot drift from the sessions that produced it, and the identical derivation runs over memory in tests and DynamoDB in production.",
+    },
+    explainWord: {
+      modelLadder: MODEL_LADDER,
+      onTotalFailure: "return the sentence the word appears in, and say no explanation is available",
+      guard: "the word must appear in the story's caption document before any model is called",
+      rationale: "Showing a reader their own context is less helpful than a definition and impossible to be wrong.",
+    },
+    timing: {
+      usesModels: false,
+      rationale: "The karaoke cursor is pure binary-search math over measured word timings. Nothing here calls a model, so there is nothing to fall back from.",
+    },
+    captionPipelines: {
+      paths: ["amazon-transcribe (human narration)", "amazon-polly (any text, zero word error by construction)"],
+      rationale: "Two independent routes into the same caption format, so a story can be produced whichever input the content has.",
+    },
+  }));
+
+  registerMcp(app, { library, progress, explain: opts.explain ?? {} });
 
   return { app, library, progress };
 }

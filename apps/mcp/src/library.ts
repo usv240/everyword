@@ -126,10 +126,61 @@ export async function loadLibraryFromUrl(baseUrl: string): Promise<Story[]> {
   );
 }
 
-async function fetchJson(url: string): Promise<unknown> {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Failed to load ${url}: HTTP ${res.status}`);
+/**
+ * Fetch with bounded retry.
+ *
+ * The library load happens once at cold start, and everything the MCP server
+ * can answer depends on it. A single transient 5xx or a slow edge would
+ * otherwise take the whole Alexa+ surface down until the container recycled,
+ * so a handful of retries with backoff is worth far more here than it would
+ * be on a per-request path.
+ */
+async function fetchJson(url: string, attempts = 3): Promise<unknown> {
+  let lastError: Error | null = null;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      lastError = err as Error;
+      if (i < attempts - 1) {
+        await new Promise((r) => setTimeout(r, 200 * 2 ** i));
+      }
+    }
   }
-  return res.json();
+  throw new Error(`Failed to load ${url} after ${attempts} attempts: ${lastError?.message}`);
+}
+
+/**
+ * Load the library, preferring the deployed content directory and falling
+ * back to whatever is on local disk.
+ *
+ * The remote copy is authoritative because it is the one the reader serves.
+ * But an MCP server that cannot start at all because a CDN had a bad minute
+ * is worse than one running a catalogue that is a deploy behind: the tools
+ * still answer, the numbers are still computed from real caption documents,
+ * and the degradation is reported rather than hidden.
+ */
+export async function loadLibraryResilient(opts: {
+  url?: string;
+  contentDir?: string;
+}): Promise<{ library: Story[]; source: "remote" | "local"; note?: string }> {
+  if (opts.url) {
+    try {
+      return { library: await loadLibraryFromUrl(opts.url), source: "remote" };
+    } catch (err) {
+      try {
+        return {
+          library: loadLibrary(opts.contentDir),
+          source: "local",
+          note: `Remote catalogue unavailable (${(err as Error).message}); serving the bundled copy.`,
+        };
+      } catch {
+        // Both failed: rethrow the remote error, which is the informative one.
+        throw err;
+      }
+    }
+  }
+  return { library: loadLibrary(opts.contentDir), source: "local" };
 }

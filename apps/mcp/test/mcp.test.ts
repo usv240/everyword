@@ -125,13 +125,14 @@ describe("EveryWord MCP (Streamable HTTP, 2025-11-25)", () => {
     expect(res.statusCode).toBe(400);
   });
 
-  it("lists the five reading tools", async () => {
+  it("lists the six reading tools", async () => {
     const res = await post(
       { jsonrpc: "2.0", id: 6, method: "tools/list" },
       { "mcp-session-id": sessionId, "mcp-protocol-version": MCP_PROTOCOL_VERSION },
     );
     const tools = res.json().result.tools as Array<{ name: string }>;
     expect(tools.map((t) => t.name).sort()).toEqual([
+      "explain_word",
       "get_reading_progress",
       "get_story_text",
       "list_library",
@@ -360,5 +361,104 @@ describe("progress derivations", () => {
     await store.record({ readerId: "b", slug: "s", wordsFollowed: 7, completed: true, at: day(1) });
     expect((await store.list("a")).length).toBe(1);
     expect((await store.list("a"))[0]!.wordsFollowed).toBe(5);
+  });
+});
+
+/**
+ * explain_word: the one place a model touches what a reader sees.
+ *
+ * The claims under test are the fences, not the prose: the word must really
+ * be in the story, the explanation is grounded in the sentence it appeared
+ * in, and total model failure still leaves the reader with something true.
+ */
+describe("explain_word grounding and fallback", () => {
+  const CONTENT = join(__dirname, "..", "..", "web", "public", "content");
+
+  async function session(explain: Record<string, unknown> = {}) {
+    const { app, library } = buildServer({ contentDir: CONTENT, explain: explain as never });
+    const init = await app.inject({
+      method: "POST",
+      url: "/mcp",
+      headers: { "content-type": "application/json" },
+      payload: JSON.stringify({
+        jsonrpc: "2.0", id: 1, method: "initialize",
+        params: { protocolVersion: MCP_PROTOCOL_VERSION, capabilities: {}, clientInfo: { name: "t", version: "1" } },
+      }),
+    });
+    const sid = init.headers["mcp-session-id"] as string;
+    const call = async (name: string, args: Record<string, unknown>) => {
+      const res = await app.inject({
+        method: "POST", url: "/mcp",
+        headers: { "content-type": "application/json", "mcp-session-id": sid },
+        payload: JSON.stringify({ jsonrpc: "2.0", id: 2, method: "tools/call", params: { name, arguments: args } }),
+      });
+      const body = res.json();
+      return body.error ? { error: body.error } : JSON.parse(body.result.content[0].text);
+    };
+    return { call, library };
+  }
+
+  it("refuses a word that is not in the story rather than defining something else", async () => {
+    let called = false;
+    const { call } = await session({
+      models: ["m"],
+      createText: async () => { called = true; return "nope"; },
+    });
+    const out = await call("explain_word", { slug: "crow-and-pitcher", word: "helicopter" });
+    expect(out.found).toBe(false);
+    expect(out.source).toBe("not-in-story");
+    // The model is never consulted: the check happens before any call.
+    expect(called).toBe(false);
+  });
+
+  it("grounds the explanation in the sentence the word appears in", async () => {
+    let seenPrompt = "";
+    const { call } = await session({
+      models: ["m"],
+      createText: async (_s: string, u: string) => { seenPrompt = u; return "A pitcher is a jug that holds water."; },
+    });
+    const out = await call("explain_word", { slug: "crow-and-pitcher", word: "pitcher" });
+    expect(out.found).toBe(true);
+    expect(out.source).toBe("bedrock");
+    expect(out.explanation).toContain("jug");
+    // The real sentence from the caption document is handed to the model.
+    expect(seenPrompt.toLowerCase()).toContain("pitcher");
+    expect(out.context.toLowerCase()).toContain("pitcher");
+  });
+
+  it("matches a word even when it carries punctuation in the captions", async () => {
+    const { call } = await session({
+      models: ["m"],
+      createText: async () => "A crow is a large black bird.",
+    });
+    const out = await call("explain_word", { slug: "crow-and-pitcher", word: "Crow," });
+    expect(out.found).toBe(true);
+  });
+
+  it("descends the model ladder", async () => {
+    const { call } = await session({
+      models: ["gated", "ok"],
+      createText: async (_s: string, _u: string, model: string) => {
+        if (model === "gated") throw new Error("AccessDeniedException");
+        return "A jug for water.";
+      },
+    });
+    const out = await call("explain_word", { slug: "crow-and-pitcher", word: "pitcher" });
+    expect(out.model).toBe("ok");
+    expect(out.attempts[0]).toMatchObject({ model: "gated", ok: false });
+  });
+
+  it("falls back to showing the reader their own sentence when every model fails", async () => {
+    const { call } = await session({
+      models: ["a", "b"],
+      createText: async () => { throw new Error("region unavailable"); },
+    });
+    const out = await call("explain_word", { slug: "crow-and-pitcher", word: "pitcher" });
+    // Less helpful than a definition, and impossible to be wrong.
+    expect(out.found).toBe(true);
+    expect(out.source).toBe("context-only");
+    expect(out.context).toBeTruthy();
+    expect(out.explanation).toBeUndefined();
+    expect(out.attempts).toHaveLength(2);
   });
 });

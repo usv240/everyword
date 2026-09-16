@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { describe, storyLines, type Story } from "./library";
 import { completedSlugs, summarize, type ProgressStore } from "./progress";
+import { explainWord, type ExplainDeps } from "./explain";
 
 /**
  * MCP server for EveryWord, implementing the Model Context Protocol spec
@@ -127,6 +128,20 @@ const TOOLS: ToolDef[] = [
     },
   },
   {
+    name: "explain_word",
+    description:
+      "Explain one word from a story, in one short sentence, for someone learning to read. The word must appear in the story: if it does not, this says so rather than guessing. The explanation is grounded in the sentence the word appears in, so it gives the meaning the word has there.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        slug: { type: "string", description: "Story slug from list_library" },
+        word: { type: "string", description: "The word the reader is stuck on" },
+      },
+      required: ["slug", "word"],
+      additionalProperties: false,
+    },
+  },
+  {
     name: "get_story_text",
     description:
       "The full text of one story, as the reader sees it, one entry per displayed line. Use this to answer questions about a story or to read a passage aloud. The text comes from the caption document, so it is exactly what is on screen.",
@@ -159,7 +174,7 @@ const rpcError = (
 
 export function registerMcp(
   app: FastifyInstance,
-  deps: { library: Story[]; progress: ProgressStore },
+  deps: { library: Story[]; progress: ProgressStore; explain: ExplainDeps },
 ): void {
   const sessions = new Set<string>();
 
@@ -304,6 +319,15 @@ export function registerMcp(
         });
       }
 
+      case "explain_word": {
+        const story = findStory(args.slug);
+        const word = typeof args.word === "string" ? args.word : "";
+        if (!word.trim()) {
+          throw Object.assign(new Error("word is required"), { code: -32602 });
+        }
+        return textContent(await explainWord(story, word, deps.explain));
+      }
+
       case "get_story_text": {
         const story = findStory(args.slug);
         return textContent({
@@ -356,7 +380,7 @@ export function registerMcp(
           capabilities: { tools: { listChanged: false } },
           serverInfo: SERVER_INFO,
           instructions:
-            "EveryWord turns watching into reading with word-by-word karaoke captions. Ask what is in the library, recommend a story for a reader, or report how many words someone has actually read. Report only numbers these tools return, and never estimate a reading level or diagnose a reading difficulty.",
+            "EveryWord turns watching into reading with word-by-word karaoke captions. Ask what is in the library, recommend a story for a reader, report how many words someone has actually read, or explain a word they are stuck on. Report only numbers these tools return, and never estimate a reading level or diagnose a reading difficulty.",
         }),
       );
     }

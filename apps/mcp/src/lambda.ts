@@ -1,6 +1,6 @@
 import awsLambdaFastify from "@fastify/aws-lambda";
 import { buildServer } from "./server";
-import { loadLibraryFromUrl } from "./library";
+import { loadLibraryResilient } from "./library";
 import { DynamoProgressStore } from "./progress";
 
 /**
@@ -31,10 +31,14 @@ if (!tableName) {
   throw new Error("PROGRESS_TABLE must be set in the Lambda environment");
 }
 
-const library = await loadLibraryFromUrl(contentUrl);
+const loaded = await loadLibraryResilient({ url: contentUrl });
+if (loaded.note) console.warn(loaded.note);
+export const librarySource = loaded.source;
+
 const { app } = buildServer({
-  library,
+  library: loaded.library,
   progress: new DynamoProgressStore(tableName),
+  librarySource: loaded.source,
 });
 
 export const handler = awsLambdaFastify(app);

@@ -15,6 +15,7 @@ import { Duration } from "aws-cdk-lib";
 import { FunctionUrlAuthType, HttpMethod, Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction, OutputFormat } from "aws-cdk-lib/aws-lambda-nodejs";
 import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
+import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import type { Construct } from "constructs";
 
 /**
@@ -102,6 +103,16 @@ class EveryWordStack extends Stack {
     });
 
     progressTable.grantReadWriteData(mcp);
+    // explain_word calls Claude on Bedrock through a model ladder.
+    mcp.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+        resources: [
+          "arn:aws:bedrock:*::foundation-model/anthropic.*",
+          `arn:aws:bedrock:*:${this.account}:inference-profile/*`,
+        ],
+      }),
+    );
 
     const mcpUrl = mcp.addFunctionUrl({
       authType: FunctionUrlAuthType.NONE,

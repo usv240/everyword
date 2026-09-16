@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@anthropic-ai/bedrock-sdk": "^0.33.6",
     "@aws-sdk/client-dynamodb": "^3.1133.0",
     "@aws-sdk/lib-dynamodb": "^3.1133.0",
     "@everyword/captions-core": "0.1.0",
