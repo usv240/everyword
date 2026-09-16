@@ -39,7 +39,7 @@ Four pieces, each open source under MIT:
 - **`@everyword/captions-core`**: the open caption format (docs/FORMAT.md) and the engine. It normalizes Amazon Transcribe word timings into readable lines: a 42-character budget, clause-aware line breaks that prefer to end a line at punctuation rather than mid-phrase, silence and duration breaks, and sub-perceptual gap tiling so the highlight never flickers between syllables. The karaoke cursor is pure binary-search math with reading-first semantics: during a pause the previous word stays lit, and between lines the previous line stays visible, so a reader's eye is never left with nothing to hold.
 - **`karaoke-captions-react`**: the renderer, split out as a standalone MIT-licensed package so any video app can adopt it. Caption document plus a currentTime in, highlighted line out, themed with four CSS variables, with a callback that drives reading-exposure meters. The web reader and the Fire TV app import the same package.
 - **The pipeline**: media in, captions out. S3 upload, an Amazon Transcribe job with word-level timestamps, normalization, then media plus captions plus a manifest entry written into the reader's content directory. Adding a new story is one command.
-- **The apps**: a static Next.js reader on S3 and CloudFront, and a React Native TV app (react-native-tvos) with a proper 10-foot UI: D-pad focusable controls, visible focus rings, TV-safe margins, nothing requiring a pointer.
+- **The apps**: a static Next.js reader on S3 and CloudFront, and a React Native TV app (react-native-tvos) targeting **Fire OS**, with a proper 10-foot UI: D-pad focusable controls, visible focus rings, TV-safe margins, nothing requiring a pointer. It ships as a sideloadable APK. No physical Fire TV was available, so it was tested on an Android Virtual Device, which is Amazon's own documented method for emulating an Amazon device; docs/FIRE_TV_TARGET.md states precisely what that establishes and what it does not, and why Vega OS was not a reachable target from Windows.
 
 **The evaluation** samples LibriSpeech dev-clean utterances at fixed offsets, decode-validates every download, stitches them with tracked offsets, runs one production-identical Transcribe pass, and aligns hypothesis words to gold words by edit distance, scoring only exact token matches so recognition errors can never flatter the timing numbers. The line-quality comparison judges every internal break against the gold pause structure, against a greedy fixed-width chunker at the same character budget. Method and measured limits are in docs/EVAL.md; one command reproduces the run.
 
@@ -73,7 +73,7 @@ See PRODUCT_FEEDBACK.md in the repository for the full version. Amazon Transcrib
 
 ## Friction log (optional, judged bonus)
 
-Six entries in FRICTION_LOG.md with task, steps, expected versus actual, severity, workaround, and an actionable suggestion: Turbopack monorepo root inference, a positive entry for Transcribe's first-run experience, the three Windows Fire TV build failures, and the dataset integrity lesson.
+Twelve entries in FRICTION_LOG.md, each with task, steps, expected versus actual, severity, workaround, and an actionable suggestion. The ones we would most want read: the Vega SDK has no Windows or WSL support, which combined with Vega OS being Linux-based rather than Android-based leaves a Windows developer with no way to satisfy the "Fire TV/Vega simulator" option at all (entry 12); Polly's best-sounding engine refuses word speech marks, so the product category that most needs both the best voice and word timings cannot have both (entry 7); Builder Tools `init-context` crashes when stdin is not a TTY despite documented non-interactive flags, which blocks any scripted setup (entry 9). There is also a deliberately positive entry for Amazon Transcribe's first-run experience, three Windows Fire TV build failures, and a dataset-integrity lesson that was our own fault and is recorded anyway.
 
 ---
 
@@ -87,6 +87,9 @@ Fire TV (primary). AWS Builder and Open Source mini challenges.
 
 - Live reader: https://d34emfdcezeszz.cloudfront.net
 - Fire TV APK and demo footage: https://github.com/usv240/everyword/releases/tag/v0.1.0
+- Fire TV target platform and test environment: docs/FIRE_TV_TARGET.md
+- Evidence for every impact claim: docs/EVIDENCE.md
+- Accessibility audit (100 accessibility, 100 best practices, 100 SEO): docs/ACCESSIBILITY.md
 - Repository (MIT): https://github.com/usv240/everyword
 - Evaluation: https://github.com/usv240/everyword/blob/main/docs/EVAL.md
 - Caption format spec: https://github.com/usv240/everyword/blob/main/docs/FORMAT.md

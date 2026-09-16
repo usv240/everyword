@@ -9,7 +9,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 ## Live
 
 - Reader: https://d34emfdcezeszz.cloudfront.net (real content, press Play)
-- Fire TV APK: https://github.com/usv240/everyword/releases/tag/v0.1.0 (self-contained; sideload instructions and 58s of emulator footage on the release)
+- Fire TV APK: https://github.com/usv240/everyword/releases/tag/v0.1.0 (self-contained, sideloads to a Fire TV device with `adb install`; the release carries sideload instructions and 58s of footage from an Android Virtual Device). Target platform, test environment and its limits: [docs/FIRE_TV_TARGET.md](docs/FIRE_TV_TARGET.md)
 - Deployed by the CDK stack in `infra/` (S3 and CloudFront); the caption pipeline runs on Amazon Transcribe
 
 ## What is here
@@ -18,7 +18,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 - `packages/karaoke-captions-react`: the renderer, a standalone MIT-licensed package with no dependency on this repo. Feed it a caption document and a currentTime; theme it with four CSS variables. The web reader and the Fire TV app share it.
 - `apps/pipeline`: two ways in, one caption format out. **Transcribe pipeline**: human-narrated media in, word timings measured at 30 ms median. **Polly pipeline**: any text in, narrated and timed from speech marks, with zero word error by construction because the words are known rather than recognized. The second is how any public-domain book becomes a read-along. Uploads to S3, runs Amazon Transcribe (word-level timestamps), normalizes, and drops media plus captions plus a manifest entry into the reader's content directory.
 - `apps/web`: the reader. Real public-domain content (an Aesop fable read by LibriVox volunteers) with real generated captions: play, read-that-line-again, slow mode with pitch preservation, reading-optimized Lexend type, adjustable size, light and dark themes, and a words-read-along meter.
-- `tv/`: the Fire TV app (react-native-tvos). Same karaoke renderer, same real content, 10-foot UI with D-pad focus, running on the Android TV emulator: see docs/screenshots/tv-emulator-karaoke.png. Lives outside the npm workspaces on purpose; metro.config.js documents the monorepo wiring.
+- `tv/`: the Fire TV app (react-native-tvos), targeting **Fire OS** and sideloadable to any Fire TV device as an APK. Same karaoke renderer, same real content, 10-foot UI with D-pad focus. No physical Fire TV was available, so it was tested on an Android Virtual Device, which is Amazon's own documented method for emulating an Amazon device: see docs/screenshots/tv-emulator-karaoke.png and [docs/FIRE_TV_TARGET.md](docs/FIRE_TV_TARGET.md), which states exactly what that does and does not prove. Lives outside the npm workspaces on purpose; metro.config.js documents the monorepo wiring.
 
 ## Run it
 

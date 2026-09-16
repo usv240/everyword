@@ -47,7 +47,15 @@ Draft of the hackathon submission's product-feedback answer, maintained as we bu
 - Onboarding: installation is one command; the first guided workflow is where it breaks for anyone not on an interactive terminal.
 - Build again: yes for the documentation and device knowledge, which are the parts that are hard to get elsewhere. The guided-workflow layer needs a non-interactive path first.
 
+## Vega OS and the Vega SDK
+
+- Used for: evaluated as a target for the TV app, then ruled out. Reported here because the reason is product feedback rather than a preference.
+- What we found: the Vega Developer Tools ship for macOS and Linux only, and the docs state Windows and WSL are neither supported nor tested. This project was built on Windows, so the Vega Virtual Device was unreachable. Separately, Vega OS is Linux-based rather than Android-based, so an existing Fire OS APK cannot be run on the Vega Virtual Device to satisfy a "test on the simulator" requirement; reaching Vega is a rebuild, not a re-run.
+- Why it matters: the Fire TV submission requirement names "an actual Fire TV device or the Fire TV/Vega simulator", and on Windows one of those two options does not exist. A developer with no Fire TV device and no Mac or Linux machine has no compliant path, which is a sharp edge on a track that otherwise says any framework is fine. FRICTION_LOG.md entry 12 has the detail and the suggestions.
+- Onboarding: the documentation is clear and well organised once you are on a supported OS, and there is no allowlist or account gate, which is genuinely good. The gap is that the OS limitation is discoverable only by noticing the absence of a Windows tab.
+- Build again: yes, on a Mac or a Linux box. Vega looks like the better long-term target for a caption renderer like ours, and we would want the `VTTCue` word-timing gap (docs/BUILDER_TOOLS.md) closed first.
+
 ## Still to record
 
-- Vega simulator or Fire TV device experience, captured while shooting the final demo footage.
 - Amazon Appstore submission flow, once attempted.
+- Fire OS behaviour on physical hardware, once a Fire TV device is available. See docs/FIRE_TV_TARGET.md for what our Android Virtual Device testing does and does not establish.
