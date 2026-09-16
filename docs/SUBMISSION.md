@@ -91,6 +91,7 @@ The rules cap winnings rather than entries: "each project can only win one track
 
 ## Links
 
+- Demo video (under 3 minutes): YouTube link, add when published. Shot list with pre-flight commands: docs/VIDEO_SCRIPT.md
 - Live reader: https://d34emfdcezeszz.cloudfront.net
 - Fire TV APK and demo footage: https://github.com/usv240/everyword/releases/tag/v0.1.0
 - MCP server (Alexa+ surface), live: https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp
