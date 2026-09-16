@@ -10,7 +10,7 @@ So the division of labour is simple. The screen does the reading practice. The a
 
 ## The closed loop
 
-The agent does not reach into EveryWord's data. It calls the **same MCP server** Alexa+ would use (`apps/mcp/src/mcp.ts`, Model Context Protocol spec 2025-11-25 over Streamable HTTP). Five tools: `list_library`, `recommend_story`, `get_reading_progress`, `record_reading_session`, `get_story_text`.
+The agent does not reach into EveryWord's data. It calls the **same MCP server** Alexa+ would use (`apps/mcp/src/mcp.ts`, Model Context Protocol spec 2025-11-25 over Streamable HTTP). Six tools: `list_library`, `recommend_story`, `get_reading_progress`, `record_reading_session`, `get_story_text`, `explain_word`. The agent discovers them at connect time, so `explain_word` was available to it the moment the server shipped it, with no agent code changed.
 
 If the MCP surface were wrong, this agent would be wrong too. That is the cheapest possible proof that the surface is real rather than declared.
 

@@ -184,3 +184,39 @@ export async function loadLibraryResilient(opts: {
   }
   return { library: loadLibrary(opts.contentDir), source: "local" };
 }
+
+/**
+ * Reduce a slug, a title, or an agent's guess at either to a comparable key.
+ * Articles are dropped as whole words so that "The Crow and the Pitcher",
+ * "crow-and-pitcher", and "the-crow-and-the-pitcher" all collapse to
+ * "crowandpitcher".
+ */
+function storyKey(text: string): string {
+  return text
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((t) => t && t !== "the" && t !== "a" && t !== "an")
+    .join("");
+}
+
+/**
+ * Resolve a story from whatever the caller actually has.
+ *
+ * Found by pointing a real agent at the server: asked about "The Crow and
+ * the Pitcher", it guessed the slug "the-crow-and-the-pitcher" from the
+ * title, got "Unknown story", and had to recover by listing the library. A
+ * parent will say the title and never the slug, so the server should meet
+ * them there. Exact slug first, then exact title, then the normalised key.
+ */
+export function resolveStory(library: Story[], query: unknown): Story | null {
+  if (typeof query !== "string" || !query.trim()) return null;
+  const q = query.trim();
+  const bySlug = library.find((s) => s.slug === q);
+  if (bySlug) return bySlug;
+  const lower = q.toLowerCase();
+  const byTitle = library.find((s) => s.title.toLowerCase() === lower);
+  if (byTitle) return byTitle;
+  const key = storyKey(q);
+  if (!key) return null;
+  return library.find((s) => storyKey(s.slug) === key || storyKey(s.title) === key) ?? null;
+}

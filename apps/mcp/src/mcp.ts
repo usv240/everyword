@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { describe, storyLines, type Story } from "./library";
+import { describe, resolveStory, storyLines, type Story } from "./library";
 import { completedSlugs, summarize, type ProgressStore } from "./progress";
 import { explainWord, type ExplainDeps } from "./explain";
 
@@ -134,7 +134,7 @@ const TOOLS: ToolDef[] = [
     inputSchema: {
       type: "object",
       properties: {
-        slug: { type: "string", description: "Story slug from list_library" },
+        slug: { type: "string", description: "Story slug or title from list_library; a close match is accepted" },
         word: { type: "string", description: "The word the reader is stuck on" },
       },
       required: ["slug", "word"],
@@ -148,7 +148,7 @@ const TOOLS: ToolDef[] = [
     inputSchema: {
       type: "object",
       properties: {
-        slug: { type: "string", description: "Story slug from list_library" },
+        slug: { type: "string", description: "Story slug or title from list_library; a close match is accepted" },
       },
       required: ["slug"],
       additionalProperties: false,
@@ -190,12 +190,18 @@ export function registerMcp(
     return true;
   };
 
-  const findStory = (slug: unknown): Story => {
-    const story = deps.library.find((s) => s.slug === slug);
+  // Accepts a slug, a title, or a near miss at either, because a real agent
+  // asked about "The Crow and the Pitcher" guessed "the-crow-and-the-pitcher"
+  // and failed. When nothing resolves, the error lists what exists so the
+  // caller can self-correct in one step instead of guessing again.
+  const findStory = (query: unknown): Story => {
+    const story = resolveStory(deps.library, query);
     if (!story) {
-      throw Object.assign(new Error(`Unknown story: ${String(slug)}`), {
-        code: -32602,
-      });
+      const known = deps.library.map((s) => `${s.slug} ("${s.title}")`).join(", ");
+      throw Object.assign(
+        new Error(`Unknown story: ${String(query)}. Known stories: ${known}`),
+        { code: -32602 },
+      );
     }
     return story;
   };

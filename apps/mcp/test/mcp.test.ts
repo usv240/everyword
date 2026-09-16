@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { buildServer } from "../src/server";
 import { MCP_PROTOCOL_VERSION } from "../src/mcp";
 import { summarize, completedSlugs, MemoryProgressStore } from "../src/progress";
+import { loadLibrary, resolveStory } from "../src/library";
 
 /**
  * MCP transport conformance against spec revision 2025-11-25, plus the
@@ -460,5 +461,36 @@ describe("explain_word grounding and fallback", () => {
     expect(out.context).toBeTruthy();
     expect(out.explanation).toBeUndefined();
     expect(out.attempts).toHaveLength(2);
+  });
+});
+
+/**
+ * Story resolution: meet the caller where they are.
+ *
+ * Found by a real agent, not by a test: asked about "The Crow and the
+ * Pitcher" it guessed the slug "the-crow-and-the-pitcher" and got "Unknown
+ * story". A parent says the title. The server should understand it.
+ */
+describe("resolveStory accepts what a human would say", () => {
+  const library = loadLibrary(join(__dirname, "..", "..", "web", "public", "content"));
+
+  it("exact slug", () => {
+    expect(resolveStory(library, "crow-and-pitcher")?.slug).toBe("crow-and-pitcher");
+  });
+  it("the title, any case", () => {
+    expect(resolveStory(library, "the crow and the pitcher")?.slug).toBe("crow-and-pitcher");
+    expect(resolveStory(library, "The Crow and the Pitcher")?.slug).toBe("crow-and-pitcher");
+  });
+  it("the slug an agent guessed from the title", () => {
+    expect(resolveStory(library, "the-crow-and-the-pitcher")?.slug).toBe("crow-and-pitcher");
+  });
+  it("still rejects genuine nonsense, and never picks a wrong story", () => {
+    expect(resolveStory(library, "moby dick")).toBeNull();
+    expect(resolveStory(library, "")).toBeNull();
+    expect(resolveStory(library, 42)).toBeNull();
+  });
+  it("does not confuse two real stories", () => {
+    expect(resolveStory(library, "The Lion and the Mouse")?.slug).toBe("lion-and-mouse");
+    expect(resolveStory(library, "hare and tortoise")?.slug).toBe("hare-and-tortoise");
   });
 });
