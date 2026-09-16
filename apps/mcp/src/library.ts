@@ -90,3 +90,46 @@ export function describe(story: Story) {
 export function storyLines(story: Story): string[] {
   return story.doc.segments.map((s) => s.text);
 }
+
+/**
+ * Load the library over HTTP from the deployed content directory.
+ *
+ * Used in Lambda. The point is that there is exactly one catalogue: the MCP
+ * server reads the same manifest and the same caption documents that the web
+ * reader and the Fire TV app serve, over the same CloudFront distribution.
+ * An agent therefore cannot report a story the reader does not have, or a
+ * word count the karaoke cursor disagrees with.
+ */
+export async function loadLibraryFromUrl(baseUrl: string): Promise<Story[]> {
+  const base = baseUrl.replace(/\/$/, "");
+  const manifest = (await fetchJson(`${base}/manifest.json`)) as {
+    items: ManifestItem[];
+  };
+
+  return Promise.all(
+    manifest.items.map(async (item) => {
+      const doc = (await fetchJson(`${base}/${item.captions}`)) as CaptionDoc;
+      const words = countWords(doc);
+      const durationSec = docDuration(doc);
+      return {
+        slug: item.slug,
+        title: item.title,
+        attribution: item.attribution,
+        words,
+        durationSec,
+        wordsPerMinute:
+          durationSec > 0 ? Math.round((words / durationSec) * 60) : 0,
+        narration: item.source,
+        doc,
+      };
+    }),
+  );
+}
+
+async function fetchJson(url: string): Promise<unknown> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Failed to load ${url}: HTTP ${res.status}`);
+  }
+  return res.json();
+}

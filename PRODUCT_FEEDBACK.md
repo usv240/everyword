@@ -55,6 +55,22 @@ Draft of the hackathon submission's product-feedback answer, maintained as we bu
 - Onboarding: the documentation is clear and well organised once you are on a supported OS, and there is no allowlist or account gate, which is genuinely good. The gap is that the OS limitation is discoverable only by noticing the absence of a Windows tab.
 - Build again: yes, on a Mac or a Linux box. Vega looks like the better long-term target for a caption renderer like ours, and we would want the `VTTCue` word-timing gap (docs/BUILDER_TOOLS.md) closed first.
 
+## Model Context Protocol (spec 2025-11-25, Streamable HTTP)
+
+- Used for: the Alexa+ surface (`apps/mcp`). Implemented by hand against the spec rather than through an SDK, because the transport requirements are part of what a track entry should demonstrate.
+- Worked well: the spec is precise about the things that are easy to get wrong. Session issuance and the 400-versus-404 distinction for missing versus terminated sessions, the explicit permission to answer GET with 405 when you offer no server-initiated stream, and the DNS-rebinding origin guidance are all stated plainly enough to implement and to test against. Twenty conformance tests came almost directly from reading the revision.
+- Needs work: the one thing that bit us in both projects is not in the spec text, which is that a real client sends DELETE with a JSON content-type and an empty body. A naive body parser answers 500, and a test suite built on an injection helper never produces that shape. A short note in the transport section about empty-bodied DELETE would have saved the bug outright; we only found it in Nightlight by pointing a real agent at the server, and carried the fix here.
+- Onboarding: good. The revision is readable start to finish in an afternoon.
+- Build again: yes, and we did, twice.
+
+## Strands Agents SDK
+
+- Used for: the Reading Check-in agent (`apps/agent/reading_check_in.py`), an outside client of our own MCP server.
+- Worked well: connecting an agent to an MCP server over Streamable HTTP is about five lines, and `MCPClient` plus `list_tools_sync` handed the agent our five tools with no adapter code and no duplicated schemas. Pointing it at the deployed Lambda instead of localhost was a URL change. The pattern it encourages, where the agent's only capabilities are the tools you already expose, is the right default for anything reporting on a child.
+- Needs work: tool-call failures surface as long Python tracebacks rather than structured results, which is hard to reason about mid-loop. Documentation for the plain local-process path against a remote MCP server is thinner than the hosted story, and it is what most people will try first.
+- Onboarding: `pip install strands-agents` and a `BedrockModel` was the whole setup.
+- Build again: yes.
+
 ## Still to record
 
 - Amazon Appstore submission flow, once attempted.

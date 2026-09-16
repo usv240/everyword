@@ -28,6 +28,22 @@ Documented-integrations record for the AWS Builder mini challenge. Every service
 - Where: `infra/bin/app.ts`.
 - What for: the reader is a static export served from a private S3 bucket through CloudFront with origin access control and a viewer-request function that rewrites extensionless paths to directory indexes. The entire stack is one reviewable TypeScript file; `cdk deploy` reproduces the deployment. Live: https://d34emfdcezeszz.cloudfront.net
 
+## AWS Lambda (the MCP server)
+
+- Where: `apps/mcp/src/lambda.ts`, deployed by `infra/bin/app.ts`
+- What for: hosting the EveryWord MCP server, which is the Alexa+ surface. The same Fastify app that runs locally, wrapped with `@fastify/aws-lambda` behind a function URL. Live at https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp
+- The design choice worth naming: the Lambda does not bundle a copy of the catalogue. It loads the manifest and the caption documents over CloudFront from the same content directory the web reader and the Fire TV app serve. There is exactly one catalogue, so an agent cannot report a story the reader does not have, or a word count the karaoke cursor disagrees with.
+- CORS exposes `MCP-Session-Id`, without which a browser-based MCP client cannot read the session header off the initialize response.
+- 512MB, 30s, Node 20, bundled by esbuild as ESM.
+
+## Amazon Bedrock and the Strands Agents SDK
+
+- Where: `apps/agent/reading_check_in.py`
+- What for: the Reading Check-in agent, which answers a parent's question about a child's reading. It is a second, independent client of the same MCP server Alexa+ would use, with no data access of its own.
+- Why an agent rather than a report: the question a parent actually asks ("how is she doing, and what should she read tonight?") needs dependent steps, which is an agent's job rather than a template's. It reads progress, then picks a story under whatever constraint was given, then answers.
+- Model: Claude on Amazon Bedrock (`us.anthropic.claude-sonnet-4-5-20250929-v1:0`).
+- The safety boundary: the agent may report only numbers the tools returned. It never assesses a reading level, never suggests a child is behind or ahead, and never implies a diagnosis. Verified live: asked about a reader with no history, it answered "Nothing has been recorded for Jamie yet" rather than filling the gap.
+
 ## Reproduce
 
 ```

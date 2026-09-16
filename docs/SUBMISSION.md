@@ -79,7 +79,13 @@ Twelve entries in FRICTION_LOG.md, each with task, steps, expected versus actual
 
 ## Tracks and mini challenges
 
-Fire TV (primary). AWS Builder and Open Source mini challenges.
+Fire TV and Alexa+. AWS Builder and Open Source mini challenges.
+
+The rules cap winnings rather than entries: "each project can only win one track prize and one mini challenge prize."
+
+**Alexa+** is not a stretch here. The track asks for a self-hosted MCP server implementing spec 2025-11-25 over Streamable HTTP, and `apps/mcp` is exactly that, deployed and live at https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp. EveryWord measures how many words a reader actually followed on screen, which is not minutes played and is the one number no other reading tool has. Sitting in a database it is useless, because the adult who cares about it asks out loud rather than opening a dashboard. The screen does the reading practice; the agent does the noticing. Twenty transport and tool conformance tests, and a Strands agent in `apps/agent` consumes the server as an independent outside client, verified live against the deployed endpoint.
+
+**Fire TV** is the reader's home: a react-native-tvos app targeting Fire OS, shipped as a sideloadable multi-architecture APK. See docs/FIRE_TV_TARGET.md for the target, the test environment, and the honest limits of both.
 
 ---
 
@@ -87,6 +93,7 @@ Fire TV (primary). AWS Builder and Open Source mini challenges.
 
 - Live reader: https://d34emfdcezeszz.cloudfront.net
 - Fire TV APK and demo footage: https://github.com/usv240/everyword/releases/tag/v0.1.0
+- MCP server (Alexa+ surface), live: https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp
 - Fire TV target platform and test environment: docs/FIRE_TV_TARGET.md
 - Evidence for every impact claim: docs/EVIDENCE.md
 - Accessibility audit (100 accessibility, 100 best practices, 100 SEO): docs/ACCESSIBILITY.md
