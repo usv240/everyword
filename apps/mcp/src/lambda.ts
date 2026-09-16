@@ -1,6 +1,7 @@
 import awsLambdaFastify from "@fastify/aws-lambda";
 import { buildServer } from "./server";
 import { loadLibraryFromUrl } from "./library";
+import { DynamoProgressStore } from "./progress";
 
 /**
  * AWS Lambda entry point for the EveryWord MCP server.
@@ -12,10 +13,12 @@ import { loadLibraryFromUrl } from "./library";
  * property worth keeping: the agent's catalogue and the reader's catalogue
  * cannot drift apart because there is only one of them.
  *
- * Reading progress is in-process for this build, so it resets when Lambda
- * recycles the container. That is the honest scope of a demo; the
- * ProgressStore interface is deliberately narrow so a DynamoDB
- * implementation drops in without touching the MCP layer.
+ * Reading progress is persisted in DynamoDB. That is not incidental:
+ * reading practice measured in RAM is not measured at all, because a parent
+ * asking on Sunday about a week of reading would get back whatever happened
+ * to survive the last cold start. Sessions are an append-only log and every
+ * number reported is derived from it, so a summary can never drift from the
+ * sessions that produced it.
  */
 
 const contentUrl = process.env.CONTENT_URL;
@@ -23,7 +26,15 @@ if (!contentUrl) {
   throw new Error("CONTENT_URL must be set in the Lambda environment");
 }
 
+const tableName = process.env.PROGRESS_TABLE;
+if (!tableName) {
+  throw new Error("PROGRESS_TABLE must be set in the Lambda environment");
+}
+
 const library = await loadLibraryFromUrl(contentUrl);
-const { app } = buildServer({ library });
+const { app } = buildServer({
+  library,
+  progress: new DynamoProgressStore(tableName),
+});
 
 export const handler = awsLambdaFastify(app);

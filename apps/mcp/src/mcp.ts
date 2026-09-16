@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { describe, storyLines, type Story } from "./library";
-import type { ProgressStore } from "./progress";
+import { completedSlugs, summarize, type ProgressStore } from "./progress";
 
 /**
  * MCP server for EveryWord, implementing the Model Context Protocol spec
@@ -209,7 +209,7 @@ export function registerMcp(
 
         const done =
           readerId && excludeCompleted
-            ? deps.progress.completedSlugs(readerId)
+            ? completedSlugs(await deps.progress.list(readerId))
             : new Set<string>();
 
         const applied: string[] = [];
@@ -259,7 +259,7 @@ export function registerMcp(
         if (!readerId) {
           throw Object.assign(new Error("readerId is required"), { code: -32602 });
         }
-        const summary = deps.progress.summarize(readerId);
+        const summary = summarize(await deps.progress.list(readerId), readerId);
         const trend =
           summary.wordsPreviousWeek === 0
             ? summary.wordsThisWeek > 0

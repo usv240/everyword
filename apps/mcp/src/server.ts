@@ -2,7 +2,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { loadLibrary, type Story } from "./library";
 import { registerMcp } from "./mcp";
-import { ProgressStore } from "./progress";
+import { MemoryProgressStore, type ProgressStore } from "./progress";
 
 /**
  * The EveryWord MCP server.
@@ -17,7 +17,7 @@ export function buildServer(
 ) {
   const app = Fastify({ logger: false });
   const library = opts.library ?? loadLibrary(opts.contentDir);
-  const progress = opts.progress ?? new ProgressStore();
+  const progress = opts.progress ?? new MemoryProgressStore();
 
   // Capture the raw body and tolerate an empty one.
   //

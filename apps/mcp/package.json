@@ -10,6 +10,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1133.0",
+    "@aws-sdk/lib-dynamodb": "^3.1133.0",
     "@everyword/captions-core": "0.1.0",
     "@fastify/aws-lambda": "^6.4.1",
     "@fastify/cors": "^10.0.1",

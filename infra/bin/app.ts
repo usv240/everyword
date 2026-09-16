@@ -14,6 +14,7 @@ import { S3BucketOrigin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { Duration } from "aws-cdk-lib";
 import { FunctionUrlAuthType, HttpMethod, Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction, OutputFormat } from "aws-cdk-lib/aws-lambda-nodejs";
+import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
 import type { Construct } from "constructs";
 
 /**
@@ -69,6 +70,16 @@ class EveryWordStack extends Stack {
 
     const siteUrl = `https://${distribution.distributionDomainName}`;
 
+    // Reading progress: an append-only session log. Partition key
+    // READER#{id}, sort key SESSION#{iso}#{slug}. Every number a parent is
+    // told is derived from this log, never stored pre-aggregated.
+    const progressTable = new Table(this, "ReadingProgress", {
+      partitionKey: { name: "pk", type: AttributeType.STRING },
+      sortKey: { name: "sk", type: AttributeType.STRING },
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
     // The MCP server: the Alexa+ surface. Model Context Protocol 2025-11-25
     // over Streamable HTTP, the same Fastify app that runs locally.
     const mcp = new NodejsFunction(this, "McpServer", {
@@ -78,6 +89,7 @@ class EveryWordStack extends Stack {
       timeout: Duration.seconds(30),
       environment: {
         CONTENT_URL: `${siteUrl}/content`,
+        PROGRESS_TABLE: progressTable.tableName,
       },
       bundling: {
         format: OutputFormat.ESM,
@@ -88,6 +100,8 @@ class EveryWordStack extends Stack {
           "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);",
       },
     });
+
+    progressTable.grantReadWriteData(mcp);
 
     const mcpUrl = mcp.addFunctionUrl({
       authType: FunctionUrlAuthType.NONE,

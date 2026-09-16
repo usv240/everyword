@@ -28,6 +28,13 @@ Documented-integrations record for the AWS Builder mini challenge. Every service
 - Where: `infra/bin/app.ts`.
 - What for: the reader is a static export served from a private S3 bucket through CloudFront with origin access control and a viewer-request function that rewrites extensionless paths to directory indexes. The entire stack is one reviewable TypeScript file; `cdk deploy` reproduces the deployment. Live: https://d34emfdcezeszz.cloudfront.net
 
+## Amazon DynamoDB (reading progress)
+
+- Where: `apps/mcp/src/progress.ts` (`DynamoProgressStore`), table defined in `infra/bin/app.ts`
+- What for: the reading session log, which is the product's one irreplaceable number. Partition key `READER#{id}`, sort key `SESSION#{iso}#{slug}`, on-demand billing.
+- The design that matters: sessions are append-only, and every figure a parent is ever told (totals, streaks, this week against last week) is derived from that log by a pure function. Nothing is stored pre-aggregated, so a summary can never drift away from the sessions that produced it, and the identical computation runs over memory in tests and DynamoDB in production.
+- Why it is not in memory: reading practice measured in RAM is not measured at all. A parent asking on Sunday about a week of reading would otherwise get back whatever survived the last Lambda cold start.
+
 ## AWS Lambda (the MCP server)
 
 - Where: `apps/mcp/src/lambda.ts`, deployed by `infra/bin/app.ts`

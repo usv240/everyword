@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { join } from "node:path";
 import { buildServer } from "../src/server";
 import { MCP_PROTOCOL_VERSION } from "../src/mcp";
+import { summarize, completedSlugs, MemoryProgressStore } from "../src/progress";
 
 /**
  * MCP transport conformance against spec revision 2025-11-25, plus the
@@ -294,5 +295,70 @@ describe("session termination from a real client", () => {
     });
     expect(del.statusCode).toBe(204);
     await app.close();
+  });
+});
+
+/**
+ * Progress is derived, never stored pre-aggregated. These test the pure
+ * functions directly, which is what lets the identical computation run over
+ * memory in tests and over DynamoDB in production.
+ */
+describe("progress derivations", () => {
+  const day = (n: number) => new Date(Date.UTC(2026, 0, n)).toISOString();
+
+  it("counts a consecutive-day streak, and lets yesterday still count", () => {
+    const sessions = [3, 4, 5].map((d) => ({
+      readerId: "r",
+      slug: "s",
+      wordsFollowed: 10,
+      completed: false,
+      at: day(d),
+    }));
+    // "Today" is the 6th: the run ended yesterday, which still counts, because
+    // a streak that broke before the day was over would punish someone who
+    // simply has not read yet this evening.
+    const sum = summarize(sessions, "r", new Date(Date.UTC(2026, 0, 6, 9)));
+    expect(sum.currentStreakDays).toBe(3);
+  });
+
+  it("breaks a streak across a missed day", () => {
+    const sessions = [1, 2, 5].map((d) => ({
+      readerId: "r",
+      slug: "s",
+      wordsFollowed: 10,
+      completed: false,
+      at: day(d),
+    }));
+    const sum = summarize(sessions, "r", new Date(Date.UTC(2026, 0, 5, 9)));
+    expect(sum.currentStreakDays).toBe(1);
+  });
+
+  it("separates this week from last week", () => {
+    const now = new Date(Date.UTC(2026, 0, 20));
+    const sessions = [
+      { readerId: "r", slug: "a", wordsFollowed: 100, completed: true, at: day(18) },
+      { readerId: "r", slug: "b", wordsFollowed: 40, completed: false, at: day(10) },
+    ];
+    const sum = summarize(sessions, "r", now);
+    expect(sum.wordsThisWeek).toBe(100);
+    expect(sum.wordsPreviousWeek).toBe(40);
+    expect(sum.totalWordsRead).toBe(140);
+    expect(sum.storiesCompleted).toBe(1);
+  });
+
+  it("completedSlugs counts only finished stories", () => {
+    const set = completedSlugs([
+      { readerId: "r", slug: "a", wordsFollowed: 1, completed: true, at: day(1) },
+      { readerId: "r", slug: "b", wordsFollowed: 1, completed: false, at: day(1) },
+    ]);
+    expect([...set]).toEqual(["a"]);
+  });
+
+  it("the memory store keeps readers apart", async () => {
+    const store = new MemoryProgressStore();
+    await store.record({ readerId: "a", slug: "s", wordsFollowed: 5, completed: true, at: day(1) });
+    await store.record({ readerId: "b", slug: "s", wordsFollowed: 7, completed: true, at: day(1) });
+    expect((await store.list("a")).length).toBe(1);
+    expect((await store.list("a"))[0]!.wordsFollowed).toBe(5);
   });
 });
