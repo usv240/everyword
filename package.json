@@ -12,11 +12,12 @@
   ],
   "scripts": {
     "test": "vitest run",
-    "typecheck": "tsc -b packages/captions-core packages/karaoke-captions-react apps/pipeline",
+    "typecheck": "tsc -b packages/captions-core packages/karaoke-captions-react apps/pipeline apps/mcp",
     "pipeline": "npm run pipeline -w @everyword/pipeline",
     "web:dev": "npm run dev -w @everyword/web",
     "web:build": "npm run build -w @everyword/web",
-    "polly": "npm run polly -w @everyword/pipeline"
+    "polly": "npm run polly -w @everyword/pipeline",
+    "mcp": "npm run dev -w @everyword/mcp"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

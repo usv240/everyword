@@ -1,0 +1,17 @@
+{
+  "name": "@everyword/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EveryWord MCP server: the Alexa+ surface. Model Context Protocol 2025-11-25 over Streamable HTTP, exposing the reading library and real reading progress.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@everyword/captions-core": "0.1.0",
+    "@fastify/cors": "^10.0.1",
+    "fastify": "^5.1.0"
+  }
+}
