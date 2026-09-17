@@ -26,7 +26,8 @@ export function buildServer(
   const library = opts.library ?? loadLibrary(opts.contentDir);
   const progress = opts.progress ?? new MemoryProgressStore();
 
-  // Capture the raw body and tolerate an empty one.
+  // Capture the raw body, tolerate an empty one, and report a malformed one
+  // as data rather than as a transport failure.
   //
   // An empty body with a JSON content-type is legal and common: real MCP
   // clients send exactly that on DELETE when terminating a session. In the
@@ -35,6 +36,14 @@ export function buildServer(
   // asked and so never produced the shape a real client sends. It was found
   // by pointing an actual agent at the server. The fix is carried here from
   // the start, and the regression test below pins it.
+  //
+  // Malformed JSON is the same lesson a second time. Handing the parse error
+  // to `done` lets Fastify answer with its own 500 envelope, but JSON-RPC is
+  // explicit that an unparseable body is a -32700 Parse error, and a 500
+  // tells a client to retry something that will never succeed. Found on the
+  // deployed Lambda by the conformance probe in the Nightlight repository
+  // (scripts/mcp-conform.mjs), which speaks real HTTP; every injected test
+  // here passed while the live server was wrong.
   app.addContentTypeParser(
     "application/json",
     { parseAs: "buffer" },
@@ -47,7 +56,7 @@ export function buildServer(
       try {
         done(null, { raw, json: JSON.parse(raw.toString("utf8")) });
       } catch (err) {
-        done(err as Error);
+        done(null, { raw, json: undefined, parseError: (err as Error).message });
       }
     },
   );

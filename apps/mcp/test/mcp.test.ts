@@ -298,6 +298,25 @@ describe("session termination from a real client", () => {
     expect(del.statusCode).toBe(204);
     await app.close();
   });
+
+  it("answers a malformed body with -32700 rather than a transport 500", async () => {
+    // The same lesson a second time, and again found against the deployed
+    // Lambda rather than here: JSON-RPC calls an unparseable body a Parse
+    // error, so it belongs in the protocol with a client-error status. A 500
+    // tells a client to retry something that cannot succeed and leaks the
+    // framework's error envelope. Found by scripts/mcp-conform.mjs in the
+    // Nightlight repository, which speaks real HTTP.
+    const { app } = buildServer({ contentDir: CONTENT_DIR });
+    const res = await app.inject({
+      method: "POST",
+      url: "/mcp",
+      headers: { "content-type": "application/json" },
+      payload: "{ this is not json",
+    });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error.code).toBe(-32700);
+    await app.close();
+  });
 });
 
 /**

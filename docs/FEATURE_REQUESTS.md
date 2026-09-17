@@ -122,6 +122,20 @@ Friction log entry 11.
 
 Not in the spec text, and it cost two of our three projects a 500 error each. A naive body parser treats an empty body with `Content-Type: application/json` as a parse failure, and a test suite built on an injection helper never produces that shape, so it passes while real clients fail. One sentence in the session-termination section prevents it.
 
+### 11. Ship a transport conformance suite, or at least a status-code table
+
+**Important, and it is the highest-leverage thing the project could publish.**
+
+Every server author writes the same tests, guesses at the same ambiguities, and learns which guesses were wrong only when a real client arrives. We wrote thirty-five tests from the specification text, they all passed, and the deployed server was still wrong about one rule: it answered an unparseable body with an HTTP 500 rather than a -32700 Parse error.
+
+Two asks, in order of value.
+
+First, publish the HTTP status mapping. The transport section is precise about sessions and about `Accept`, and silent about what status accompanies a JSON-RPC error. We reasoned it out: a request needing a session and carrying none is 400, an unknown or expired session is 404 so the client starts a new one instead of fixing its request, an unparseable body is -32700 at 400 rather than a 500, and a tool that rejects its arguments is a 200 carrying a JSON-RPC error because the transport succeeded. All defensible, none written down, so implementations will differ and clients will paper over it.
+
+Second, ship the suite. A runner any author can point at a URL would make the specification executable. We built a small one (`scripts/mcp-conform.mjs`, nineteen graded checks, no dependencies) and it found a live defect within a minute of first use. Grading matters: it separates MUST from SHOULD and accepts either legal answer where the spec permits two, because a conformance tool that grades its own preferences as violations gets ignored.
+
+Friction log entry 13, and see request 10, which is a rule this suite would have caught.
+
 ---
 
 ## What we are not asking for
