@@ -97,6 +97,8 @@ The rules cap winnings rather than entries: "each project can only win one track
 - MCP server (Alexa+ surface), live: https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp
 - Fire TV target platform and test environment: docs/FIRE_TV_TARGET.md
 - Evidence for every impact claim: docs/EVIDENCE.md
+- Design reasoning: docs/DESIGN.md
+- Feature requests (optional field): docs/FEATURE_REQUESTS.md
 - Accessibility audit (100 accessibility, 100 best practices, 100 SEO): docs/ACCESSIBILITY.md
 - Repository (MIT): https://github.com/usv240/everyword
 - Evaluation: https://github.com/usv240/everyword/blob/main/docs/EVAL.md
