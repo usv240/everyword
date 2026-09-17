@@ -52,6 +52,48 @@ Against gold forced alignments from LibriSpeech, our end-to-end word highlight l
 
 Timing accuracy matters for a reason specific to this intervention. A highlight that runs early teaches the wrong word-sound pair, which is worse for a learning reader than no highlight at all. That is why the evaluation reports early-lights separately rather than folding them into a mean error.
 
+## 6. The economics, and why this one is not close
+
+Most education interventions are argued for on hope. This one has a cost per learner, and it is the reason to build it.
+
+### What low literacy costs the United States
+
+**54 percent of US adults aged 16 to 74, about 130 million people, read below a sixth grade level. The estimated cost to the economy is $2.2 trillion a year.**
+Gallup for the Barbara Bush Foundation for Family Literacy, 2020. [Source](https://www.barbarabush.org/new-economic-study/)
+
+Read that against section 3: the number at the lowest PIAAC level **grew from 48 million to 58.9 million between 2017 and 2023**. This is not a stable problem being adequately served.
+
+### What Same Language Subtitling costs per learner
+
+**$0.004.** Four tenths of one cent. Annual programme costs ran from $150,000 for pilots to $2,000,000 for national scale-up, against an audience of 200 million viewers.
+Kothari and Bandyopadhyay, catalogued by the [UNESCO Institute for Lifelong Learning](https://www.uil.unesco.org/en/litbase/reading-billion-same-language-subtitling-india).
+
+That figure is the entire argument. At four tenths of a cent, the intervention does not need to work often, or work well, to be worth doing. It needs only to work sometimes, and the five-year study in section 2 says it works considerably more than sometimes: **32 percentage points more children became good readers** than in the unexposed group.
+
+### Why it costs that little, and what changed
+
+The mechanic is twenty-five years old. What was missing was never the idea; it was **an automatic word-timing pipeline cheap enough to run on arbitrary video.** A human captioner timing every word is the reason this stayed a broadcast-policy intervention rather than a product.
+
+Measured on our own pipeline: **about two cents per minute of media** through Amazon Transcribe, and the Polly path costs only synthesis because the word timings arrive free in the speech marks, with zero word error by construction.
+
+So a ninety-minute film costs roughly **$1.80** to turn into word-timed reading practice, once, forever, for every future viewer of it.
+
+### The comparison that matters
+
+| Intervention | Cost per learner |
+|---|---|
+| Same Language Subtitling (measured, at national scale) | **$0.004** |
+| Our pipeline, per minute of new content | **~$0.02** |
+| Cost of low adult literacy to the US economy | **$2.2 trillion a year** |
+
+There is no version of this arithmetic where the intervention is the expensive part.
+
+### The honest boundary
+
+**We are not claiming EveryWord has taught anyone to read.** The 32-point figure belongs to a five-year study of Indian television, not to this software. What we built is the pipeline that makes the mechanic cheap enough to ship anywhere, plus the renderer no TV platform provides, and we measured the part that is ours: **30 ms median onset error with zero early-lights beyond 150 ms**, because a highlight that runs early teaches the wrong word and would make the intervention worse than nothing.
+
+The evidence says the mechanic works when the highlighting is correct. We made the highlighting correct and cheap. Whether our particular implementation reproduces the Indian results is unmeasured, and would need a trial.
+
 ## Correction made during this audit
 
 We wrote that SLS delivers reading practice "to more than 200 million weak readers." The sourced figure is 200 million **viewers** across 10 programmes, which is not the same claim: not every viewer is a weak reader. The corrected framing appears above and in the README. The separate figure for the size of the addressable population, 500 million early readers in India, is reported by UNESCO as a potential rather than a reach.

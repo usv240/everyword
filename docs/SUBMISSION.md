@@ -65,6 +65,16 @@ A library of read-along stories, a word-tap dictionary, and the argument this pr
 
 ---
 
+## Potential impact (the economics)
+
+**This intervention has a measured cost per learner: $0.004.** Four tenths of one cent, from UNESCO's catalogue of a five-year study of 13,000 initially-weak readers that found 32 percentage points more children became good readers than in the unexposed group.
+
+Set that against the problem: 54 percent of US adults aged 16 to 74, about 130 million people, read below a sixth grade level, at an estimated cost to the economy of **$2.2 trillion a year** (Gallup for the Barbara Bush Foundation, 2020). The number at the lowest PIAAC level grew from 48 million to 58.9 million between 2017 and 2023. This is not a stable problem being adequately served.
+
+At four tenths of a cent, the intervention does not need to work often to be worth doing. The reason it is not already everywhere is not the idea, which is twenty-five years old, but the absence of **an automatic word-timing pipeline cheap enough to run on arbitrary video.** Ours costs about **two cents per minute** of media, so a ninety-minute film becomes word-timed reading practice for roughly $1.80, once, for every future viewer of it.
+
+We do not claim EveryWord has taught anyone to read. The 32-point figure belongs to Indian television, not to this software. What is ours is the pipeline and the renderer, and the part we measured is timing: 30 ms median onset error with zero early-lights beyond 150 ms, because a highlight that runs early teaches the wrong word. Full chain in [EVIDENCE.md](EVIDENCE.md) section 6.
+
 ## Product feedback (required field)
 
 See PRODUCT_FEEDBACK.md in the repository for the full version. Amazon Transcribe is the load-bearing service and it earned a rare positive friction-log entry: word-level timing is part of every result with no configuration, and our measured 30 ms median onset error is that timing quality wearing our renderer. A synchronous small-file mode would remove the polling loop. React Native for TV ships a genuinely TV-ready template, but the Windows developer path needs a caveats page: three separate hard failures (MAX_PATH in the native build, Metro versus subst file identity, monorepo duplicate React) cost most of a day and each has a non-obvious workaround. On AWS we used Transcribe (every word timing, in both the pipeline and the evaluation), S3 (media staging and the site bucket), CloudFront (delivery with origin access control and an index-rewrite function), and CDK (the stack); details in docs/AWS.md.
