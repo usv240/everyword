@@ -95,9 +95,30 @@ Fire TV and Alexa+. AWS Builder and Open Source mini challenges.
 
 The rules cap winnings rather than entries: "each project can only win one track prize and one mini challenge prize."
 
-**Alexa+** is not a stretch here. The track asks for a self-hosted MCP server implementing spec 2025-11-25 over Streamable HTTP, and `apps/mcp` is exactly that, deployed and live at https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp. EveryWord measures how many words a reader actually followed on screen, which is not minutes played and is the one number no other reading tool has. Sitting in a database it is useless, because the adult who cares about it asks out loud rather than opening a dashboard. The screen does the reading practice; the agent does the noticing. Six tools, including `explain_word`, which explains a word a reader is stuck on through a three-model Bedrock ladder, grounded in the sentence it appears in, and refuses words not in the story rather than guessing. Reading sessions persist in DynamoDB as an append-only log from which every reported number is derived. Nothing fails into silence: the catalogue load retries and falls back to a bundled copy, the model ladder falls to the reader's own sentence, and `GET /api/resilience` reports every degradation path. Thirty conformance and behaviour tests, and a Strands agent in `apps/agent` consumes the server as an independent outside client, verified live against the deployed endpoint.
+**Alexa+** is not a stretch here. The track asks for a self-hosted MCP server implementing spec 2025-11-25 over Streamable HTTP, and `apps/mcp` is exactly that, deployed and live at https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp. EveryWord measures how many words a reader actually followed on screen, which is not minutes played and is the one number no other reading tool has. Sitting in a database it is useless, because the adult who cares about it asks out loud rather than opening a dashboard. The screen does the reading practice; the agent does the noticing. Six tools, including `explain_word`, which explains a word a reader is stuck on through a three-model Bedrock ladder, grounded in the sentence it appears in, and refuses words not in the story rather than guessing. Reading sessions persist in DynamoDB as an append-only log from which every reported number is derived. Nothing fails into silence: the catalogue load retries and falls back to a bundled copy, the model ladder falls to the reader's own sentence, and `GET /api/resilience` reports every degradation path. Thirty-six conformance and behaviour tests, and a Strands agent in `apps/agent` consumes the server as an independent outside client, verified live against the deployed endpoint.
 
 **Fire TV** is the reader's home: a react-native-tvos app targeting Fire OS, shipped as a sideloadable multi-architecture APK. See docs/FIRE_TV_TARGET.md for the target, the test environment, and the honest limits of both.
+
+## Open source
+
+- Repository: https://github.com/usv240/everyword (MIT, visible in About)
+- GitHub username: usv240
+- Contributions: https://www.npmjs.com/package/karaoke-captions-react and https://www.npmjs.com/package/@everyword/captions-core
+
+**Two new MIT packages, both on npm.**
+
+`karaoke-captions-react` is the renderer: a word-timed caption document and a playback time in, a highlighted line out, themed with four CSS variables, with an `onWordsRead` callback that drives reading-exposure meters. It ships a React Native entry too, which is what runs on the Fire TV.
+
+`@everyword/captions-core` is the engine underneath it: the open caption format, an Amazon Transcribe normaliser with clause-aware line breaks and gap tiling, a standard WebVTT exporter in both plain and karaoke modes, and the binary-search word-index math that drives the cursor.
+
+They matter because Same Language Subtitling is one of the most proven literacy interventions ever measured and no video platform ships the renderer for it. Anyone can now `npm install` it. Splitting the engine out is what makes the caption format a format rather than our file layout, and the WebVTT exporter is what keeps it a superset of a standard rather than a silo.
+
+Both are the same code the web reader and the Fire TV app import, not copies made for the submission, and the README of each is tested as an API claim.
+
+## AWS Builder
+
+Amazon Transcribe (word-level timings, in both the caption pipeline and the evaluation), Amazon Polly (the second pipeline, narrating any public-domain text with zero word error by construction), Amazon Bedrock (a three-model ladder behind `explain_word`, falling back to the reader's own sentence), the Strands Agents SDK (an agent consuming our own MCP server), DynamoDB (reading sessions as an append-only log, every figure derived on read), Lambda with a function URL, S3, CloudFront and CDK. Each with its reason in [AWS.md](AWS.md).
+
 
 ---
 
