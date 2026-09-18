@@ -19,10 +19,10 @@ Amazon ships the same mechanic for books, as Immersion Reading. No video platfor
 ```tsx
 import { KaraokeCaptions } from "karaoke-captions-react";
 
-<KaraokeCaptions doc={captionDoc} currentTime={video.currentTime} />
+<KaraokeCaptions doc={captionDoc} time={video.currentTime} />
 ```
 
-`doc` is a word-timed caption document from [`@everyword/captions-core`](https://www.npmjs.com/package/@everyword/captions-core), which also normalizes Amazon Transcribe output into that shape. `currentTime` is seconds, straight off your media element. Drive it from `requestAnimationFrame` or a `timeupdate` handler; the lookup is a binary search over a prebuilt index and allocates nothing per frame.
+`doc` is a word-timed caption document from [`@everyword/captions-core`](https://www.npmjs.com/package/@everyword/captions-core), which also normalizes Amazon Transcribe output into that shape. `time` is seconds, straight off your media element. Drive it from `requestAnimationFrame` or a `timeupdate` handler; the lookup is a binary search over a prebuilt index and allocates nothing per frame.
 
 ## Theming
 
@@ -30,14 +30,16 @@ Four CSS variables, so it inherits your design rather than imposing one.
 
 ```css
 .captions {
-  --kc-text: #4a5568;        /* words not yet spoken */
-  --kc-active: #1a202c;      /* the word being spoken */
-  --kc-active-bg: #fef3c7;   /* highlight behind it */
-  --kc-font-size: 2rem;
+  --kc-highlight: #ffd34d;      /* background behind the word being spoken */
+  --kc-highlight-ink: #21242b;  /* that word's text colour */
+  --kc-done-ink: inherit;       /* words already spoken */
+  --kc-upcoming-ink: inherit;   /* words not yet spoken, also dimmed to 0.55 */
 }
 ```
 
-The default type stack is reading-optimized. Nothing else is styled for you.
+Pass your own class with `className`. Nothing else is styled for you.
+
+Words carry `data-state="done" | "active" | "upcoming"`, so you can target them directly if the variables are not enough.
 
 ## React Native and Fire TV
 
@@ -47,7 +49,20 @@ import { KaraokeCaptionsNative } from "karaoke-captions-react/native";
 
 The native entry ships as TypeScript source rather than compiled JavaScript, because it imports `react-native` and is built by your own Metro transform. Every React Native project already does that transform, so no configuration is needed. `react-native` is an optional peer dependency: install it only if you use this entry.
 
-Same component, same document, `StyleProp` instead of CSS variables. It runs on a Fire TV in a ten-foot layout.
+Same component, same document. React Native has no CSS variables, so colours are props instead:
+
+```tsx
+<KaraokeCaptionsNative
+  doc={doc}
+  time={position}
+  style={styles.captionBox}
+  textStyle={styles.captionText}
+  highlightColor="#ffd34d"
+  highlightInk="#21242b"
+/>
+```
+
+It runs on a Fire TV in a ten-foot layout.
 
 ## Never early
 
@@ -57,9 +72,12 @@ Measured end to end against gold Montreal Forced Aligner alignments on LibriSpee
 
 ## API
 
-- `<KaraokeCaptions doc currentTime className />` the web renderer
-- `<KaraokeCaptionsNative doc currentTime style textStyle />` from `karaoke-captions-react/native`
-- `globalWordPosition(doc, currentTime)` the position the renderer uses, if you want to drive something else with it
+- `<KaraokeCaptions doc time className? onWordsRead? />` the web renderer
+- `<KaraokeCaptionsNative doc time style? textStyle? highlightColor? highlightInk? doneInk? upcomingInk? onWordsRead? />` from `karaoke-captions-react/native`
+- `useWordIndex(doc, time): WordIndex` the memoised cursor lookup, if you want to drive something else with it
+- `globalWordPosition(doc, wordIndex): number` how many words have been read at that cursor position
+
+`onWordsRead(count)` fires when the highlight advances, with the number of words completed since the last call. Seeking backward never emits a negative count. It is what drives a reading-exposure meter.
 
 ## License
 

@@ -40,11 +40,13 @@ Three things it does that a naive splitter does not:
 ```ts
 import { computeWordIndex } from "@everyword/captions-core";
 
-const index = computeWordIndex(doc);          // build once
-const position = index.at(currentTimeSeconds); // binary search, no allocation
+const cursor = computeWordIndex(doc, currentTimeSeconds);
+// { segment: 0, word: 2, finished: false }
 ```
 
-`computeWordIndex` is pure and synchronous. Build it once per document and call it on every animation frame.
+Pure, synchronous and allocation-free on the hot path: it binary-searches segments and then words, so calling it ten to twenty times a second costs nothing.
+
+Two behaviours are deliberate and worth knowing. During a silence inside a segment the previous word stays lit rather than blinking off, which keeps a reader's eye anchored. Between segments the previous line stays up with its last word lit, so nothing vanishes during a breath.
 
 A React renderer that does exactly this is [`karaoke-captions-react`](https://www.npmjs.com/package/karaoke-captions-react).
 
@@ -71,10 +73,11 @@ The early-light count is the one that matters. A highlight that runs ahead of th
 ## API
 
 - `normalizeTranscribe(result, options)` Amazon Transcribe result to a caption document
-- `computeWordIndex(doc)` the word-index lookup structure
+- `computeWordIndex(doc, t)` which segment and word are live at time `t`
 - `toWebVTT(doc, options)` plain or karaoke WebVTT
 - `countWords(doc)`, `docDuration(doc)` derived from the document rather than trusted from a manifest
-- Types: `CaptionDoc`, `CaptionSegment`, `CaptionWord`, `WordIndex`, `TranscribeResult`
+- `transcribeItemsToWords(result)`, `segmentWords(words, opts)` the two halves of `normalizeTranscribe`, exported for testing
+- Types: `CaptionDoc`, `CaptionSegment`, `CaptionWord`, `WordIndex`, `NormalizeOptions`, `WebVttOptions`, `TranscribeResult`
 
 ## License
 
