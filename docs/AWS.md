@@ -59,6 +59,20 @@ Documented-integrations record for the AWS Builder mini challenge. Every service
 - Model: Claude on Amazon Bedrock (`us.anthropic.claude-sonnet-4-5-20250929-v1:0`).
 - The safety boundary: the agent may report only numbers the tools returned. It never assesses a reading level, never suggests a child is behind or ahead, and never implies a diagnosis. Verified live: asked about a reader with no history, it answered "Nothing has been recorded for Jamie yet" rather than filling the gap.
 
+## Environment
+
+`EVERYWORD_BUCKET_SUFFIX` is your AWS account id. It names the staging
+bucket the pipeline and the evaluation upload to
+(`everyword-pipeline-<suffix>`). It is deliberately not in the source: an
+account id is not a password, but it is an identifier worth not
+publishing, and hardcoding it would stop anyone else running this in their
+own account. The pipeline throws with that sentence if it is unset rather
+than silently targeting a bucket that is not yours.
+
+```
+export EVERYWORD_BUCKET_SUFFIX=$(aws sts get-caller-identity --query Account --output text)
+```
+
 ## Reproduce
 
 ```

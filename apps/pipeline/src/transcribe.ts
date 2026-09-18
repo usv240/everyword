@@ -95,7 +95,16 @@ async function main(): Promise<void> {
   const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 8);
   console.log(`Media: ${bytes.length} bytes, .${ext}, sha ${hash}`);
 
-  const accountSuffix = process.env.EVERYWORD_BUCKET_SUFFIX ?? "957325809861";
+  // No default: an AWS account id does not belong in source, and a missing
+  // one should fail loudly here rather than silently target a bucket that
+  // is not yours.
+  const accountSuffix = process.env.EVERYWORD_BUCKET_SUFFIX;
+  if (!accountSuffix) {
+    throw new Error(
+      "EVERYWORD_BUCKET_SUFFIX is not set. It is your AWS account id, used to " +
+        "name the staging bucket. See docs/AWS.md.",
+    );
+  }
   const bucket = args.bucket ?? `everyword-pipeline-${accountSuffix}`;
   try {
     await s3.send(new CreateBucketCommand({ Bucket: bucket }));

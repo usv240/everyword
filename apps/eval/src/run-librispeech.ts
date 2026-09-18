@@ -75,7 +75,16 @@ const SCRATCH = path.join(
   SPLIT,
 );
 const REGION = process.env.AWS_REGION ?? "us-east-1";
-const BUCKET = "everyword-pipeline-957325809861";
+/**
+ * Staging bucket for the evaluation audio.
+ *
+ * The account suffix comes from the environment rather than the source,
+ * for the same reason the sibling projects keep theirs out: an AWS account
+ * id is not a password, but it is an identifier worth not publishing, and
+ * hardcoding it also means nobody else can run this evaluation in their
+ * own account.
+ */
+const BUCKET = `everyword-pipeline-${process.env.EVERYWORD_BUCKET_SUFFIX ?? ""}`;
 const OFFSETS = [0, 300, 600, 900, 1200, 1500, 1800, 2100, 2400];
 const PER_OFFSET = 5;
 const SILENCE_SEC = 1.0;
