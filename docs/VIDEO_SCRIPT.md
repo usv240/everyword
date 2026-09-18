@@ -1,7 +1,15 @@
 # Demo video script: EveryWord
 
-Two minutes forty. Hard ceiling three minutes, and the rules say judges are
-not required to watch past it, so nothing important lives after 2:00.
+**Target 2:24. Hard ceiling 3:00.** The rules say judges are not required
+to watch past three minutes, so nothing important lives after 2:00.
+
+**Narration: 298 spoken words**, which is 2:24 at a brisk pace and 2:43 at a slower one, once the story playing, the Fire TV cut and the page loads are counted at about 25 seconds.
+
+An earlier draft ran 4:27, because the word count was taken from the first
+line of each quote instead of the whole quote. Everything below is cut to
+fit, so **do not add lines back in**. **Time one read-through out loud
+before you record**: reading pace is the only variable nobody can estimate
+for you.
 
 ## What this script is built to do
 
@@ -50,18 +58,13 @@ Tabs, in order:
 
 **Point at:** the landing page hero, already looping, words lighting up.
 
-> **"Same Language Subtitling is captions in the language you are already
-> hearing, highlighted word by word, on ordinary entertainment."**
+> **"Same Language Subtitling: captions in the language you are already hearing, highlighted word by word, on ordinary entertainment."**
 
-> **"It has run on Indian national television for twenty years. Two hundred
-> million viewers. National broadcast policy since 2019. A five-year study
-> of thirteen thousand people who could barely read found thirty-two
-> percentage points more children became good readers."**
+> **"Twenty years on Indian national television. Two hundred million viewers. In a five-year study, thirty-two percentage points more children became good readers."**
 
 **Point at:** the highlight sweeping across the line.
 
-> **"Amazon already ships this mechanic for books. It is called Immersion
-> Reading. No television platform has ever shipped it for video."**
+> **"Amazon already ships this for books, as Immersion Reading. No television platform has ever shipped it for video."**
 
 Pause. Then:
 
@@ -75,19 +78,15 @@ Pause. Then:
 
 **Point at:** the words as they light.
 
-> **"Real public domain story, real audio, real captions from our pipeline.
-> Every word lights at the moment it is spoken, so watching quietly
-> becomes reading practice."**
+> **"Real story, real captions from our pipeline. Every word lights as it is spoken, so watching becomes reading practice."**
 
 **Point at:** the words-read meter.
 
-> **"And this counts words the reader actually followed. Not minutes
-> played. That is the only number here that measures reading."**
+> **"And this counts words the reader followed. Not minutes played. The only number here that measures reading."**
 
 **Click:** read that line again.
 
-> **"One button to hear a line again, because that is the thing a
-> struggling reader wants most."**
+> **"One button to hear a line again."**
 
 ---
 
@@ -95,13 +94,11 @@ Pause. Then:
 
 **Cut to:** the Fire TV recording. Full screen.
 
-> **"Here it is on Fire TV, sideloaded as an APK and driven by the remote.
-> Same caption format, same renderer package, ten-foot layout."**
+> **"On Fire TV, sideloaded as an APK, driven by the remote. Same renderer, ten-foot layout."**
 
 **Point at:** the D-pad navigation, then the highlight on the TV.
 
-> **"The living room is where this belongs. A child watching a cartoon is
-> getting reading practice and nobody had to sign them up for anything."**
+> **"This belongs in the living room. A child watching a cartoon gets reading practice and nobody signed them up for anything."**
 
 ---
 
@@ -111,15 +108,9 @@ Pause. Then:
 
 **Point at:** a story marked Transcribe, then one marked Polly.
 
-> **"Two ways in. A human recording goes through Amazon Transcribe, which
-> returns the timing of every word."**
+> **"Two ways in: a human recording timed by Amazon Transcribe, or any public domain text read aloud by Amazon Polly, which reports when it said each word."**
 
-> **"Or give it any public domain text and Amazon Polly reads it aloud and
-> reports exactly when it said each word. Those captions cannot have the
-> wrong word in them, because the words were known before they were
-> spoken."**
-
-> **"That second path means any book ever written can become a read-along."**
+> **"Those captions cannot contain a wrong word, because the words were known before they were spoken. Which means any book ever written can become a read-along."**
 
 ---
 
@@ -127,59 +118,39 @@ Pause. Then:
 
 **Navigate to:** the measured claim on the landing page, or docs/EVAL.md.
 
-> **"We measured the part that is ours, against gold word alignments on
-> speech we did not record."**
+> **"We measured our part against gold word alignments, on speech we did not record."**
 
 **Point at:** the 30 ms figure.
 
-> **"The highlight lands within thirty milliseconds of the spoken word.
-> That is about one frame of video."**
+> **"The highlight lands within thirty milliseconds of the spoken word. About one frame of video."**
 
 **Point at:** the zero.
 
-> **"And it never lights a word early. Zero out of seven hundred and
-> sixty-six. That is the one error a reading tool must never make, because
-> a highlight that runs ahead teaches a child the wrong word."**
+> **"And it never lights a word early. Zero out of seven hundred and sixty-six. A highlight that runs ahead teaches a child the wrong word."**
 
-> **"We ran it again on the split LibriSpeech itself calls hard. Same
-> thirty milliseconds. Same zero."**
+> **"Again on the split LibriSpeech calls hard. Same thirty milliseconds. Same zero."**
 
 ---
 
-## 2:10 to 2:25 The agent surface
+## Cut from this video on purpose
 
-**Navigate to:** the terminal.
+The MCP server and the `explain_word` refusal used to sit here. They are
+Alexa+ material, and this is the Fire TV video. Spending twenty-five
+seconds on a second track pushed the whole thing past three minutes and
+made the video about two things instead of one.
 
-> **"It is an Alexa+ surface too. A Model Context Protocol server with six
-> tools, so a parent can ask out loud how much their child read this week
-> instead of opening a dashboard."**
-
-Run this if you have the seconds. The output prints
-`12 of 12 MUST, 7 of 7 SHOULD`, which is the nineteen; know that before you
-are on camera so you do not hesitate reading it.
+Both are in the README and the submission, where a judge who cares will
+find them, and the conformance probe proves the claim without a camera:
 
 ```
 node scripts/mcp-conform.mjs
 ```
 
-> **"Nineteen of nineteen spec checks, live over real HTTP."**
-
-**Point at:** the refusal, if you show one. Ask it about a word in the
-story, then a word that is not.
-
-> **"And when a reader asks about a word that is not in the story, it says
-> so instead of inventing an answer. A reading tool that makes up a
-> definition is worse than one that says it does not know."**
-
----
-
-## 2:25 to 2:40 Close
+## 2:10 to 2:30 Close
 
 **Cut back to:** the words lighting up. Let it play under the last lines.
 
-> **"A hundred and thirty million American adults read below a sixth grade
-> level. The technique that fixes it costs four tenths of a cent per
-> learner and has twenty years of evidence behind it."**
+> **"A hundred and thirty million American adults read below a sixth grade level. This technique costs four tenths of a cent per learner."**
 
 > **"The renderer nobody had shipped is on npm tonight, MIT licensed."**
 
@@ -193,7 +164,6 @@ story, then a word that is not.
 
 Cut in this order:
 
-1. The MCP conformance run at 2:10, say the sentence over the reader
 2. The read-that-line-again click at 0:25
 3. The test-other sentence at 1:45
 
