@@ -194,6 +194,31 @@ Never cut: the Fire TV footage, the words lighting up, or the zero. The
 first is a track requirement, the second is the product, and the third is
 the only claim that would make a teacher trust it.
 
+## Upload checklist
+
+- Under three minutes. Check the real duration, not your estimate.
+- YouTube or Vimeo, **public**, not unlisted.
+- English.
+- No third-party music or footage you do not have rights to.
+- Title and description name the Fire TV track.
+- Paste the link into the Devpost submission and into `docs/SUBMISSION.md`,
+  which currently says "add when published".
+
+## Every number spoken here, and where it comes from
+
+Live or committed as of recording. If anything changes before you shoot,
+re-check it rather than trusting this table.
+
+| Spoken | Source |
+|---|---|
+| 30 ms median, zero of 766 early | `apps/eval/results/librispeech.json` |
+| Same on test-other, zero of 761 | `apps/eval/results/librispeech-test-other.json` |
+| 19 of 19 spec checks | `node scripts/mcp-conform.mjs` |
+| Six MCP tools | `apps/mcp/src/mcp.ts` |
+| 200 million viewers, 32 points, $0.004 | UNESCO, cited in `docs/EVIDENCE.md` |
+| 130 million adults below sixth grade | Gallup for the Barbara Bush Foundation, in `docs/EVIDENCE.md` |
+| National broadcast policy since 2019 | `docs/EVIDENCE.md`, with citation |
+
 ## Things not to say
 
 Do not say EveryWord has taught anyone to read. The thirty-two point
