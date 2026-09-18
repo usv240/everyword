@@ -46,12 +46,33 @@ import {
  *        versus a naive fixed-width chunker that ignores timing.
  *
  * Usage: npm run librispeech -w @everyword/eval
- * Results: results/librispeech.json plus console summary.
+ * Results: results/librispeech.json for dev_clean, results/librispeech-<split>.json
+ * for any other split, plus a console summary.
  */
 
+/**
+ * Which LibriSpeech split to measure against.
+ *
+ *   npm run eval -w @everyword/eval                      # dev_clean
+ *   npm run eval -w @everyword/eval -- --split test_other
+ *
+ * dev_clean is the controlled condition: studio-quality read speech from
+ * the split the corpus itself labels "clean". test_other is the same
+ * pipeline against the split LibriSpeech sets aside as harder, with
+ * accents, noisier recordings and speakers who appear nowhere in the
+ * clean split. One number says the renderer is capable; two say it
+ * survives a condition we did not choose for ourselves.
+ */
+const SPLIT = (() => {
+  const i = process.argv.indexOf("--split");
+  const value = i >= 0 ? process.argv[i + 1] : undefined;
+  return value && /^[a-z_0-9]+$/.test(value) ? value : "dev_clean";
+})();
+
 const SCRATCH = path.join(
-  process.env.LOCALAPPDATA ?? "/tmp",
-  "Temp/claude/c--Hackathons-Build--Ship--Shape-Amazon-Developer-Hackathon/3a806e71-60ae-49b6-a839-daefacfd2920/scratchpad/librispeech",
+  process.env.TEMP ?? process.env.TMPDIR ?? "/tmp",
+  "everyword-eval",
+  SPLIT,
 );
 const REGION = process.env.AWS_REGION ?? "us-east-1";
 const BUCKET = "everyword-pipeline-957325809861";
@@ -79,7 +100,7 @@ const norm = (w: string): string => w.toUpperCase().replace(/[^A-Z']/g, "");
 async function fetchRows(): Promise<Array<{ id: string; src: string; words: GoldWord[] }>> {
   const out: Array<{ id: string; src: string; words: GoldWord[] }> = [];
   for (const offset of OFFSETS) {
-    const url = `https://datasets-server.huggingface.co/rows?dataset=gilkeyio%2Flibrispeech-alignments&config=default&split=dev_clean&offset=${offset}&length=${PER_OFFSET}`;
+    const url = `https://datasets-server.huggingface.co/rows?dataset=gilkeyio%2Flibrispeech-alignments&config=default&split=${SPLIT}&offset=${offset}&length=${PER_OFFSET}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`rows fetch ${offset}: HTTP ${res.status}`);
     const body = (await res.json()) as {
@@ -373,8 +394,9 @@ async function main(): Promise<void> {
   const overBudget = doc.segments.filter((s) => s.text.length > 42).length;
 
   const summary = {
+    split: SPLIT,
     reference:
-      "LibriSpeech dev-clean with Montreal Forced Aligner gold word alignments (HF gilkeyio/librispeech-alignments); audio and alignments not authored by us",
+      `LibriSpeech ${SPLIT.replace("_", "-")} with Montreal Forced Aligner gold word alignments (HF gilkeyio/librispeech-alignments); audio and alignments not authored by us`,
     utterances: utts.length,
     speakersApprox: new Set(utts.map((u) => u.id.split("-")[0])).size,
     goldWords: goldTotal,
@@ -400,8 +422,13 @@ async function main(): Promise<void> {
   console.log(JSON.stringify(summary, null, 2));
   const outDir = path.resolve(process.cwd(), "results");
   fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(path.join(outDir, "librispeech.json"), JSON.stringify(summary, null, 1));
-  console.log("\nWrote results/librispeech.json");
+  // dev_clean keeps the historical filename so every existing reference to
+  // it stays valid; any other split gets its own file beside it. Without
+  // this, a run on a second split silently overwrote the first, which is
+  // exactly what happened the first time this was parameterised.
+  const name = SPLIT === "dev_clean" ? "librispeech.json" : `librispeech-${SPLIT.replace(/_/g, "-")}.json`;
+  fs.writeFileSync(path.join(outDir, name), JSON.stringify(summary, null, 1));
+  console.log(`\nWrote results/${name}`);
 }
 
 main().catch((err) => {

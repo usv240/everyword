@@ -2,6 +2,8 @@
 
 Subtitles that light up word by word as they are spoken. Watching becomes reading. Measured against gold LibriSpeech alignments (speech we did not record): the highlight lands within 30 ms of the spoken word (median, p90 85 ms), never lights a word early beyond 150 ms across 766 matched words, and breaks lines at real pauses 42 percent of the time where timing-blind chunking manages 2 (docs/EVAL.md).
 
+Run again on **test-other**, the split LibriSpeech itself sets aside as hard, with accents, noisier recordings and 26 speakers who appear nowhere in the clean split: the median onset error is the same 30 ms, the p90 the same 85 ms, and it still lights **zero** words early across 761 matched words. Match rate slips from 97.2 to 96.7 percent, which is the direction a harder split predicts and is stated rather than rounded away.
+
 Same Language Subtitling (SLS), karaoke-style same-language captions on ordinary entertainment, is one of the most proven literacy interventions ever measured: two decades on Indian national television, 10 programmes reaching an estimated 200 million viewers, and Indian national broadcast policy since 2019. A five-year study of 13,000 people who could initially read little or nothing found 32 percentage points more children becoming good readers than in the unexposed group, at a cost of $0.004 per learner (UNESCO Institute for Lifelong Learning). Separately, more than 100 empirical studies find captions improve comprehension, attention and memory, with people learning to read among those who gain most (Gernsbacher, 2015). Sources for every claim are in [docs/EVIDENCE.md](docs/EVIDENCE.md). Amazon already ships exactly this mechanic for books (Immersion Reading and Read and Listen). No TV platform has ever shipped it for video. EveryWord is that product: Immersion Reading, for television.
 
 Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plus the AWS Builder and Open Source mini challenges).
@@ -27,7 +29,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 
 ```
 npm install
-npm test                 # 69 tests: caption engine, MCP server, and every public claim
+npm test                 # 75 tests: caption engine, MCP server, and every public claim
 npm run web:dev          # the reader on localhost:3000
 
 # generate captions for new content (needs AWS credentials):

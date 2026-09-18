@@ -48,7 +48,7 @@ This is a platform-level gap rather than an oversight, and we verified it rather
 
 The evidence above says the intervention works when the highlighting is correct. Our own contribution is showing the highlighting can be made correct from commodity services, which is the part that decides whether this ships.
 
-Against gold forced alignments from LibriSpeech, our end-to-end word highlight lands at **30 ms median onset error with zero early-lights beyond 150 ms across 766 matched words**. The Polly path is stronger still: because the words are known rather than recognized, caption word error is zero by construction rather than by measurement. Method, limits and the reproduction command are in [EVAL.md](EVAL.md).
+Against gold forced alignments from LibriSpeech, our end-to-end word highlight lands at **30 ms median onset error with zero early-lights beyond 150 ms across 766 matched words**. The same pipeline on **test-other**, the split the corpus labels hard, with 26 different speakers and noisier audio: the same 30 ms median and **zero early-lights across 761 matched words**, with the match rate slipping from 97.2 to 96.7 percent. The Polly path is stronger still: because the words are known rather than recognized, caption word error is zero by construction rather than by measurement. Method, limits and the reproduction command are in [EVAL.md](EVAL.md).
 
 Timing accuracy matters for a reason specific to this intervention. A highlight that runs early teaches the wrong word-sound pair, which is worse for a learning reader than no highlight at all. That is why the evaluation reports early-lights separately rather than folding them into a mean error.
 

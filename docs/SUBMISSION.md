@@ -14,6 +14,8 @@ EveryWord takes any video or audio, times every word with Amazon Transcribe, lig
 
 **Measured against gold-standard forced alignments on LibriSpeech (speech we did not record, 27 speakers, 788 reference words), EveryWord's highlight lands within 30 milliseconds of the spoken word at the median, never lights a word early beyond 150 milliseconds across 766 matched words, and breaks caption lines at real pauses 42 percent of the time where timing-blind chunking manages 2 percent.**
 
+**Run again on test-other, the split LibriSpeech sets aside as hard, with 26 different speakers, accents and noise: the same 30 millisecond median, the same 85 millisecond p90, and still zero words lit early across 761 matched words.** The match rate slips from 97.2 to 96.7 percent, which is the direction a harder split predicts and is reported rather than rounded away.
+
 Thirty milliseconds is about one frame of video: a reader cannot perceive the voice and the highlight as separate events. The zero is the number that matters for a learner, because a reading tool must never claim a word was spoken before it was.
 
 Fifty-four percent of American adults, about 130 million people, read below a sixth-grade level, and children surrounded by adults with low literacy are 72 percent more likely to struggle themselves. Nobody has money or time for tutoring. Everyone has a screen.

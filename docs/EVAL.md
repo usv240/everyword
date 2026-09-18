@@ -14,6 +14,28 @@ EveryWord's product claim is precise: every word lights up at the moment it is s
 | Line breaks landing on real pauses: naive fixed-width chunker | 2 percent |
 | Lines over the 42-character budget | 0 |
 
+## The second number, on the split we did not choose
+
+One number reads as a demo. The same pipeline, unchanged and untuned, run against **test-other**, the split LibriSpeech itself sets aside as difficult: accented and noisier recordings, 26 speakers who appear nowhere in the clean split.
+
+| Measure | dev-clean | test-other |
+|---|---|---|
+| Speakers | 27 | 26 |
+| Words matched to gold reference | 766 of 788 (97.2 percent) | 761 of 787 (**96.7 percent**) |
+| Highlight onset error, median | 30 ms | **30 ms** |
+| Highlight onset error, p90 | 85 ms | **85 ms** |
+| Negative control: words lit early beyond 150 ms | 0 of 766 | **0 of 761** |
+| Line breaks on real pauses: EveryWord | 42 percent | **42.2 percent** |
+| Line breaks on real pauses: naive fixed-width | 2 percent | 4.1 percent |
+| Lines over the 42-character budget | 0 | 0 |
+
+The timing does not move and the early-light control stays at zero, which is the promise that matters: accents and noise are exactly the conditions under which a recognizer starts guessing, and a guess that runs ahead of the voice teaches a learner the wrong word.
+
+The match rate does drop, from 97.2 to 96.7 percent. That is small, it is real, and it is in the direction a harder split predicts. It is reported because a second number identical to the first in every digit would be a reason to distrust the harness rather than the result.
+
+Reproduce: `npm run librispeech -w @everyword/eval -- --split test_other`. Committed at `apps/eval/results/librispeech-test-other.json`.
+
+
 For scale: 30 ms is around one frame of video. A reader cannot perceive the highlight and the voice as separate events at that offset, and the zero in the early-light row is the one that matters for reading: EveryWord never tells a learner a word has been said before it has.
 
 ## The data (not ours)

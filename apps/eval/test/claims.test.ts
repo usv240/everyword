@@ -46,6 +46,16 @@ const ls = JSON.parse(
   linesOver42Chars: number;
 };
 
+/**
+ * The harder split, run through the identical pipeline. The point of a
+ * second number is that we did not get to choose the conditions: test-other
+ * is the split LibriSpeech itself sets aside as difficult, with accents,
+ * noisier recordings and speakers who appear nowhere in the clean split.
+ */
+const hard = JSON.parse(
+  fs.readFileSync(path.join(repo, "apps/eval/results/librispeech-test-other.json"), "utf8"),
+) as typeof ls & { split: string };
+
 const PUBLIC_TEXT = [
   "README.md",
   "docs/SUBMISSION.md",
@@ -144,5 +154,48 @@ describe("every public claim matches the evidence", () => {
 
   it("no caption line exceeds the 42 character budget the engine promises", () => {
     expect(ls.linesOver42Chars).toBe(0);
+  });
+});
+
+/**
+ * One number reads as a demo. The second one is the one that has to survive
+ * a condition we did not pick.
+ */
+describe("the same pipeline on the split LibriSpeech calls hard", () => {
+  it("is actually the harder split, with different speakers", () => {
+    expect(hard.split).toBe("test_other");
+    expect(hard.reference).toMatch(/test-other/);
+    expect(hard.speakersApprox).toBeGreaterThanOrEqual(20);
+  });
+
+  it("still never lights a word early", () => {
+    // The one promise that is not allowed to degrade. Accents and noise are
+    // exactly the conditions under which a recognizer starts guessing, and
+    // a guess that runs ahead of the voice teaches the wrong word.
+    expect(hard.negativeControl.wordsLitEarlyBeyondTolerance).toBe(0);
+    expect(hard.negativeControl.ofMatchedWords).toBe(hard.matchedWords);
+    expect(hard.matchedWords).toBe(761);
+  });
+
+  it("holds its timing on harder audio", () => {
+    expect(hard.highlightOnset.medianAbsMs).toBe(ls.highlightOnset.medianAbsMs);
+    expect(hard.highlightOnset.p90AbsMs).toBeLessThanOrEqual(ls.highlightOnset.p90AbsMs * 1.5);
+  });
+
+  it("loses a little match rate, and says so rather than rounding it away", () => {
+    // 96.7 against 97.2. Small, real, and in the direction the harder split
+    // predicts. A second number identical to the first would be suspicious.
+    expect(hard.matchRatePercent).toBeLessThan(ls.matchRatePercent);
+    expect(hard.matchRatePercent).toBe(96.7);
+  });
+
+  it("still beats the naive chunker on line breaks", () => {
+    expect(hard.lineBreaksOnRealPauses.everyword.onPausePercent).toBeGreaterThan(
+      hard.lineBreaksOnRealPauses.naiveFixedWidth.onPausePercent * 5,
+    );
+  });
+
+  it("is stated publicly, not just committed", () => {
+    expect(statedIn("test-other").length + statedIn("test_other").length).toBeGreaterThan(0);
   });
 });
