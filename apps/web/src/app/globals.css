@@ -63,6 +63,22 @@
   --success: #5bbd94;
 }
 
+/* Shared shape and depth, so a popover looks the same wherever it opens. */
+:root {
+  --radius-md: 12px;
+  --shadow-md: 0 8px 28px rgb(33 36 43 / 0.14);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --shadow-md: 0 8px 28px rgb(0 0 0 / 0.5);
+  }
+}
+
+:root[data-theme="dark"] {
+  --shadow-md: 0 8px 28px rgb(0 0 0 / 0.5);
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -96,5 +112,67 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+  The hero demonstration.
+
+  Typography here is the product, so it follows the reading research rather
+  than taste. The consistent finding across the dyslexia and beginning-reader
+  literature is that spacing matters more than the choice of typeface:
+  visual crowding, where adjacent letters interfere with each other's
+  recognition, is one of the most reliably documented barriers. So Lexend
+  (designed for reading proficiency) carries generous letter spacing and a
+  line height well above the usual body default, and lines stay short.
+
+  The highlight is a pill rather than a colour change because a background
+  shape survives low contrast, colour blindness and a dim television, and
+  because it reads as "here" rather than as "this word is different".
+*/
+
+.ew-hero-demo {
+  font-family: var(--font-reading), system-ui, sans-serif;
+  margin: 0;
+}
+
+.ew-hero-line {
+  margin: 0 0 0.28em;
+  font-size: clamp(1.35rem, 3.4vw, 2.3rem);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.012em;
+  word-spacing: 0.04em;
+  color: var(--kc-upcoming-ink);
+  text-wrap: balance;
+}
+
+.ew-hero-word {
+  border-radius: 0.28em;
+  padding: 0.04em 0.16em;
+  transition:
+    background-color 110ms linear,
+    color 110ms linear,
+    opacity 110ms linear;
+}
+
+.ew-hero-word[data-state="active"] {
+  background-color: var(--kc-highlight);
+  color: var(--kc-highlight-ink);
+}
+
+.ew-hero-word[data-state="done"] {
+  color: var(--kc-done-ink);
+}
+
+.ew-hero-word[data-state="upcoming"] {
+  color: var(--kc-upcoming-ink);
+  opacity: 0.48;
+}
+
+/* Reduced motion gets the finished state: lit, legible, still. */
+@media (prefers-reduced-motion: reduce) {
+  .ew-hero-word {
+    transition: none;
   }
 }

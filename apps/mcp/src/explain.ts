@@ -1,4 +1,5 @@
 import { AnthropicBedrock } from "@anthropic-ai/bedrock-sdk";
+import { sanitiseModelText } from "./sanitise";
 import type { Story } from "./library";
 
 /**
@@ -153,7 +154,8 @@ export async function explainWord(
         found: true,
         word,
         context,
-        explanation: text,
+        // Enforced, not requested: see sanitise.ts.
+        explanation: sanitiseModelText(text),
         source: "bedrock",
         model,
         attempts,
