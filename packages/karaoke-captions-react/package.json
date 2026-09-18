@@ -1,6 +1,6 @@
 {
   "name": "karaoke-captions-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Word-by-word highlighted (karaoke) captions for React. Feed it a word-timed caption document and a currentTime, get Same Language Subtitling: the proven reading-practice technique, as a component.",
   "license": "MIT",
   "type": "module",
@@ -19,7 +19,7 @@
     "react-native": ">=0.73"
   },
   "dependencies": {
-    "@everyword/captions-core": "^0.1.0"
+    "@everyword/captions-core": "^0.1.1"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

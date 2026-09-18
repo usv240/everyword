@@ -1,4 +1,4 @@
-import type { CaptionDoc } from "./types";
+import type { CaptionDoc } from "./types.js";
 
 /**
  * WebVTT export.

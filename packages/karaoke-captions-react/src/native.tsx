@@ -5,7 +5,7 @@ import {
   type CaptionDoc,
   type WordIndex,
 } from "@everyword/captions-core";
-import { globalWordPosition } from "./index";
+import { globalWordPosition } from "./index.js";
 
 /**
  * React Native variant of KaraokeCaptions, sharing all timing semantics

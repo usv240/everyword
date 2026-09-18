@@ -1,4 +1,4 @@
-import type { CaptionDoc, WordIndex } from "./types";
+import type { CaptionDoc, WordIndex } from "./types.js";
 
 /**
  * The karaoke cursor: which segment and word are live at time t.

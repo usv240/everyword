@@ -1,6 +1,6 @@
 {
   "name": "@everyword/captions-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The EveryWord caption format and engine: word-timed caption documents, a normalizer for Amazon Transcribe output (segmentation, clause-aware line breaks, gap tiling), and the pure word-index math that drives karaoke highlighting.",
   "license": "MIT",
   "type": "module",

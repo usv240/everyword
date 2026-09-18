@@ -4,7 +4,7 @@ import type {
   CaptionWord,
   NormalizeOptions,
   TranscribeResult,
-} from "./types";
+} from "./types.js";
 
 /**
  * Turn Amazon Transcribe output into an EveryWord caption document.
