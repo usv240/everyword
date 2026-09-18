@@ -1,160 +1,202 @@
-# EveryWord demo video: shot list
+# Demo video script: EveryWord
 
-Target length 2:45. Hard limit 3:00; judges are not required to watch past it, so the reader is on screen and lighting up words by second 20. Everything shown is the live deployment, so nothing in the video can differ from what a judge clicks.
+Two minutes forty. Hard ceiling three minutes, and the rules say judges are
+not required to watch past it, so nothing important lives after 2:00.
 
-Rules this video must satisfy, and where it does:
+## What this script is built to do
 
-- Fire TV: "the demo video shows the project running on an actual Fire TV device or the Fire TV/Vega simulator." Shot 4 shows the Fire OS build on an Android Virtual Device, which is Amazon's documented method for emulating a Fire device, and says so on screen. docs/FIRE_TV_TARGET.md carries the full statement. Do not claim more than that.
-- Alexa+: "show your MCP server (spec 2025-11-25+, Streamable HTTP) in action." Shots 5, 6 and 7.
-- No third-party trademarks, music, or footage. All content is public-domain Aesop, narrated by Amazon Polly or LibriVox volunteers, both credited in CONTENT_LICENSES.md. No background track.
-- English, public on YouTube.
+Four judging criteria, each with a beat that lands early. The Fire TV rule
+is specific: the video has to show the project running on an actual Fire TV
+device or the Fire TV simulator, so that footage is not optional and it is
+not left to the end.
 
-## Before you press record
+| Criterion | Where it lands | The beat |
+|---|---|---|
+| Quality of the idea | 0:00 to 0:25 | Amazon ships this for books. No TV platform ships it for video. |
+| Design | 0:25 to 0:55 | Watch the words light up. The product explains itself. |
+| Tech implementation | 0:55 to 1:45 | Running on Fire TV, plus how any book becomes a read-along. |
+| Potential impact | 1:45 to 2:40 | 200 million viewers, 32 points, four tenths of a cent per learner. |
 
-```
-# 1. Terminal, large font (18pt+), dark theme, window sized to 1280x720.
-export MCP=https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp
-export API=https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws
-
-# 2. Seed a reader so the check-in has real numbers to report.
-#    (Sessions persist in DynamoDB, so this survives until you delete them.)
-python - <<'PY'
-import json, urllib.request, os
-URL=os.environ["MCP"]
-def rpc(m,p=None,sid=None,rid=1):
-    b={"jsonrpc":"2.0","id":rid,"method":m}
-    if p: b["params"]=p
-    r=urllib.request.urlopen(urllib.request.Request(URL,data=json.dumps(b).encode(),
-        headers={"content-type":"application/json",**({"mcp-session-id":sid} if sid else {})}))
-    return r.headers.get("mcp-session-id"), json.loads(r.read().decode())
-sid,_=rpc("initialize",{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"seed","version":"1"}})
-for i,(slug,w,done) in enumerate([("crow-and-pitcher",97,True),("lion-and-mouse",180,True),("hare-and-tortoise",96,False)]):
-    rpc("tools/call",{"name":"record_reading_session","arguments":{"readerId":"maya","slug":slug,"wordsFollowed":w,"completed":done}},sid,10+i)
-print("seeded maya")
-PY
-
-# 3. Warm explain_word (first Bedrock call can take a few seconds).
-python apps/agent/reading_check_in.py --url $MCP --reader maya \
-  --ask "What does pitcher mean in The Crow and the Pitcher?"
-
-# 4. Warm the check-in you will run on camera.
-python apps/agent/reading_check_in.py --url $MCP --reader maya
-
-# 5. Warm the resilience report.
-curl -s $API/api/resilience | python -m json.tool
-
-# 6. Have the Fire TV clip ready: everyword-demo.mp4 from the v0.1.0 GitHub
-#    release. Trim to the best 20 seconds of the karaoke highlight moving.
-```
-
-Browser: https://d34emfdcezeszz.cloudfront.net at 125 percent zoom, light theme to start. Press Play once before recording so the audio is cached, then reload. Close every other tab. Hide bookmarks bar.
-
-Record at 1080p, 30fps. Speak slowly. Pause half a second before each click.
-
-## Shot list
-
-### Shot 1: the hook (0:00 to 0:15)
-
-Screen: landing page hero, reader visible below it.
-
-Say: "Subtitles that light up word by word as they are spoken. In India this exact technique has reached an estimated 200 million viewers on national television and became broadcast policy in 2019. No TV platform has ever shipped it for video. This is it."
-
-### Shot 2: the reader, live (0:15 to 0:50)
-
-Screen: click a story card. Press Play. Let the highlight run for six full seconds with no narration; the product should speak for itself.
-
-Say: "Every word lights at the instant it is spoken."
-
-Screen: click "Read that line again". Let it replay.
-
-Say: "Read that line again."
-
-Screen: click "Slow down". Let two or three words pass.
-
-Say: "Slow down, with the pitch preserved, so the voice a learner is matching to does not distort."
-
-Screen: change the font size. Click the theme toggle to dark. Scroll to the meter.
-
-Say: "Reading-optimised type, adjustable size, light and dark. And a quiet meter: words read along, not minutes watched. That distinction is the whole product."
-
-### Shot 3: measured, not promised (0:50 to 1:10)
-
-Screen: open docs/EVAL.md on GitHub, scrolled to the results table. Two seconds.
-
-Say: "Against gold word alignments on LibriSpeech, the highlight lands within 30 milliseconds of the spoken word, and never lights a word early beyond 150 milliseconds across 766 matched words. Early is the one error a reading tool must never make."
-
-Screen: back to the library. Point at a Polly-narrated story.
-
-Say: "Two ways in. Human narration through Amazon Transcribe. Or any text at all through Amazon Polly, where the words are known rather than recognised, so caption word error is zero by construction. That is how a public-domain library becomes read-alongs."
-
-### Shot 4: Fire TV (1:10 to 1:30)
-
-Screen: the trimmed Fire TV clip. Overlay this text for the full shot, small, bottom left:
-
-"Fire OS build (react-native-tvos). Shown on an Android Virtual Device, Amazon's documented method for emulating a Fire device. Multi-architecture APK on the GitHub release."
-
-Say: "The same renderer on a ten-foot TV interface, driven entirely by D-pad. It is a Fire OS app, shipped as an APK that sideloads to any Fire TV. No physical device was available, so this is Amazon's documented virtual device; the release carries the ARM build for real hardware."
-
-### Shot 5: the MCP server (1:30 to 1:42)
-
-Screen: terminal. Run:
+## Before you record
 
 ```
-curl -s -D- -o /dev/null -X POST $MCP -H "content-type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"demo","version":"1"}}}' \
-  | grep -i mcp-session-id
+npm test                              # 92 passing
+npm run web:dev                       # or use the live site
+node scripts/mcp-conform.mjs          # 19 of 19, live
 ```
 
-Say: "The library and the reading meter are also an MCP server: spec 2025-11-25 over Streamable HTTP. The screen does the reading practice. An agent does the noticing."
+**The Fire TV footage is the one thing you cannot fake.** Get it first, on
+its own, before you record anything else:
 
-### Shot 6: an agent notices (1:42 to 2:05)
+1. Developer Console, Tools and Services, Appstore Quality Central
+2. Virtual Devices, Get Started, accept the terms
+3. Upload `everyword-tv-v0.1.0.apk` from the v0.1.0 release
+4. Launch it, drive it with the D-pad, screen record 20 seconds of the
+   words lighting up
 
-Screen: terminal. Run the check-in against the live endpoint. Let the tool list print, then the answer.
+If that farm is not reachable on your account, fall back to the Android
+Virtual Device footage and say what it is, in one clause, out loud. Do not
+let a judge discover it from the documentation.
+
+Tabs, in order:
+
+1. https://d34emfdcezeszz.cloudfront.net
+2. Your Fire TV recording, ready to cut to
+3. A terminal in the repo root
+
+---
+
+## 0:00 to 0:25 The idea
+
+**Point at:** the landing page hero, already looping, words lighting up.
+
+> **"Same Language Subtitling is captions in the language you are already
+> hearing, highlighted word by word, on ordinary entertainment."**
+
+> **"It has run on Indian national television for twenty years. Two hundred
+> million viewers. National broadcast policy since 2019. A five-year study
+> of thirteen thousand people who could barely read found thirty-two
+> percentage points more children became good readers."**
+
+**Point at:** the highlight sweeping across the line.
+
+> **"Amazon already ships this mechanic for books. It is called Immersion
+> Reading. No television platform has ever shipped it for video."**
+
+Pause. Then:
+
+> **"EveryWord is that product."**
+
+---
+
+## 0:25 to 0:55 Watch it work
+
+**Navigate to:** scroll to the player. **Press play on camera.**
+
+**Point at:** the words as they light.
+
+> **"Real public domain story, real audio, real captions from our pipeline.
+> Every word lights at the moment it is spoken, so watching quietly
+> becomes reading practice."**
+
+**Point at:** the words-read meter.
+
+> **"And this counts words the reader actually followed. Not minutes
+> played. That is the only number here that measures reading."**
+
+**Click:** read that line again.
+
+> **"One button to hear a line again, because that is the thing a
+> struggling reader wants most."**
+
+---
+
+## 0:55 to 1:20 On the television
+
+**Cut to:** the Fire TV recording. Full screen.
+
+> **"Here it is on Fire TV, sideloaded as an APK and driven by the remote.
+> Same caption format, same renderer package, ten-foot layout."**
+
+**Point at:** the D-pad navigation, then the highlight on the TV.
+
+> **"The living room is where this belongs. A child watching a cartoon is
+> getting reading practice and nobody had to sign them up for anything."**
+
+---
+
+## 1:20 to 1:45 How any book becomes a read-along
+
+**Navigate to:** the terminal, or the story list showing both source types.
+
+**Point at:** a story marked Transcribe, then one marked Polly.
+
+> **"Two ways in. A human recording goes through Amazon Transcribe, which
+> returns the timing of every word."**
+
+> **"Or give it any public domain text and Amazon Polly reads it aloud and
+> reports exactly when it said each word. Those captions cannot have the
+> wrong word in them, because the words were known before they were
+> spoken."**
+
+> **"That second path means any book ever written can become a read-along."**
+
+---
+
+## 1:45 to 2:10 The measurement
+
+**Navigate to:** the measured claim on the landing page, or docs/EVAL.md.
+
+> **"We measured the part that is ours, against gold word alignments on
+> speech we did not record."**
+
+**Point at:** the 30 ms figure.
+
+> **"The highlight lands within thirty milliseconds of the spoken word.
+> That is about one frame of video."**
+
+**Point at:** the zero.
+
+> **"And it never lights a word early. Zero out of seven hundred and
+> sixty-six. That is the one error a reading tool must never make, because
+> a highlight that runs ahead teaches a child the wrong word."**
+
+> **"We ran it again on the split LibriSpeech itself calls hard. Same
+> thirty milliseconds. Same zero."**
+
+---
+
+## 2:10 to 2:25 The agent surface
+
+**Navigate to:** the terminal.
+
+> **"It is an Alexa+ surface too. A Model Context Protocol server with six
+> tools, so a parent can ask out loud how much their child read this week
+> instead of opening a dashboard."**
+
+Optionally run, if you have the seconds:
 
 ```
-python apps/agent/reading_check_in.py --url $MCP --reader maya
+node scripts/mcp-conform.mjs
 ```
 
-Say: "A Strands agent on Bedrock, with no data access of its own. It reads Maya's real progress through the tools, picks something she has not finished, and explains the constraint it applied. It reports only numbers the tools returned. It never assesses a reading level."
+> **"Nineteen of nineteen spec checks, live over real HTTP. And when a
+> reader asks about a word that is not in the story, it refuses rather
+> than guessing."**
 
-### Shot 7: a word she is stuck on (2:05 to 2:25)
+---
 
-Screen: terminal. Run:
+## 2:25 to 2:40 Close
 
-```
-python apps/agent/reading_check_in.py --url $MCP --reader maya \
-  --ask "Maya got stuck on the word pitcher in The Crow and the Pitcher. What does it mean, in a way she can understand?"
-```
+**Cut back to:** the words lighting up. Let it play under the last lines.
 
-Say: "Explain a word. The word must appear in the story before any model is called, the sentence it appears in is the context, and the answer is one line a struggling reader can read."
+> **"A hundred and thirty million American adults read below a sixth grade
+> level. The technique that fixes it costs four tenths of a cent per
+> learner and has twenty years of evidence behind it."**
 
-Screen: run the same with "helicopter". Show the refusal.
+> **"The renderer nobody had shipped is on npm tonight, MIT licensed."**
 
-Say: "Ask about a word that is not in the story, and it says so rather than guessing."
+**Last frame:** a word lighting up.
 
-### Shot 8: nothing fails into silence (2:25 to 2:38)
+> **"EveryWord. Watching becomes reading."**
 
-Screen: terminal. Resilience curl, scrolled so the catalogue and explainWord sections are visible.
+---
 
-Say: "Reading progress lives in DynamoDB as an append-only log; every number is derived, never stored. The catalogue retries and falls back to a bundled copy. The model ladder falls back to the reader's own sentence. The karaoke timing never touches a model at all."
+## If you are over three minutes
 
-### Shot 9: close (2:38 to 2:50)
+Cut in this order:
 
-Screen: landing page evidence section, then the repo link.
+1. The MCP conformance run at 2:10, say the sentence over the reader
+2. The read-that-line-again click at 0:25
+3. The test-other sentence at 1:45
 
-Say: "A five-year study of 13,000 people who could barely read found 32 percentage points more children became good readers, at a cost of four tenths of a cent per learner. 58.9 million American adults read at the lowest level, and the number is rising. Open source, MIT, live at the link."
+Never cut: the Fire TV footage, the words lighting up, or the zero. The
+first is a track requirement, the second is the product, and the third is
+the only claim that would make a teacher trust it.
 
-Hold on the URL for two seconds. Cut.
+## Things not to say
 
-## Do not say
-
-- "200 million readers." The sourced figure is viewers.
-- Anything about assessing, diagnosing, or screening reading ability. It reports what was read.
-- "Runs on a Fire TV" without the qualifier in Shot 4.
-- Any number not in docs/EVIDENCE.md or docs/EVAL.md.
-
-## After recording
-
-- Export 1080p, H.264. No music.
-- YouTube: title "EveryWord: subtitles that teach reading", visibility Public, not Unlisted. Description: one paragraph, the reader URL, the repo URL, the MCP URL, and the Fire TV qualifier from Shot 4 verbatim.
-- Paste the link into docs/SUBMISSION.md under Links, and into the Devpost form.
+Do not say EveryWord has taught anyone to read. The thirty-two point
+figure belongs to Indian television, not to this software, and the
+submission is explicit about that line. Say the technique is proven and
+the renderer is ours, and let the judge draw the rest.
