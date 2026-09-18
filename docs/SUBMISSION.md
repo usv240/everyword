@@ -89,6 +89,16 @@ Twelve entries in FRICTION_LOG.md, each with task, steps, expected versus actual
 
 ---
 
+## Built during the hackathon
+
+This project did not exist before the submission window. The first commit
+is 2026-09-14 and the whole repository is public history: every file, every
+number and every correction was written for this hackathon.
+
+Nothing here was adapted from earlier work, so the rules' question about
+what changed during the window has the simplest possible answer, which is
+all of it.
+
 ## Tracks and mini challenges
 
 Fire TV and Alexa+. AWS Builder and Open Source mini challenges.
