@@ -18,7 +18,9 @@
     "web:dev": "npm run dev -w @everyword/web",
     "web:build": "npm run build -w @everyword/web",
     "polly": "npm run polly -w @everyword/pipeline",
-    "mcp": "npm run dev -w @everyword/mcp"
+    "mcp": "npm run dev -w @everyword/mcp",
+    "build:packages": "tsc -b packages/captions-core packages/karaoke-captions-react",
+    "pretest": "npm run build:packages"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

@@ -12,8 +12,8 @@
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "@everyword/captions-core": "0.1.0",
-    "karaoke-captions-react": "0.1.0"
+    "@everyword/captions-core": "*",
+    "karaoke-captions-react": "*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -11,6 +11,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1123.0",
     "@aws-sdk/client-transcribe": "^3.1123.0",
-    "@everyword/captions-core": "0.1.0"
+    "@everyword/captions-core": "*"
   }
 }
