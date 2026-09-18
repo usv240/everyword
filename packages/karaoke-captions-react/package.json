@@ -4,8 +4,8 @@
   "description": "Word-by-word highlighted (karaoke) captions for React. Feed it a word-timed caption document and a currentTime, get Same Language Subtitling: the proven reading-practice technique, as a component.",
   "license": "MIT",
   "type": "module",
-  "main": "src/index.tsx",
-  "types": "src/index.tsx",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "captions",
     "subtitles",
@@ -15,16 +15,56 @@
     "react"
   ],
   "peerDependencies": {
-    "react": ">=18"
+    "react": ">=18",
+    "react-native": ">=0.73"
   },
   "dependencies": {
-    "@everyword/captions-core": "0.1.0"
+    "@everyword/captions-core": "^0.1.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
     "react": "^19.0.0"
   },
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "tsc -b",
+    "prepublishOnly": "tsc -b"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./native": {
+      "types": "./src/native.tsx",
+      "default": "./src/native.tsx"
+    },
+    "./src/*": "./src/*"
+  },
+  "files": [
+    "dist/index.js",
+    "dist/index.js.map",
+    "dist/index.d.ts",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usv240/everyword.git",
+    "directory": "packages/karaoke-captions-react"
+  },
+  "homepage": "https://github.com/usv240/everyword/tree/main/packages/karaoke-captions-react",
+  "bugs": {
+    "url": "https://github.com/usv240/everyword/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
   }
 }
