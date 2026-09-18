@@ -1,97 +1,80 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# EveryWord for Fire TV
 
-# Getting Started
+The reader on the biggest screen in the house. Real public-domain content
+with word-timed captions, rendered karaoke style: every word lights up at
+the moment it is spoken, so watching becomes reading practice.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+This replaces the React Native starter README that the CLI generates. That
+file described how to run a generic React Native app and said nothing
+about what this one is.
 
-## Step 1: Start Metro
+## What it is
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+A `react-native-tvos` app targeting **Fire OS**, sideloadable to any Fire
+TV device as an APK. It plays Aesop's *The Two Pots*, read by LibriVox
+volunteers, with captions produced by the EveryWord pipeline on Amazon
+Transcribe.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+It shares the renderer with the web reader rather than reimplementing it:
 
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+```tsx
+import {KaraokeCaptionsNative} from 'karaoke-captions-react/src/native';
+import {computeWordIndex, countWords} from '@everyword/captions-core';
 ```
 
-## Step 2: Build and run your app
+Both packages are published on npm. The television and the browser light
+the same word at the same millisecond because they run the same code.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Ten-foot design
 
-### Android
+Everything is driven by the D-pad. No pointer, no small targets, no text
+that assumes you are two feet from the screen. Focus is visible at all
+times, because on a television a focus ring you cannot find is a dead end.
 
-```sh
-# Using npm
+## Install it on a Fire TV
+
+The published APK is multi-architecture and self-contained:
+
+```
+adb connect <your-fire-tv-ip>:5555
+adb install everyword-tv-v0.1.0.apk
+```
+
+Download it from the [v0.1.0
+release](https://github.com/usv240/everyword/releases/tag/v0.1.0).
+
+## Build it yourself
+
+```
+npm install
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+`metro.config.js` documents the monorepo wiring. This app lives outside
+the npm workspaces on purpose: React Native's bundler and the workspace
+hoisting disagree about which copy of React is the real one, and keeping
+it out is less trouble than teaching them to agree.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+`android/gradle.properties` builds `armeabi-v7a`, `arm64-v8a` and `x86_64`.
+Do not narrow that to `x86_64` to speed up emulator builds. An earlier
+release shipped exactly that and would have failed to install on every
+real Fire TV with `INSTALL_FAILED_NO_MATCHING_ABIS`, while the README
+invited people to sideload it. See `FRICTION_LOG.md`.
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## What was tested, and what was not
 
-```sh
-bundle install
-```
+No physical Fire TV was available during the build, so this was tested on
+an Android Virtual Device, which is Amazon's own documented substitute.
+That is a substitute and not the thing.
 
-Then, and every time you update your native dependencies, run:
+`docs/FIRE_TV_TARGET.md` states exactly what that does and does not prove,
+and points at Appstore Quality Central's virtual device farm, which hosts
+real Fire TV devices and accepts an uploaded APK.
 
-```sh
-bundle exec pod install
-```
+## Vega OS
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Not supported, and the reason is not laziness. Vega is Amazon's
+Linux-based platform and an Android APK does not run on it; targeting it
+means rebuilding against a different toolchain rather than re-running this
+on another simulator. The Vega Virtual Device also had no Windows host at
+the time of building. Both are documented in `docs/FIRE_TV_TARGET.md`.
