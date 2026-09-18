@@ -154,15 +154,22 @@ Pause. Then:
 > tools, so a parent can ask out loud how much their child read this week
 > instead of opening a dashboard."**
 
-Optionally run, if you have the seconds:
+Run this if you have the seconds. The output prints
+`12 of 12 MUST, 7 of 7 SHOULD`, which is the nineteen; know that before you
+are on camera so you do not hesitate reading it.
 
 ```
 node scripts/mcp-conform.mjs
 ```
 
-> **"Nineteen of nineteen spec checks, live over real HTTP. And when a
-> reader asks about a word that is not in the story, it refuses rather
-> than guessing."**
+> **"Nineteen of nineteen spec checks, live over real HTTP."**
+
+**Point at:** the refusal, if you show one. Ask it about a word in the
+story, then a word that is not.
+
+> **"And when a reader asks about a word that is not in the story, it says
+> so instead of inventing an answer. A reading tool that makes up a
+> definition is worse than one that says it does not know."**
 
 ---
 
