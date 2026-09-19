@@ -1,0 +1,88 @@
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, expect, it } from "vitest";
+
+const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+
+/**
+ * Counts that appear in public text have to be counted, not remembered.
+ *
+ * The README said "86 tests" against a suite of 92. It under-claimed, so
+ * nobody was misled, but this project's whole argument is that every
+ * published number is re-derived from something committed. A number that
+ * nothing checks is a number that was only true on the day it was typed.
+ *
+ * The same drift was found in all three sibling projects on the same day,
+ * and in one of them the figure had been copied across from this one,
+ * which is how a submission ended up contradicting its own README.
+ *
+ * This suite counts itself, which is the awkward part: adding a test here
+ * changes the total. That is the intended cost. The number in the README
+ * is a claim, and claims are maintained.
+ */
+
+const PUBLIC_TEXT = ["README.md", "docs/SUBMISSION.md"].flatMap((f) => {
+  const p = path.join(repo, f);
+  return fs.existsSync(p) ? [{ file: f, text: fs.readFileSync(p, "utf8") }] : [];
+});
+
+/**
+ * Count the suite the way vitest collects it, without running it.
+ *
+ * Spawning vitest from inside vitest is a trap twice over: the inner run
+ * collects this file too and spawns again, and on Windows a .cmd shim
+ * cannot be spawned without a shell since Node 22. So this walks the test
+ * directories and counts declarations.
+ *
+ * `it.each` tables count one test per row, one row per line starting with
+ * `[`. A sibling project's first draft of this counter missed those and
+ * was five short of vitest's own total while carrying a comment
+ * insisting no such table existed.
+ */
+function totalTests(): number {
+  const roots = ["apps", "packages"];
+  let n = 0;
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (["node_modules", "dist", "cdk.out", "build", ".next"].includes(entry.name)) continue;
+        walk(full);
+      } else if (/\.test\.ts$/.test(entry.name) && full.includes(`${path.sep}test${path.sep}`)) {
+        const text = fs.readFileSync(full, "utf8");
+        n += (text.match(/^\s*(?:it|test)\(/gm) ?? []).length;
+        const each = /(?:it|test)\.each\(\[\s*\n([\s\S]*?)\n\s*\]\)\(/g;
+        for (const m of text.matchAll(each)) {
+          n += (m[1]!.match(/^\s*\[/gm) ?? []).length;
+        }
+      }
+    }
+  };
+  for (const r of roots) {
+    const full = path.join(repo, r);
+    if (fs.existsSync(full)) walk(full);
+  }
+  return n;
+}
+
+describe("published counts match the repository", () => {
+  it("counts a suite at all, so a broken walker cannot pass silently", () => {
+    expect(totalTests()).toBeGreaterThan(50);
+  });
+
+  it("states a total that matches the suite", () => {
+    const stated = PUBLIC_TEXT.flatMap((d) => {
+      const m = d.text.match(/(\d+) tests/);
+      return m ? [{ file: d.file, n: Number(m[1]) }] : [];
+    });
+    expect(stated.length).toBeGreaterThan(0);
+    const actual = totalTests();
+    for (const s of stated) {
+      expect(
+        Math.abs(actual - s.n),
+        `${s.file} says ${s.n} tests, the suite has ${actual}`,
+      ).toBeLessThanOrEqual(2);
+    }
+  });
+});

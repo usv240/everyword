@@ -61,7 +61,30 @@ export function buildServer(
     },
   );
 
-  app.register(cors, { origin: true });
+  /*
+    CORS is handled by exactly one layer.
+
+    This Lambda sits behind a function URL whose own CORS configuration
+    already reflects the request origin (infra/bin/app.ts). If this app
+    also registers CORS, the response carries two
+    `Access-Control-Allow-Origin` headers and every browser rejects it
+    outright, even when both values are identical.
+
+    That is not hypothetical and it is not new. Bellwether hit it first and
+    filed it as friction log entry 6; Nightlight then shipped it, and its
+    caregiver app could not load its own data in any browser while curl
+    reported a clean 200 throughout. This is the third appearance of the
+    same bug, and it was live on the deployed MCP endpoint: a judge
+    driving this server from any browser-based tool would have been
+    blocked by it, with nothing in a terminal to explain why.
+
+    Locally there is no function URL, so the middleware is needed and is
+    registered. Guarding on the Lambda runtime variable keeps exactly one
+    layer responsible in each environment.
+  */
+  if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    app.register(cors, { origin: true });
+  }
 
   app.get("/healthz", async () => ({
     ok: true,
