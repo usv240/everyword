@@ -172,6 +172,38 @@ const rpcError = (
   message: string,
 ) => ({ jsonrpc: "2.0" as const, id, error: { code, message } });
 
+/**
+ * Which browser origins may hold a session.
+ *
+ * The MCP spec requires servers to validate Origin, because a local
+ * server bound to loopback can otherwise be driven by any web page through
+ * DNS rebinding. Loopback-only is the right answer for a server on a
+ * developer's own machine, and it was the only answer here.
+ *
+ * But this server is also deployed publicly, and its own site holds a
+ * session with it from the browser to show the Alexa+ integration
+ * working. A loopback-only list refused that site with a 403 while every
+ * agent kept working, because agents send no Origin at all. It was found
+ * by pressing the panel against a local build before it ever shipped.
+ *
+ * So the list is loopback plus explicitly named origins: the deployed
+ * site by default, and whatever EVERYWORD_ALLOWED_ORIGINS adds. Anything
+ * else is still refused. A request with no Origin header is not a browser
+ * and is not subject to this check, which is how agents connect.
+ */
+const LOOPBACK = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/;
+const SITE_ORIGIN = "https://d34emfdcezeszz.cloudfront.net";
+
+export function isAllowedOrigin(origin: string): boolean {
+  if (LOOPBACK.test(origin)) return true;
+  const named = new Set(
+    [SITE_ORIGIN, ...(process.env.EVERYWORD_ALLOWED_ORIGINS ?? "").split(",")]
+      .map((o) => o.trim().replace(/\/$/, ""))
+      .filter(Boolean),
+  );
+  return named.has(origin.replace(/\/$/, ""));
+}
+
 export function registerMcp(
   app: FastifyInstance,
   deps: { library: Story[]; progress: ProgressStore; explain: ExplainDeps },
@@ -181,7 +213,7 @@ export function registerMcp(
   const checkOrigin = (req: FastifyRequest, reply: FastifyReply): boolean => {
     const origin = req.headers.origin;
     if (typeof origin === "string" && origin.length > 0) {
-      const ok = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin);
+      const ok = isAllowedOrigin(origin);
       if (!ok) {
         reply.code(403).send(rpcError(null, -32600, "Origin not allowed"));
         return false;

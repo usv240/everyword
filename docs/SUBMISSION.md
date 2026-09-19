@@ -109,6 +109,10 @@ The rules cap winnings rather than entries: "each project can only win one track
 
 **Fire TV** is the reader's home: a react-native-tvos app targeting Fire OS, shipped as a sideloadable multi-architecture APK. See docs/FIRE_TV_TARGET.md for the target, the test environment, and the honest limits of both.
 
+Both tracks are shown on the live site rather than only described. **On your Fire TV** carries a screenshot of the release APK driven by D-pad, the four real steps to sideload it onto your own Fire TV with `adb`, a download link, and a status list that marks physical Fire TV hardware as *not yet* instead of letting a green badge imply it. **Ask Alexa+ for a story** runs a complete MCP session from the visitor's own browser against the deployed server: protocol 2025-11-25 agreed, the handshake finished, six tools listed, `recommend_story` called for something under five minutes, and the session closed with a 204. Every row is the server's own answer.
+
+Building that panel found two real defects, both fixed and pinned in `apps/mcp/test/cors.test.ts`. The server's Origin allowlist was loopback only, which is right for a local server and refused the project's own deployed site with a 403, so the page that exists to show the Alexa+ integration could not reach it; it now admits loopback plus explicitly named origins and still refuses look-alikes such as `...cloudfront.net.evil.com`. And the local CORS layer never exposed `MCP-Session-Id`, so a browser could not read the session the server had just opened; production only worked because the function URL exposed it. Agents never saw either problem, because they send no Origin and are not browsers.
+
 ## Open source
 
 - Repository: https://github.com/usv240/everyword (MIT, visible in About)

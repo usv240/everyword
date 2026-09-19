@@ -5,6 +5,9 @@ import type { CaptionDoc } from "@everyword/captions-core";
 import { computeWordIndex, countWords } from "@everyword/captions-core";
 import { KaraokeCaptions } from "karaoke-captions-react";
 import { HeroDemo } from "../components/HeroDemo";
+import { Developers } from "../components/Developers";
+import { FireTv } from "../components/FireTv";
+import { McpProof } from "../components/McpProof";
 import { InfoButton } from "../components/InfoButton";
 
 /**
@@ -201,9 +204,25 @@ export default function Reader() {
             Word
           </span>
         </p>
-        <button type="button" onClick={cycleTheme} className={btn}>
-          Theme: {themeMode}
-        </button>
+        <nav aria-label="Sections" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          {/*
+            The page used to be the reader and nothing else, so none of
+            this was reachable: not the TV app, not the agent, not the
+            package. Each link is a place somebody else can start using it.
+          */}
+          <a href="#fire-tv" className="text-sm text-muted transition-colors hover:text-ink">
+            Fire TV
+          </a>
+          <a href="#alexa" className="text-sm text-muted transition-colors hover:text-ink">
+            Alexa+
+          </a>
+          <a href="#developers" className="text-sm text-muted transition-colors hover:text-ink">
+            Developers
+          </a>
+          <button type="button" onClick={cycleTheme} className={btn}>
+            Theme: {themeMode}
+          </button>
+        </nav>
       </header>
 
       <main className="mx-auto max-w-[860px] px-4 pb-16 sm:px-6">
@@ -488,6 +507,39 @@ export default function Reader() {
               Open source (MIT)
             </a>
           </p>
+        </section>
+
+        <section id="fire-tv" aria-labelledby="ew-firetv-heading" className="mt-16 scroll-mt-8">
+          <h2 id="ew-firetv-heading" className="text-2xl font-semibold tracking-tight text-ink">
+            On your Fire TV
+          </h2>
+          <div className="mt-6">
+            <FireTv />
+          </div>
+        </section>
+
+        <section id="alexa" aria-labelledby="ew-alexa-heading" className="mt-16 scroll-mt-8">
+          <h2 id="ew-alexa-heading" className="text-2xl font-semibold tracking-tight text-ink">
+            Ask Alexa+ for a story
+          </h2>
+          <p className="mt-3 max-w-[680px] leading-relaxed text-muted">
+            An assistant can choose a story that fits a bedtime, skip what a
+            child has already finished, explain a word they tripped on, and
+            record how far they read. It does all of that through six tools
+            on EveryWord&apos;s MCP server, which you can talk to from here.
+          </p>
+          <div className="mt-6">
+            <McpProof />
+          </div>
+        </section>
+
+        <section id="developers" aria-labelledby="ew-dev-heading" className="mt-16 scroll-mt-8">
+          <h2 id="ew-dev-heading" className="text-2xl font-semibold tracking-tight text-ink">
+            For developers
+          </h2>
+          <div className="mt-6">
+            <Developers />
+          </div>
         </section>
       </main>
     </div>
