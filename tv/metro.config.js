@@ -31,9 +31,41 @@ const blockParent = name =>
     `${escapeForRegex(path.join(repoRoot, 'node_modules', name) + path.sep)}.*`,
   );
 
+/**
+ * NodeNext import specifiers, resolved for Metro.
+ *
+ * The shared packages are written for NodeNext, so their own relative
+ * imports carry a `.js` extension that points at a `.tsx` file on disk:
+ * `packages/karaoke-captions-react/src/native.tsx` imports
+ * `./index.js`. Node and tsc both require that spelling. Metro takes it
+ * literally, finds no `src/index.js`, and fails the bundle.
+ *
+ * This went unnoticed for three days and is the most expensive kind of
+ * bug this repo can have. The release variant ships a hand-generated
+ * bundle (see android/app/build.gradle), that file is not tracked by
+ * git, and Gradle has no task that regenerates it. So nothing rebuilt
+ * the bundle after the commit that added those extensions, the published
+ * APK kept working because its JavaScript predated the change, and the
+ * Fire TV app quietly became impossible to build from its own source.
+ *
+ * Retrying without the extension is enough: Metro then applies its
+ * normal sourceExts search and finds the .tsx.
+ */
+const resolveNodeNextExtension = (context, moduleName, platform) => {
+  if (/^\.{1,2}\/.*\.js$/.test(moduleName)) {
+    try {
+      return context.resolveRequest(context, moduleName.replace(/\.js$/, ''), platform);
+    } catch {
+      // Fall through: a real .js file may genuinely be what was meant.
+    }
+  }
+  return context.resolveRequest(context, moduleName, platform);
+};
+
 const config = {
   watchFolders: [repoRoot],
   resolver: {
+    resolveRequest: resolveNodeNextExtension,
     blockList: [
       blockParent('react'),
       blockParent('react-dom'),

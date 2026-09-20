@@ -17,7 +17,7 @@
  */
 
 export const APK_URL =
-  "https://github.com/usv240/everyword/releases/download/v0.1.0/everyword-tv-v0.1.0.apk";
+  "https://github.com/usv240/everyword/releases/download/v0.2.0/everyword-tv-v0.2.0.apk";
 
 const soft = (token: string) => `color-mix(in srgb, var(${token}) 14%, transparent)`;
 const PENDING = "#9a6700";
@@ -34,7 +34,7 @@ const STEPS: { title: string; body: string; code?: string }[] = [
   {
     title: "Install EveryWord from a computer on the same network",
     body: "Download the APK below, then:",
-    code: "adb connect 192.168.1.20\nadb install everyword-tv-v0.1.0.apk",
+    code: "adb connect 192.168.1.20\nadb install everyword-tv-v0.2.0.apk",
   },
   {
     title: "Open it from the Fire TV home screen",
@@ -44,6 +44,7 @@ const STEPS: { title: string; body: string; code?: string }[] = [
 
 const STATUS: { what: string; done: boolean }[] = [
   { what: "Built for Fire OS as a multi-architecture APK, published", done: true },
+  { what: "Whole library on the TV, D-pad and remote media keys, progress reported to the MCP server", done: true },
   { what: "Run on an Android TV virtual device, Amazon's documented emulator path", done: true },
   { what: "Run on physical Fire TV hardware", done: false },
 ];
@@ -88,6 +89,65 @@ export function FireTv() {
         </figcaption>
       </figure>
 
+      <figure className="mt-4 overflow-hidden rounded-lg border border-line">
+        <picture>
+          <source srcSet="/tv-library.webp" type="image/webp" />
+          <img
+            src="/tv-library.png"
+            alt="The EveryWord TV library. Five story cards in a row; the first carries the D-pad focus ring, and The Hare and the Tortoise shows 113 read."
+            width={1920}
+            height={1080}
+            className="block h-auto w-full"
+            loading="lazy"
+          />
+        </picture>
+        <figcaption className="border-t border-line bg-bg px-4 py-3 text-xs leading-relaxed text-muted">
+          The whole library on the television, chosen with the D-pad. Every
+          word count is computed from the caption document that drives the
+          highlight, so the number on the card is the number the cursor
+          counts. &ldquo;113 read&rdquo; is the session in the panel below,
+          reported by the TV and read back from the MCP server.
+        </figcaption>
+      </figure>
+
+      <div className="mt-8 rounded-lg border border-line bg-bg p-5">
+        <h4 className="font-semibold text-ink">
+          The television is a client of the same MCP server Alexa+ uses
+        </h4>
+        <p className="mt-3 text-sm leading-relaxed text-muted">
+          <code className="rounded bg-surface px-1.5 py-0.5 font-mono text-[12px] text-ink">
+            record_reading_session
+          </code>{" "}
+          describes itself, in the tool list the deployed server hands to
+          any assistant, as the thing the player calls as the karaoke
+          cursor advances. For a while no player called it, so the only
+          progress an assistant could read was progress an assistant had
+          written. Fire TV and Alexa+ were two products sharing a package.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-muted">
+          Now the TV app opens a session against the same public endpoint,
+          over the same Streamable HTTP transport, with no shared secret
+          and no private back door, and reports the words the cursor
+          actually passed. Ask Alexa+ how far a child got and the answer
+          comes off the television. If the network is gone the reader keeps
+          working and the row is simply lost; a child in a living room
+          never sees an error.
+        </p>
+      </div>
+
+      <div className="mt-6 rounded-lg border border-line bg-bg p-5">
+        <h4 className="font-semibold text-ink">What the remote does</h4>
+        <p className="mt-3 text-sm leading-relaxed text-muted">
+          Not just the on-screen buttons. A Fire TV remote sends real media
+          keys, and the first version of this app ignored every one of
+          them, which reads as broken from a sofa. Play/Pause starts and
+          stops, rewind and fast-forward move five seconds, and Back
+          returns to the library rather than leaving the app mid-story.
+          Everything is reachable with the D-pad alone and focus is always
+          visible.
+        </p>
+      </div>
+
       <h4 className="mt-8 font-semibold text-ink">Put it on your own Fire TV</h4>
       <ol className="mt-4 space-y-3">
         {STEPS.map((s, i) => (
@@ -110,7 +170,7 @@ export function FireTv() {
         href={APK_URL}
         className="mt-6 inline-block rounded-lg bg-[var(--primary)] px-5 py-3 text-sm font-medium text-[var(--primary-contrast)] transition-opacity hover:opacity-90"
       >
-        Download the APK (38 MB)
+        Download the APK (40 MB)
       </a>
 
       {/*

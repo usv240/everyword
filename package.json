@@ -11,7 +11,7 @@
     "infra"
   ],
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run && npm --prefix tv test",
     "verify:live": "node scripts/mcp-conform.mjs",
     "typecheck": "tsc -b packages/captions-core packages/karaoke-captions-react apps/pipeline apps/mcp",
     "pipeline": "npm run pipeline -w @everyword/pipeline",
@@ -20,7 +20,8 @@
     "polly": "npm run polly -w @everyword/pipeline",
     "mcp": "npm run dev -w @everyword/mcp",
     "build:packages": "tsc -b packages/captions-core packages/karaoke-captions-react",
-    "pretest": "npm run build:packages"
+    "pretest": "npm run build:packages",
+    "test:tv": "npm --prefix tv test"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

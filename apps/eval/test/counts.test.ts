@@ -54,6 +54,31 @@ const PUBLIC_TEXT = [
  * was five short of vitest's own total while carrying a comment
  * insisting no such table existed.
  */
+/**
+ * The Fire TV app's tests, which are Jest and live outside the workspaces.
+ *
+ * They were invisible to this counter and to `npm test`, and the cost of
+ * that was concrete: `tv/__tests__/App.test.tsx` had been failing to
+ * parse for as long as it existed and nothing reported it, because
+ * nothing ran it. The app for this project's primary track had one test
+ * and it was a test that never executed.
+ *
+ * Counted separately because the file naming differs (`.test.ts` and
+ * `.test.tsx` directly under `tv/__tests__`) and because Jest, not
+ * vitest, collects them.
+ */
+function tvTests(): number {
+  const dir = path.join(repo, "tv", "__tests__");
+  if (!fs.existsSync(dir)) return 0;
+  let n = 0;
+  for (const entry of fs.readdirSync(dir)) {
+    if (!/\.test\.tsx?$/.test(entry)) continue;
+    const text = fs.readFileSync(path.join(dir, entry), "utf8");
+    n += (text.match(/^\s*(?:it|test)\(/gm) ?? []).length;
+  }
+  return n;
+}
+
 function totalTests(): number {
   const roots = ["apps", "packages"];
   let n = 0;
@@ -122,7 +147,7 @@ describe("published counts match the repository", () => {
       return m ? [{ file: d.file, n: Number(m[1]) }] : [];
     });
     expect(stated.length).toBeGreaterThan(0);
-    const actual = totalTests();
+    const actual = totalTests() + tvTests();
     for (const s of stated) {
       expect(
         Math.abs(actual - s.n),
