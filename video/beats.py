@@ -85,85 +85,77 @@ BEATS: list[Beat] = [
         action="landing_hold",
         pause_before=0.0,
         say="Hi everyone, I am Ujwal.",
-        note=(
-            "A person before an interface, and no pause in front of it, so "
-            "the video opens on a human rather than on a page. The live "
-            "address is on screen from the first frame."
-        ),
-    ),
-    Beat(
-        key="idea",
-        action="landing_hold",
-        pause_before=0.4,
-        say=(
-            "Same language subtitling. Captions in the language you are "
-            "already hearing, highlighted word by word, on ordinary "
-            "entertainment."
-        ),
-        note="The idea named plainly, before any claim about it.",
-    ),
-    Beat(
-        key="evidence",
-        action="landing_evidence",
-        pause_before=0.5,
-        say=(
-            "Twenty years on Indian national television, two hundred million "
-            "viewers. Thirty-two percentage points more children became good "
-            "readers."
-        ),
-        note=(
-            "The strongest fact in the project, and it is nobody's here. "
-            "Shown on the page with its citation rather than only spoken."
-        ),
+        note="A person before an interface, with the live address already on screen.",
     ),
     Beat(
         key="gap",
-        action="landing_hero",
-        pause_before=0.5,
+        action="landing_hold",
+        pause_before=0.4,
         say=(
-            "Amazon already ships this for books, as Immersion Reading. No "
-            "television platform has ever shipped it for video. EveryWord is "
-            "that product."
+            "Every video already has subtitles, and every one of them is "
+            "line level. They can tell you what was said. None can tell you "
+            "which word is being spoken right now."
         ),
         note=(
-            "The gap, and the claim to fill it. Naming what Amazon already "
-            "does is what makes the idea land as obvious rather than novel."
+            "The gap, stated before the product. This is the sentence the "
+            "whole submission rests on, and it is checkable by anyone who "
+            "has ever opened a subtitle file."
         ),
     ),
     Beat(
-        key="play",
+        key="why-that-matters",
+        action="landing_hero",
+        pause_before=0.4,
+        say=(
+            "Which means no subtitle track on earth can teach anybody to "
+            "read. There is nothing to light."
+        ),
+        note="The consequence. Short, because it should land hard.",
+    ),
+    Beat(
+        key="watch",
         action="reader_play",
         pause_before=0.5,
-        min_hold=13.0,
+        min_hold=12.0,
         say=(
-            "Real story, real captions from our pipeline. Every word lights "
-            "as it is spoken, so watching becomes reading practice."
+            "This is Sintel, from the Blender Foundation. It has shipped "
+            "with English subtitles inside the file since twenty ten. Those "
+            "cues are the filmmakers'. EveryWord added the word timings."
         ),
         note=(
-            "The product explaining itself. Held long enough for a viewer to "
-            "watch the highlight actually travel a line, because this shot is "
-            "the entire design argument."
+            "The product, on a real film nobody here made. Held long enough "
+            "to watch the highlight travel a full line, because this shot is "
+            "the entire argument."
         ),
     ),
     Beat(
-        key="meter",
-        action="reader_meter",
-        pause_before=0.4,
+        key="proof",
+        action="landing_upgrade",
+        pause_before=0.5,
         say=(
-            "And this counts the words the reader followed. Not minutes "
-            "played. It is the only number here that measures reading."
+            "Here is one line before and after, from the two files this "
+            "site serves. Same words, same line breaks. Only the timing is "
+            "new."
         ),
         note=(
-            "The one metric no other reading product has, pointed at while "
-            "it is moving."
+            "The claim made checkable. A judge can open both files. This is "
+            "the beat that turns an assertion into evidence."
         ),
     ),
     Beat(
-        key="again",
-        action="reader_again",
-        pause_before=0.4,
-        say="One button to hear a line again.",
-        note="A click on camera, so the controls are shown working.",
+        key="safety",
+        action="landing_upgrade",
+        pause_before=0.3,
+        say=(
+            "The words come from the subtitle author. Amazon Transcribe "
+            "supplies only the timings, and is never asked what the words "
+            "are. So a recogniser that mishears cannot put a wrong spelling "
+            "in front of a child."
+        ),
+        note=(
+            "Why the split is a safety property and not an implementation "
+            "detail. The thing that makes it shippable to children."
+        ),
     ),
     Beat(
         key="tv-library",
@@ -172,13 +164,11 @@ BEATS: list[Beat] = [
         min_hold=9.0,
         say=(
             "And here it is running on a Fire TV, sideloaded as an app and "
-            "driven entirely by the remote. Five stories, chosen with the "
-            "D-pad."
+            "driven entirely by the remote."
         ),
         note=(
-            "The track requirement. Device footage, not a mockup and not the "
-            "browser pretending. First of three television beats because the "
-            "rule says show it running, so it is shown early."
+            "The track requirement. Device footage, shown early because the "
+            "rule says show it running."
         ),
     ),
     Beat(
@@ -187,13 +177,12 @@ BEATS: list[Beat] = [
         pause_before=0.4,
         min_hold=11.0,
         say=(
-            "Same renderer as the browser, rebuilt for ten feet away. A child "
-            "watching television gets reading practice, and nobody signed them "
-            "up."
+            "The same film, the same subtitles, on the screen a family "
+            "already watches. Nobody signed up for a reading lesson."
         ),
         note=(
-            "The highlight moving on a TV screen. The whole thesis in one "
-            "shot: this is the living room, not a tablet."
+            "The thesis in one shot, and the line that connects the demo to "
+            "the research that follows."
         ),
     ),
     Beat(
@@ -201,41 +190,37 @@ BEATS: list[Beat] = [
         action="tv_progress",
         pause_before=0.4,
         say=(
-            "The television reports what was read to our own server, so an "
-            "assistant can answer how far a child got. That number came off "
-            "the TV."
+            "The television reports what was actually read to our own MCP "
+            "server, so an assistant can answer how far a child got. That "
+            "number came off the TV."
         ),
-        note=(
-            "Where the Fire TV track and the Alexa plus track become one "
-            "product instead of two that share a package."
-        ),
+        note="Where the Fire TV track and the Alexa plus track become one product.",
     ),
     Beat(
-        key="pipeline",
-        action="landing_sources",
+        key="evidence",
+        action="landing_evidence",
         pause_before=0.5,
         say=(
-            "Two ways in. A human recording timed by Amazon Transcribe, or "
-            "any text read aloud by Amazon Polly, which reports when it said "
-            "each word."
+            "This ran on Indian national television for twenty years, "
+            "reaching two hundred million viewers. Thirty-two percentage "
+            "points more children became good readers."
         ),
-        note=(
-            "How the library scales past what we hand-made. Pointed at the "
-            "story cards, which are labelled with which path made them."
-        ),
+        note="The strongest fact in the project, and it is nobody's here.",
     ),
     Beat(
-        key="polly",
-        action="landing_sources",
+        key="transfers",
+        action="landing_evidence",
         pause_before=0.3,
         say=(
-            "Those captions cannot contain a wrong word, because the words "
-            "were known before they were spoken. Any book can become a "
-            "read-along."
+            "It worked because nobody chose it. The practice rode programmes "
+            "people already watched. A reading app cannot do that. Upgrading "
+            "captions that already exist can."
         ),
         note=(
-            "The consequence, which is the part that makes it a product "
-            "rather than five fables."
+            "The most important beat in the video. It is the answer to the "
+            "obvious objection, which is that this idea already exists: the "
+            "idea exists, the mechanism has never been available for video, "
+            "and a reading app does not inherit the result."
         ),
     ),
     Beat(
@@ -243,14 +228,10 @@ BEATS: list[Beat] = [
         action="landing_measure",
         pause_before=0.5,
         say=(
-            "We measured our part against gold word alignments, on speech we "
-            "did not record. The highlight lands within thirty milliseconds of "
-            "the spoken word. About one frame."
+            "The renderer is measured against gold alignments on speech we "
+            "did not record. Thirty milliseconds from voice to highlight."
         ),
-        note=(
-            "The tech implementation beat. Measured against something we did "
-            "not author, which is the only kind of number worth saying."
-        ),
+        note="Tech implementation, measured against something we did not author.",
     ),
     Beat(
         key="zero",
@@ -261,24 +242,17 @@ BEATS: list[Beat] = [
             "sixty-six. A highlight that runs ahead teaches a child the wrong "
             "word."
         ),
-        note=(
-            "The number a teacher would care about, and the reason it is "
-            "pinned rather than tracked."
-        ),
+        note="The number a teacher would care about.",
     ),
     Beat(
         key="privacy",
         action="landing_privacy",
         pause_before=0.5,
         say=(
-            "It is for children, so here is everything it keeps. Five fields, "
-            "and no microphone anywhere in it. A product that cannot listen "
-            "cannot leak what it heard."
+            "It is for children, so here is everything it keeps. Five "
+            "fields, and no microphone anywhere in it."
         ),
-        note=(
-            "The question a parent asks first. The structural answer is "
-            "stronger than a promise and it is on the page to be read."
-        ),
+        note="The question a parent asks first, answered structurally.",
     ),
     Beat(
         key="close",
@@ -287,13 +261,14 @@ BEATS: list[Beat] = [
         min_hold=10.0,
         say=(
             "A hundred and thirty million American adults read below a sixth "
-            "grade level. This technique costs four tenths of a cent per "
-            "learner. The renderer nobody had shipped is on npm, MIT licensed. "
-            "EveryWord. Watching becomes reading."
+            "grade level. This costs four tenths of a cent per learner, and "
+            "it now works on video that already exists. The renderer and the "
+            "aligner are on npm, MIT licensed. EveryWord. Watching becomes "
+            "reading."
         ),
         note=(
-            "Scale, cost, and the thing anyone can pick up tomorrow, held on "
-            "the words lighting up rather than on a logo."
+            "Scale, cost, the thing that changed, and what anyone can pick up "
+            "tomorrow. Held on words lighting up, never on a logo."
         ),
     ),
     Beat(
@@ -302,10 +277,7 @@ BEATS: list[Beat] = [
         pause_before=0.4,
         min_hold=2.2,
         say="Thank you.",
-        note=(
-            "Its own beat. Crowded onto the closing line it gets swallowed. "
-            "Nothing follows it."
-        ),
+        note="Its own beat. Crowded onto the closing line it gets swallowed.",
     ),
 ]
 

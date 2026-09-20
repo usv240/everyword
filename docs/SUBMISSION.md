@@ -6,15 +6,25 @@ Paste-ready copy for each Devpost field. Keep the first two sentences intact; th
 
 ## Tagline (one line)
 
-EveryWord takes any video or audio, times every word with Amazon Transcribe, lights each word at the instant it is spoken, and turns watch time into reading practice.
+Every video already has subtitles and every one of them is line level. EveryWord gives them word timings, so the word being spoken can be lit as it is spoken, on content that already exists.
 
 ---
 
 ## What it does (project description)
 
-**Measured against gold-standard forced alignments on LibriSpeech (speech we did not record, 27 speakers, 788 reference words), EveryWord's highlight lands within 30 milliseconds of the spoken word at the median, never lights a word early beyond 150 milliseconds across 766 matched words, and breaks caption lines at real pauses 42 percent of the time where timing-blind chunking manages 2 percent.**
+**Every video in the world already has subtitles. Every one of them is line level.** That is the gap this project closes, and it is the reason nobody has shipped Same Language Subtitling for video.
 
-**Run again on test-other, the split LibriSpeech sets aside as hard, with 26 different speakers, accents and noise: the same 30 millisecond median, the same 85 millisecond p90, and still zero words lit early across 761 matched words.** The match rate slips from 97.2 to 96.7 percent, which is the direction a harder split predicts and is reported rather than rounded away.
+A subtitle file tells a renderer what was said and when the line begins. It cannot say which word is being spoken right now, so nothing can highlight one, so no subtitle track on earth can teach anybody to read. Line-level is where every caption in the world stops.
+
+EveryWord adds the only thing missing. Give it the subtitle file a video already ships with, plus a speech recognition pass over the same audio, and it returns the same words with a time on each. The split is the design:
+
+- **The words come from the subtitle author.** The recogniser is never asked what was said, only when. So a recogniser that hears "their" for "there" cannot put the wrong spelling in front of a child learning to read. Zero word error by construction, which is the same argument as our Polly path, applied to content nobody here wrote.
+- **The line breaks stay the author's.** A human chose where those lines break, usually for good reasons about phrasing and reading speed. This library does not know better than they did.
+- **Nothing new has to be made.** That is what makes it a product rather than a shelf of five things we authored.
+
+**Proved on a film nobody here made.** Sintel is distributed by the Blender Foundation as an MKV with English SubRip embedded, as it has been since 2010. Fourteen cues, 75 words. Amazon Transcribe heard 80. **74 of the 75 subtitle words anchored to a recognised word, 98.7 percent**, and the displayed text is identical, character for character, to the file that shipped with the film. The live site serves the original subtitles, the caption document made from them, and everything the recogniser heard, and checks the two texts match in your browser while you watch.
+
+The renderer underneath is measured separately, against gold forced alignments on LibriSpeech, speech we did not record: the highlight lands within **30 milliseconds** of the spoken word at the median, **never lights a word early** beyond 150 ms across 766 matched words, and breaks lines at real pauses 42 percent of the time where timing-blind chunking manages 2. Run again on test-other, the split LibriSpeech sets aside as hard, with 26 different speakers, accents and noise: the same 30 ms median, the same 85 ms p90, and still zero early across 761 matched words. Match rate slips from 97.2 to 96.7 percent, the direction a harder split predicts, reported rather than rounded away.
 
 Thirty milliseconds is about one frame of video: a reader cannot perceive the voice and the highlight as separate events. The zero is the number that matters for a learner, because a reading tool must never claim a word was spoken before it was.
 
@@ -28,9 +38,11 @@ The audience is not shrinking. In 2023, 28 percent of US adults, 58.9 million pe
 
 No TV platform has ever shipped it. Meanwhile Amazon already ships exactly this mechanic for books: Immersion Reading, expanded in February 2026 with Read and Listen in the Audible app, highlights each word as the narrator speaks it.
 
-**EveryWord is Immersion Reading, for television.**
+**EveryWord is Immersion Reading, for video that already exists.**
 
-Watch the reader: a real public-domain Aesop fable read by LibriVox volunteers, captions generated automatically by our pipeline, each word lighting as it is spoken. Press "Read that line again" to hear a line once more. Slow it down with pitch preserved. Change the type size, or switch to a reading-optimized typeface. A meter counts the words you read along with, quietly, with no gamification. The same renderer runs on the Fire TV app, and the release ships a self-contained APK you can sideload onto a Fire TV stick.
+And the distinction matters more than it sounds. SLS worked in India *because* nobody signed up for it: the reading practice rode programmes people had already chosen to watch, so the hardest problem in literacy, getting a reluctant reader to start, was solved by the television already being on. A reading app cannot reproduce that. It asks a child to choose reading. Upgrading the captions on what they were watching anyway does not.
+
+Watch the reader: Sintel, playing with the subtitles the Blender Foundation shipped inside it, each word lighting as it is spoken, on the web and on a Fire TV. Press "Read that line again" to hear a line once more. Slow it down with pitch preserved. Change the type size, or switch to a reading-optimized typeface. A meter counts the words you read along with, quietly, with no gamification. The same renderer runs on the Fire TV app, and the release ships a self-contained APK you can sideload onto a Fire TV stick.
 
 ---
 

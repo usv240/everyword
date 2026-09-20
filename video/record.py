@@ -298,6 +298,7 @@ MEASURE = "text=30 ms"
 MEASURED_BOX = "text=Measured, not promised"
 EARLY_ZERO = "text=766 matched words"
 PRIVACY = "#privacy"
+UPGRADE = "text=What the film shipped"
 CARDS = "text=CHOOSE A STORY"
 
 
@@ -367,6 +368,15 @@ def landing_zero(r: Recorder):
     r.hold_beat()
 
 
+def landing_upgrade(r: Recorder):
+    # The before-and-after panel. Rest the two columns in frame together:
+    # the whole point is that a viewer sees one line in both forms at
+    # once, so a shot of either column alone says nothing.
+    r.scroll_to(UPGRADE, rest=URL_BAR_HEIGHT + 60)
+    yield
+    r.hold_beat()
+
+
 def landing_privacy(r: Recorder):
     r.scroll_to(PRIVACY, rest=URL_BAR_HEIGHT + 60)
     yield
@@ -401,6 +411,7 @@ ACTIONS = {
     "landing_sources": landing_sources,
     "landing_measure": landing_measure,
     "landing_zero": landing_zero,
+    "landing_upgrade": landing_upgrade,
     "landing_privacy": landing_privacy,
     "reader_close": reader_close,
     "hold": hold,

@@ -1,29 +1,50 @@
 # Demo video script: EveryWord
 
-**Target 2:24. Hard ceiling 3:00.** The rules say judges are not required
-to watch past three minutes, so nothing important lives after 2:00.
+**The beats are data, in [`video/beats.py`](../video/beats.py).** That file is what the
+pipeline reads: the exact line spoken, which camera shoots it, and how
+long it holds. This document is the argument for why those beats are in
+that order. If the two disagree, the code is right and this is stale.
 
-**Narration: 298 spoken words**, which is 2:24 at a brisk pace and 2:43 at a slower one, once the story playing, the Fire TV cut and the page loads are counted at about 25 seconds.
+**Target 2:46. Hard ceiling 3:00.** `python video/beats.py` prints the
+estimate and exits non-zero if the plan is already over. The estimate has
+run about five seconds under the finished cut, so leave headroom.
 
-An earlier draft ran 4:27, because the word count was taken from the first
-line of each quote instead of the whole quote. Everything below is cut to
-fit, so **do not add lines back in**. **Time one read-through out loud
-before you record**: reading pace is the only variable nobody can estimate
-for you.
+## What this video has to do
 
-## What this script is built to do
+Answer the obvious objection, which a good judge will have within twenty
+seconds: *this idea already exists*.
 
-Four judging criteria, each with a beat that lands early. The Fire TV rule
-is specific: the video has to show the project running on an actual Fire TV
-device or the Fire TV simulator, so that footage is not optional and it is
-not left to the end.
+It does. Same Language Subtitling has been running on Indian television
+since 1996 and Amazon ships the same mechanic for books as Immersion
+Reading. The video does not pretend otherwise; it names both. What it
+argues instead is narrower and true:
+
+1. The technique is proven, and it worked **because nobody chose it**.
+   The practice rode programmes people were already watching.
+2. Nobody has shipped it for video, for a concrete reason: every
+   subtitle file in the world is line level, so there is nothing to
+   light.
+3. EveryWord closes exactly that gap, on content that already exists,
+   and proves it on a film nobody here made.
+
+A reading app does not inherit the Indian result. Upgrading the captions
+on what a family was watching anyway does. That is the whole pitch, and
+the **transfers** beat is where it lands, so nothing may be cut before
+it.
 
 | Criterion | Where it lands | The beat |
 |---|---|---|
-| Quality of the idea | 0:00 to 0:25 | Amazon ships this for books. No TV platform ships it for video. |
-| Design | 0:25 to 0:55 | Watch the words light up. The product explains itself. |
-| Tech implementation | 0:55 to 1:45 | Running on Fire TV, plus how any book becomes a read-along. |
-| Potential impact | 1:45 to 2:40 | 200 million viewers, 32 points, four tenths of a cent per learner. |
+| Quality of the idea | 0:00 to 0:20 | Every video has subtitles. None have words. |
+| Design | 0:20 to 0:45 | A real film, its own subtitles, lighting up. |
+| Tech implementation | 0:45 to 1:05 | The same line before and after, from files you can open. |
+| Fire TV track | 1:05 to 1:40 | Running on the device, driven by the remote. |
+| Potential impact | 1:40 to 2:10 | 200 million viewers, 32 points, and why it transfers. |
+
+## Never cut
+
+The Fire TV footage (a track requirement), the film playing with words
+lighting up (the product), the before-and-after panel (the evidence),
+and the **transfers** beat (the argument). Everything else is negotiable.
 
 ## Before you record
 
