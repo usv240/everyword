@@ -19,7 +19,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 ## Live
 
 - Reader: https://d34emfdcezeszz.cloudfront.net (real content, press Play)
-- Fire TV APK: https://github.com/usv240/everyword/releases/tag/v0.3.0 (self-contained, sideloads to a Fire TV device with `adb install`; the release carries sideload instructions and 58s of footage from an Android Virtual Device). Target platform, test environment and its limits: [docs/FIRE_TV_TARGET.md](docs/FIRE_TV_TARGET.md)
+- Fire TV APK: https://github.com/usv240/everyword/releases/tag/v0.3.1 (self-contained, sideloads to a Fire TV device with `adb install`; the release carries sideload instructions and 58s of footage from an Android Virtual Device). Target platform, test environment and its limits: [docs/FIRE_TV_TARGET.md](docs/FIRE_TV_TARGET.md)
 - MCP server (the Alexa+ surface): `https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp` (Model Context Protocol 2025-11-25 over Streamable HTTP, live)
 - Deployed by the CDK stack in `infra/` (S3 and CloudFront for the reader, Lambda for the MCP server); the caption pipeline runs on Amazon Transcribe and Amazon Polly
 
@@ -37,7 +37,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 
 ```
 npm install
-npm test                 # 148 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
+npm test                 # 153 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
 npm run web:dev          # the reader on localhost:3000
 
 # generate captions for new content (needs AWS credentials):

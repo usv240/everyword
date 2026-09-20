@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { CaptionDoc } from "@everyword/captions-core";
-import { computeWordIndex, countWords } from "@everyword/captions-core";
+import { countWords, replayTarget } from "@everyword/captions-core";
 import { KaraokeCaptions } from "karaoke-captions-react";
 import { HeroDemo } from "../components/HeroDemo";
 import { Developers } from "../components/Developers";
@@ -199,15 +199,13 @@ export default function Reader() {
   const replayLine = useCallback(() => {
     const audio = audioRef.current;
     if (!audio || !doc) return;
-    const wi = computeWordIndex(doc, audio.currentTime);
-    const seg = doc.segments[Math.max(0, wi.segment)];
-    if (seg) {
-      audio.currentTime = seg.start;
-      setTime(seg.start);
-      if (audio.paused) {
-        void audio.play();
-        setPlaying(true);
-      }
+    const target = replayTarget(doc, audio.currentTime);
+    if (target === null) return;
+    audio.currentTime = target;
+    setTime(target);
+    if (audio.paused) {
+      void audio.play();
+      setPlaying(true);
     }
   }, [doc]);
 
@@ -562,11 +560,18 @@ export default function Reader() {
                 >
                   {playing ? "Pause" : "Play"}
                 </button>
+                {/*
+                  Disabled rather than silently ignoring the press. Before
+                  the first line there is nothing to repeat, and a control
+                  that looks available and does nothing is worse than one
+                  that says so.
+                */}
                 <button
                   type="button"
                   onClick={replayLine}
                   className={btn}
                   aria-keyshortcuts="ArrowLeft"
+                  disabled={replayTarget(doc, time) === null}
                 >
                   Read that line again
                 </button>

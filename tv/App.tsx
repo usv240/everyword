@@ -9,7 +9,7 @@ import {
   useTVEventHandler,
 } from 'react-native';
 import Video, {type VideoRef} from 'react-native-video';
-import {computeWordIndex} from '@everyword/captions-core';
+import {replayTarget} from '@everyword/captions-core';
 import {KaraokeCaptionsNative} from 'karaoke-captions-react/native';
 import {LIBRARY, formatDuration, type Story} from './src/library';
 import {createReporter, type Reporter} from './src/mcp';
@@ -244,13 +244,13 @@ export default function App() {
     if (!current) {
       return;
     }
-    const wi = computeWordIndex(current.captions, state.current.time);
-    const seg = current.captions.segments[Math.max(0, wi.segment)];
-    if (seg) {
-      videoRef.current?.seek(seg.start);
-      setTime(seg.start);
-      setPaused(false);
+    const target = replayTarget(current.captions, state.current.time);
+    if (target === null) {
+      return;
     }
+    videoRef.current?.seek(target);
+    setTime(target);
+    setPaused(false);
   }, []);
 
   /**

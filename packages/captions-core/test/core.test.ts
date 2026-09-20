@@ -3,9 +3,11 @@ import {
   computeWordIndex,
   countWords,
   normalizeTranscribe,
+  replayTarget,
   segmentWords,
   toWebVTT,
   transcribeItemsToWords,
+  type CaptionDoc,
   type CaptionWord,
   type TranscribeResult,
 } from "../src/index";
@@ -177,5 +179,49 @@ describe("WebVTT export", () => {
       segments: [{ id: 0, start: 3723.5, end: 3725, text: "late", words: [{ w: "late", s: 3723.5, e: 3725 }] }],
     };
     expect(toWebVTT(long)).toContain("01:02:03.500 --> 01:02:05.000");
+  });
+});
+
+describe("replayTarget", () => {
+  /* Sintel's shape: the film opens with seven seconds of music. */
+  const doc: CaptionDoc = {
+    source: { kind: "aligned" },
+    segments: [
+      { id: "s0", start: 7.25, end: 9.22, text: "a b", words: [
+        { w: "a", s: 7.25, e: 8.2 }, { w: "b", s: 8.2, e: 9.22 }] },
+      { id: "s1", start: 20, end: 22, text: "c d", words: [
+        { w: "c", s: 20, e: 21 }, { w: "d", s: 21, e: 22 }] },
+    ],
+  } as unknown as CaptionDoc;
+
+  it("has nothing to repeat before the first line", () => {
+    // The bug: both readers seeked to 7.25 from here, which is forward.
+    expect(replayTarget(doc, 0)).toBeNull();
+    expect(replayTarget(doc, 5.83)).toBeNull();
+    expect(replayTarget(doc, 7.24)).toBeNull();
+  });
+
+  it("returns the start of the line being read", () => {
+    expect(replayTarget(doc, 7.25)).toBe(7.25);
+    expect(replayTarget(doc, 8.5)).toBe(7.25);
+    expect(replayTarget(doc, 21.4)).toBe(20);
+  });
+
+  it("gives back the line just finished during a pause between lines", () => {
+    // A reader who missed a word asks for it after the line has ended.
+    expect(replayTarget(doc, 15)).toBe(7.25);
+  });
+
+  it("never moves the media forward, at any time in the document", () => {
+    // The property, rather than the three cases above: this is what the
+    // label promises, and it is the invariant that was broken.
+    for (let t = 0; t <= 25; t += 0.05) {
+      const target = replayTarget(doc, t);
+      if (target !== null) expect(target).toBeLessThanOrEqual(t);
+    }
+  });
+
+  it("has nothing to repeat in an empty document", () => {
+    expect(replayTarget({ ...doc, segments: [] } as unknown as CaptionDoc, 5)).toBeNull();
   });
 });

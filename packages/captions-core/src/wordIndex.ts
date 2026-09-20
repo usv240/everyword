@@ -56,3 +56,29 @@ export function docDuration(doc: CaptionDoc): number {
   const last = doc.segments[doc.segments.length - 1];
   return last ? last.end : 0;
 }
+
+/**
+ * Where "read that line again" should seek to from time t.
+ *
+ * Returns the start of the line currently being read, or null when there
+ * is no line to repeat.
+ *
+ * The null case is the whole function, and both readers got it wrong in
+ * the same way. Before the first cue there is no current segment, and the
+ * obvious `segments[Math.max(0, wi.segment)]` picks segment zero, whose
+ * start is *later* than t during an opening title, a musical intro or any
+ * silence before the first word. On Sintel, whose first cue begins at
+ * 7.25s, pressing the button during the opening skipped the film forward
+ * by a second and a half. A control labelled "again" must never advance
+ * the media, so it returns null instead and callers do nothing.
+ *
+ * Between cues this needs no special case: computeWordIndex keeps the
+ * previous segment current through a pause, so a reader who has missed
+ * something in the gap after a line still gets that line back.
+ */
+export function replayTarget(doc: CaptionDoc, t: number): number | null {
+  const wi = computeWordIndex(doc, t);
+  if (wi.segment < 0) return null;
+  const start = doc.segments[wi.segment]!.start;
+  return start <= t ? start : null;
+}

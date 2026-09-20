@@ -49,7 +49,7 @@ and the **transfers** beat (the argument). Everything else is negotiable.
 ## Before you record
 
 ```
-npm test                              # 148 tests
+npm test                              # 153 tests
 npm run web:dev                       # or use the live site
 node scripts/mcp-conform.mjs          # 19 of 19, live
 ```
@@ -59,7 +59,7 @@ its own, before you record anything else:
 
 1. Developer Console, Tools and Services, Appstore Quality Central
 2. Virtual Devices, Get Started, accept the terms
-3. Upload `everyword-tv-v0.3.0.apk`. This is the build that carries the
+3. Upload `everyword-tv-v0.3.1.apk`. This is the build that carries the
    film: it is 67.6 MB because Sintel is inside it, where v0.2.0 was
    41.7 MB and contained no video at all. If the file you are uploading
    is under 50 MB it is the wrong one, and the footage will show the old
