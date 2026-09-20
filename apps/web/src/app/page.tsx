@@ -9,6 +9,7 @@ import { Developers } from "../components/Developers";
 import { FireTv } from "../components/FireTv";
 import { McpProof } from "../components/McpProof";
 import { Privacy } from "../components/Privacy";
+import { UpgradeProof } from "../components/UpgradeProof";
 import { Faq } from "../components/Faq";
 import { InfoButton } from "../components/InfoButton";
 
@@ -569,6 +570,22 @@ export default function Reader() {
               Open source (MIT)
             </a>
           </p>
+        </section>
+
+        <section id="upgrade" aria-labelledby="ew-upgrade-heading" className="mt-16 scroll-mt-8">
+          <h2 id="ew-upgrade-heading" className="text-2xl font-semibold tracking-tight text-ink">
+            Every video already has subtitles. None of them have words.
+          </h2>
+          <p className="mt-3 max-w-[760px] leading-relaxed text-muted">
+            That is the gap, and it is why nobody has shipped this for
+            video. A subtitle file says what was said and when the line
+            starts. It never says which word is being spoken, so nothing
+            can highlight one. EveryWord takes the file a video already
+            has and adds the only thing missing.
+          </p>
+          <div className="mt-6">
+            <UpgradeProof />
+          </div>
         </section>
 
         <section id="fire-tv" aria-labelledby="ew-firetv-heading" className="mt-16 scroll-mt-8">
