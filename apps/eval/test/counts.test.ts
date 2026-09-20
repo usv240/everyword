@@ -36,6 +36,10 @@ const PUBLIC_TEXT = [
   "README.md",
   "docs/SUBMISSION.md",
   "apps/web/src/app/page.tsx",
+  // The shooting script counts too. It told whoever records the video to
+  // expect "92 passing" long after the suite had grown past it, which is
+  // the one document where a wrong number gets read out loud on camera.
+  "docs/VIDEO_SCRIPT.md",
 ].flatMap((f) => {
   const p = path.join(repo, f);
   return fs.existsSync(p) ? [{ file: f, text: fs.readFileSync(p, "utf8") }] : [];
@@ -257,5 +261,50 @@ describe("the documented command can reach the number it claims", () => {
       install,
       "nothing installs tv/, so a clean clone cannot run the suite the README counts",
     ).toContain("tv");
+  });
+});
+
+/*
+  Five documents point a reader at the Fire TV APK, and they have to point
+  at the same one.
+
+  They did not. Three of them still linked v0.1.0 hours after v0.2.0 was
+  published, and v0.2.0 itself turned out to contain no video: it was cut
+  before the film was added to the app, so it was 41.7 MB where the build
+  that carries Sintel is 67.6 MB. Anyone following the video script would
+  have sideloaded the wrong APK onto Fire TV hardware and recorded the old
+  audio-only reader as the demonstration of a product about video.
+
+  Only the link and the filename are checked. Prose that discusses an
+  older release on purpose, like the x86_64-only mistake in
+  FIRE_TV_TARGET.md, is history and stays as written.
+*/
+describe("the Fire TV release the documents send people to", () => {
+  const DOCS = [
+    "README.md",
+    "docs/SUBMISSION.md",
+    "docs/VIDEO_SCRIPT.md",
+    "docs/FIRE_TV_TARGET.md",
+    "tv/README.md",
+  ];
+
+  const refs = DOCS.flatMap((f) => {
+    const text = fs.readFileSync(path.join(repo, f), "utf8");
+    return [
+      ...text.matchAll(/releases\/tag\/(v\d+\.\d+\.\d+)/g),
+      ...text.matchAll(/everyword-tv-(v\d+\.\d+\.\d+)\.apk/g),
+    ].map((m) => ({ file: f, version: m[1]! }));
+  });
+
+  it("is named at all, so a broken match cannot pass silently", () => {
+    expect(refs.length).toBeGreaterThan(3);
+  });
+
+  it("is the same release in every document", () => {
+    const versions = [...new Set(refs.map((r) => r.version))];
+    expect(
+      versions,
+      refs.map((r) => `${r.file} -> ${r.version}`).join("; "),
+    ).toHaveLength(1);
   });
 });

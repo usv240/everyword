@@ -49,7 +49,7 @@ and the **transfers** beat (the argument). Everything else is negotiable.
 ## Before you record
 
 ```
-npm test                              # 92 passing
+npm test                              # 148 tests
 npm run web:dev                       # or use the live site
 node scripts/mcp-conform.mjs          # 19 of 19, live
 ```
@@ -59,9 +59,15 @@ its own, before you record anything else:
 
 1. Developer Console, Tools and Services, Appstore Quality Central
 2. Virtual Devices, Get Started, accept the terms
-3. Upload `everyword-tv-v0.1.0.apk` from the v0.1.0 release
-4. Launch it, drive it with the D-pad, screen record 20 seconds of the
-   words lighting up
+3. Upload `everyword-tv-v0.3.0.apk`. This is the build that carries the
+   film: it is 67.6 MB because Sintel is inside it, where v0.2.0 was
+   41.7 MB and contained no video at all. If the file you are uploading
+   is under 50 MB it is the wrong one, and the footage will show the old
+   audio-only reader.
+4. Launch it, open Sintel from the shelf, and screen record 20 seconds of
+   the film playing with its own subtitles lighting up word by word.
+   That shot is the submission. A fable reading aloud does not replace
+   it, because the claim is about video nobody made for us.
 
 If that farm is not reachable on your account, fall back to the Android
 Virtual Device footage and say what it is, in one clause, out loud. Do not

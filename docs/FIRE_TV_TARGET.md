@@ -4,7 +4,7 @@ Stated plainly, because "it runs on TV" is not a claim a judge should have to ta
 
 ## The target: Fire OS
 
-The EveryWord TV app in `tv/` is a React Native app built with `react-native-tvos`. It compiles to an Android APK and targets **Fire OS**, the Android-based operating system on Fire TV Stick, Fire TV Cube, and Fire TV Edition televisions. The release APK is attached to the [v0.1.0 release](https://github.com/usv240/everyword/releases/tag/v0.1.0) and sideloads onto a Fire TV device with `adb install`.
+The EveryWord TV app in `tv/` is a React Native app built with `react-native-tvos`. It compiles to an Android APK and targets **Fire OS**, the Android-based operating system on Fire TV Stick, Fire TV Cube, and Fire TV Edition televisions. The release APK is attached to the [v0.3.0 release](https://github.com/usv240/everyword/releases/tag/v0.3.0) and sideloads onto a Fire TV device with `adb install`.
 
 This is a supported Fire TV path. The hackathon rules allow "React Native, web technologies, or Android (Kotlin/Java), any framework is fine, as long as it runs on Fire OS or Vega OS."
 
