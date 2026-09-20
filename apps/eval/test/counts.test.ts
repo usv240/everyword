@@ -156,3 +156,72 @@ describe("published counts match the repository", () => {
     }
   });
 });
+
+/*
+  A hint that names a key the code does not handle.
+
+  This is the same defect as a library caption reading "Five
+  public-domain fables" above six titles, and as a story card that
+  credited Amazon Transcribe for subtitles the film already shipped
+  with: copy describing behaviour that is not there. Here it costs more
+  than it looks, because the person the hint is written for is somebody
+  who cannot reliably read the sentence that explains the workaround.
+*/
+describe("the keyboard hint on the reader", () => {
+  const page = fs.readFileSync(path.join(repo, "apps/web/src/app/page.tsx"), "utf8");
+
+  /** The keys the page puts in front of a visitor. */
+  const advertised = [...page.matchAll(/<Key>([^<]+)<\/Key>/g)].map((m) => m[1]!.trim());
+
+  /** What the handler actually compares KeyboardEvent.key against. */
+  const handled = [...page.matchAll(/e\.key === "([^"]+)"/g)].map((m) => m[1]!);
+
+  const SPELLING: Record<string, string[]> = {
+    space: [" ", "Spacebar"],
+    "left arrow": ["ArrowLeft"],
+    S: ["s", "S"],
+  };
+
+  it("advertises keys at all, so a broken match cannot pass silently", () => {
+    expect(advertised.length).toBeGreaterThan(0);
+    expect(handled.length).toBeGreaterThan(0);
+  });
+
+  it("handles every key it tells a visitor to press", () => {
+    for (const label of advertised) {
+      const keys = SPELLING[label];
+      expect(keys, `the page offers "${label}"; add its KeyboardEvent.key here`).toBeTruthy();
+      expect(
+        keys!.some((k) => handled.includes(k)),
+        `the page says to press "${label}" and nothing handles it`,
+      ).toBe(true);
+    }
+  });
+
+  it("names controls that exist, in the hint it gives touch visitors", () => {
+    // A phone has no space bar, so it gets a different sentence, and that
+    // sentence points at buttons by name. Rename a button and the hint
+    // starts describing something the visitor cannot find.
+    const hint = page.match(/ew-touch-only[\s\S]*?<\/p>/)?.[0] ?? "";
+    expect(hint, "no touch hint found on the reader").toBeTruthy();
+    const buttons = [...page.matchAll(/<button[\s\S]*?<\/button>/g)]
+      // The markup is wrapped across lines, so the label is not sitting
+      // flush against its tags in the source. Collapse before looking.
+      .map((m) => m[0].replace(/\s+/g, " ").replace(/>\s+/g, ">").replace(/\s+</g, "<"))
+      .join(" ");
+    for (const label of ["Play", "Read that line again"]) {
+      if (!hint.includes(label)) continue;
+      expect(
+        buttons.includes(`>${label}<`) || buttons.includes(`"${label}"`),
+        `the touch hint says to tap "${label}" and no button is called that`,
+      ).toBe(true);
+    }
+  });
+
+  it("leaves a key pressed inside a control to that control", () => {
+    // Space already activates a focused button. Without this guard every
+    // button on the page fires twice, so the reader starts playing at the
+    // moment somebody pressed Pause.
+    expect(page).toMatch(/closest\(\s*"button,/);
+  });
+});

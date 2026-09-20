@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { CaptionDoc } from "@everyword/captions-core";
 import { computeWordIndex, countWords } from "@everyword/captions-core";
 import { KaraokeCaptions } from "karaoke-captions-react";
@@ -70,31 +70,56 @@ const EVIDENCE = [
   },
 ];
 
+/** A key on the keyboard, drawn as one, so a hint reads as a hint. */
+function Key({ children }: { children: string }) {
+  return (
+    <kbd className="mx-[0.15em] inline-block whitespace-nowrap rounded border border-line bg-bg px-1.5 py-0.5 align-baseline font-mono text-[11px] font-medium text-ink">
+      {children}
+    </kbd>
+  );
+}
+
+/**
+ * The theme, read from the page rather than remembered separately.
+ *
+ * A blocking script in layout.tsx applies the stored choice before the
+ * first paint, so there is no flash and, by the time React runs,
+ * document.documentElement already holds the answer. This hook used to
+ * keep a second copy in state and reconcile it in an effect, which cost
+ * an extra render on every load and allowed the button's label to
+ * disagree with the page it labels. useSyncExternalStore reads the copy
+ * that is actually true, and the server snapshot is "system" because
+ * that is what the prerendered HTML says before the script runs.
+ */
 function useTheme(): [string, () => void] {
-  const [mode, setMode] = useState("system");
-  useEffect(() => {
-    try {
-      const t = localStorage.getItem("ew-theme");
-      if (t === "light" || t === "dark") setMode(t);
-    } catch {
-      /* storage unavailable */
-    }
-  }, []);
-  const cycle = useCallback(() => {
-    setMode((prev) => {
-      const next = prev === "system" ? "light" : prev === "light" ? "dark" : "system";
-      const root = document.documentElement;
-      if (next === "system") root.removeAttribute("data-theme");
-      else root.setAttribute("data-theme", next);
-      try {
-        if (next === "system") localStorage.removeItem("ew-theme");
-        else localStorage.setItem("ew-theme", next);
-      } catch {
-        /* ignore */
-      }
-      return next;
+  const subscribe = useCallback((onChange: () => void) => {
+    const observer = new MutationObserver(onChange);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
     });
+    return () => observer.disconnect();
   }, []);
+
+  const mode = useSyncExternalStore(
+    subscribe,
+    () => document.documentElement.getAttribute("data-theme") ?? "system",
+    () => "system",
+  );
+
+  const cycle = useCallback(() => {
+    const next = mode === "system" ? "light" : mode === "light" ? "dark" : "system";
+    const root = document.documentElement;
+    if (next === "system") root.removeAttribute("data-theme");
+    else root.setAttribute("data-theme", next);
+    try {
+      if (next === "system") localStorage.removeItem("ew-theme");
+      else localStorage.setItem("ew-theme", next);
+    } catch {
+      /* Storage unavailable. The choice still applies for this visit. */
+    }
+  }, [mode]);
+
   return [mode, cycle];
 }
 
@@ -198,6 +223,45 @@ export default function Reader() {
   const onWordsRead = useCallback((n: number) => {
     setWordsRead((prev) => prev + n);
   }, []);
+
+  /*
+    The two things somebody sitting with a child actually does: stop,
+    and hear that line again. On the television those are two buttons
+    under a thumb. On a laptop they were a mouse trip to a control
+    four hundred pixels below the words being read, which is exactly
+    the wrong place to put them, because the whole point is that your
+    eyes stay on the text.
+
+    The guard is the part worth reading. Space already activates a
+    focused button and scrolls the page, so handling it blindly would
+    make every button on this page fire twice and would swallow a
+    space in any field added later. So a key that came from a control
+    is left alone, and preventDefault happens only after that.
+  */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const el = e.target;
+      if (
+        el instanceof HTMLElement &&
+        el.closest("button, a, input, textarea, select, [contenteditable='true']")
+      ) {
+        return;
+      }
+      if (e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+        toggle();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        replayLine();
+      } else if (e.key === "s" || e.key === "S") {
+        e.preventDefault();
+        toggleSlow();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [toggle, replayLine, toggleSlow]);
 
   // A title with a picture. The manifest says so, because the
 
@@ -347,6 +411,15 @@ export default function Reader() {
                         film is the one worth opening first.
                       */}
                       {s.kind === "video" ? (
+                        /*
+                          next/image is the usual advice here and it does
+                          not apply: this site is a static export with
+                          image optimization switched off, so next/image
+                          would emit this same tag and charge a runtime
+                          for it. Width, height and lazy loading are the
+                          parts that actually matter, and they are here.
+                        */
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={`/content/${s.slug}.poster.jpg`}
                           alt=""
@@ -404,6 +477,23 @@ export default function Reader() {
               </div>
 
               {/*
+                The page had nothing anywhere on it telling a first-time
+                visitor what to do. It opened on an argument and a shelf
+                of cards, and the one action it wants tried was a button
+                below the fold. One line, next to the thing it describes.
+              */}
+              <p className="ew-touch-only mt-2 max-w-[560px] text-sm leading-relaxed text-muted">
+                Tap Play to start, and Read that line again to hear a line
+                twice. The word being spoken lights up as you{" "}
+                {isVideo ? "watch" : "listen"}.
+              </p>
+              <p className="ew-keys-only mt-2 max-w-[560px] text-sm leading-relaxed text-muted">
+                Press <Key>space</Key> to play, <Key>left arrow</Key> to hear a
+                line again, <Key>S</Key> to slow it down. The word being spoken
+                lights up as you {isVideo ? "watch" : "listen"}.
+              </p>
+
+              {/*
                 With a picture, the captions belong on the picture.
                 That is where a viewer already looks for subtitles, and
                 the entire premise is that this happens during watching
@@ -430,7 +520,7 @@ export default function Reader() {
                       fontWeight: 600,
                     }}
                   >
-                    <span className="rounded-lg bg-black/70 px-3 py-1.5 leading-snug text-white">
+                    <span className="ew-caption-pill rounded-lg bg-black/70 px-3 py-1.5 leading-snug text-white">
                       <KaraokeCaptions doc={doc} time={time} onWordsRead={onWordsRead} />
                     </span>
                   </div>
@@ -468,13 +558,25 @@ export default function Reader() {
                   type="button"
                   onClick={toggle}
                   className="rounded-lg bg-[var(--primary)] px-6 py-2.5 text-sm font-medium text-[var(--primary-contrast)] transition-opacity hover:opacity-90"
+                  aria-keyshortcuts="Space"
                 >
                   {playing ? "Pause" : "Play"}
                 </button>
-                <button type="button" onClick={replayLine} className={btn}>
+                <button
+                  type="button"
+                  onClick={replayLine}
+                  className={btn}
+                  aria-keyshortcuts="ArrowLeft"
+                >
                   Read that line again
                 </button>
-                <button type="button" onClick={toggleSlow} className={btn} aria-pressed={slow}>
+                <button
+                  type="button"
+                  onClick={toggleSlow}
+                  className={btn}
+                  aria-pressed={slow}
+                  aria-keyshortcuts="S"
+                >
                   {slow ? "Normal speed" : "Slow down"}
                 </button>
                 <button

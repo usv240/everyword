@@ -176,3 +176,47 @@ body {
     transition: none;
   }
 }
+
+/*
+  The caption pill is there to keep white words legible over a picture,
+  and it should exist only while there are words to keep legible.
+
+  Between lines the renderer emits an empty caption, and the pill went
+  on painting: a small black rectangle sitting in the middle of the film
+  before a single word had been spoken. Every test passed, because no
+  test looks at the film. A screenshot found it in one glance.
+
+  This keys off the marker the renderer already emits rather than
+  recomputing "is anything being said" beside it, for the same reason
+  the theme reads the document instead of remembering separately: two
+  copies of one truth is two things to keep in step.
+*/
+.ew-caption-pill:has(.kc-empty) {
+  background-color: transparent;
+}
+
+/*
+  Tell people what to press, on the devices where there is something to
+  press.
+
+  The reader has keyboard control and a hint naming the keys, which is
+  the right hint for a laptop and the wrong one for a phone: a touch
+  visitor cannot press space, so the line is at best noise and at worst
+  an instruction that cannot be followed. Splitting it in CSS rather
+  than in JavaScript keeps the prerendered HTML honest, because there
+  is nothing to guess at build time and nothing to correct after
+  hydration.
+*/
+.ew-keys-only {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ew-keys-only {
+    display: block;
+  }
+
+  .ew-touch-only {
+    display: none;
+  }
+}

@@ -37,7 +37,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 
 ```
 npm install
-npm test                 # 140 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
+npm test                 # 144 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
 npm run web:dev          # the reader on localhost:3000
 
 # generate captions for new content (needs AWS credentials):

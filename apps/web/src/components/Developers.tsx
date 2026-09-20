@@ -39,13 +39,17 @@ export function Developers() {
       </pre>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <div>
+        {/* min-w-0: a grid item defaults to min-width:auto, so a code
+            block wide enough to scroll makes the whole page scroll
+            instead. On a phone that showed as the entire site
+            sliding sideways. */}
+        <div className="min-w-0">
           <p className="text-sm font-medium text-ink">In a browser</p>
           <pre className="mt-2 overflow-x-auto rounded-md border border-line bg-bg p-3 font-mono text-[12px] leading-relaxed text-ink">
             <code>{WEB}</code>
           </pre>
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="text-sm font-medium text-ink">On a TV, with React Native</p>
           <pre className="mt-2 overflow-x-auto rounded-md border border-line bg-bg p-3 font-mono text-[12px] leading-relaxed text-ink">
             <code>{TV}</code>

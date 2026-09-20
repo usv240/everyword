@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 /**
  * The product, running, before anyone clicks anything.
@@ -73,28 +73,41 @@ const START = LINES[0]!.words[0]!.s;
 const END = LINES[LINES.length - 1]!.words.at(-1)!.e;
 const HOLD_AFTER_END = 1.1;
 
+/**
+ * Whether this visitor has asked their system for less motion.
+ *
+ * Subscribed rather than copied into state. The media query is the
+ * source of truth, it can change in the middle of a visit, and reading
+ * it this way means the first client render already has the answer
+ * instead of starting a moving demo and stopping it a frame later.
+ */
+function usePrefersReducedMotion(): boolean {
+  const subscribe = useCallback((onChange: () => void) => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
+}
+
 export function HeroDemo() {
   const [t, setT] = useState(START);
-  const [reduced, setReduced] = useState(false);
+  const reduced = usePrefersReducedMotion();
   const frame = useRef<number | null>(null);
 
   useEffect(() => {
-    // Anyone who has asked their system to reduce motion gets the finished
-    // state instead of a loop: the words are still shown lit, so the idea
-    // survives without anything moving. Honouring this is not decoration,
-    // it is the difference between a demo and a problem for some people.
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReduced(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
-
-  useEffect(() => {
-    if (reduced) {
-      setT(END);
-      return;
-    }
+    // Anyone who has asked their system to reduce motion gets the
+    // finished state instead of a loop: the words are still shown lit,
+    // so the idea survives without anything moving. Honouring this is
+    // not decoration, it is the difference between a demo and a problem
+    // for some people. No clock is set for them, because the render
+    // below ignores the clock entirely in that case.
+    if (reduced) return;
     let started: number | null = null;
     const tick = (now: number) => {
       if (started === null) started = now;

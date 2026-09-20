@@ -106,7 +106,7 @@ export function UpgradeProof() {
       </p>
 
       <div className="mt-8 grid gap-5 lg:grid-cols-2">
-        <div className="rounded-xl border border-line bg-bg p-5">
+        <div className="min-w-0 rounded-xl border border-line bg-bg p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted">
             What the film shipped
           </p>
@@ -127,7 +127,7 @@ export function UpgradeProof() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-[var(--primary)] bg-bg p-5">
+        <div className="min-w-0 rounded-xl border border-[var(--primary)] bg-bg p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--primary)]">
             What EveryWord made from it
           </p>
