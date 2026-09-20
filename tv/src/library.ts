@@ -34,6 +34,8 @@ interface Entry {
   source: 'polly' | 'transcribe' | 'aligned';
   /** A title with a picture, rather than audio with text. */
   video?: boolean;
+  /** A still from the film, for the library card. */
+  poster?: ReturnType<typeof require>;
   captions: CaptionDoc;
   media: ReturnType<typeof require>;
 }
@@ -57,6 +59,7 @@ const ENTRIES: Entry[] = [
     video: true,
     captions: require('../assets/sintel.captions.json') as CaptionDoc,
     media: require('../assets/sintel.mp4'),
+    poster: require('../assets/sintel.poster.jpg'),
   },
   {
     slug: 'crow-and-pitcher',

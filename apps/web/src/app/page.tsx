@@ -40,6 +40,7 @@ interface ManifestItem {
 }
 
 const FONT_SIZES = ["1.6rem", "2.1rem", "2.7rem"];
+const FONT_LABELS = ["Small", "Medium", "Large"];
 
 const EVIDENCE = [
   {
@@ -256,18 +257,32 @@ export default function Reader() {
           <div className="rounded-2xl border border-line bg-surface p-5 sm:p-7">
             <HeroDemo />
           </div>
-          <p className="mt-5 max-w-[640px] text-base leading-relaxed">
-            <span className="font-semibold">That is the whole idea.</span>{" "}
-            Words light up at the moment they are spoken, so watching becomes
-            reading practice. Those are real timings from the story below,
-            produced by this pipeline on Amazon Transcribe. Nothing here is a
-            mock-up.
+          <p className="mt-5 max-w-[680px] text-base leading-relaxed">
+            <span className="font-semibold">
+              Every video already has subtitles. None of them have words.
+            </span>{" "}
+            A subtitle file says what was said and when the line starts. It
+            never says which word is being spoken, so nothing can highlight
+            one. EveryWord adds the only thing missing, to the file a video
+            already ships with.
             <InfoButton id="sls" />
           </p>
-          <p className="mt-3 max-w-[640px] text-sm leading-relaxed text-muted">
-            Same Language Subtitling has run on Indian national television for
-            two decades, reaching an estimated 200 million viewers, and has
-            been national broadcast policy there since 2019.
+          <p className="mt-3 max-w-[680px] text-sm leading-relaxed text-muted">
+            Below is Sintel, distributed by the Blender Foundation with
+            English subtitles inside the file. Those cues are the
+            filmmakers&apos;. EveryWord only gave them word timings, and{" "}
+            <a className="text-[var(--primary)] underline underline-offset-2" href="#upgrade">
+              you can read both files
+            </a>
+            . Nothing here is a mock-up and nothing here was written by us.
+          </p>
+          <p className="mt-3 max-w-[680px] text-sm leading-relaxed text-muted">
+            This is the technique that ran on Indian national television for
+            two decades, reached an estimated 200 million viewers, and has
+            been national broadcast policy there since 2019. It worked
+            because it rode programmes people had already chosen to watch.
+            That only becomes possible for the rest of the world&apos;s video
+            when the captions it already has can carry a word.
           </p>
         </section>
 
@@ -325,23 +340,55 @@ export default function Reader() {
                           : "border-line bg-surface hover:border-[var(--primary)]"
                       }`}
                     >
+                      {/*
+                        A video gets a still from itself. A shelf of
+                        identical grey rectangles gives a visitor nothing
+                        to choose between, and the one title that is a
+                        film is the one worth opening first.
+                      */}
+                      {s.kind === "video" ? (
+                        <img
+                          src={`/content/${s.slug}.poster.jpg`}
+                          alt=""
+                          width={640}
+                          height={273}
+                          loading="lazy"
+                          className="mb-3 block h-24 w-full rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div
+                          aria-hidden
+                          className="mb-3 flex h-24 w-full items-center justify-center rounded-lg bg-bg text-3xl"
+                          style={{ fontFamily: "var(--font-reading)" }}
+                        >
+                          <span className="text-muted">{s.title.replace(/^The /, "").charAt(0)}</span>
+                        </div>
+                      )}
                       <p className="font-medium text-ink">{s.title}</p>
                       <p className="mt-1 text-xs text-muted">
                         {s.words} words · {Math.floor(s.durationSec / 60)}m{" "}
-                        {s.durationSec % 60}s ·{" "}
-                        {s.source === "polly" ? "Polly speech marks" : "Transcribe"}
+                        {s.durationSec % 60}s
+                      </p>
+                      <p className="mt-1 text-[11px] uppercase tracking-wide text-muted">
+                        {s.source === "aligned"
+                          ? "Film's own subtitles, upgraded"
+                          : s.source === "polly"
+                            ? "Polly speech marks"
+                            : "Transcribe"}
                       </p>
                     </button>
                   );
                 })}
               </div>
               <p className="mt-3 text-xs leading-relaxed text-muted">
-                Two pipelines, one caption format. Stories read by a human are
-                timed with Amazon Transcribe (30 ms median accuracy, measured).
-                Stories synthesized from public-domain text are timed from
-                Amazon Polly speech marks, which carry the words themselves, so
-                those captions have zero word error by construction. Any book
-                ever written can become a read-along this way.
+                Three ways in, one caption format. A video that already
+                has subtitles keeps them, and EveryWord adds only the word
+                timings. A human recording with no captions is timed by
+                Amazon Transcribe (30 ms median, measured). Text with no
+                recording at all is read by Amazon Polly, whose speech
+                marks carry the words themselves. The first path is the one
+                that scales, because it needs nothing that does not already
+                exist.
               </p>
             </section>
 
@@ -434,8 +481,15 @@ export default function Reader() {
                   type="button"
                   onClick={() => setFontIdx((i) => (i + 1) % FONT_SIZES.length)}
                   className={btn}
+                  aria-label={`Text size, currently ${FONT_LABELS[fontIdx]}. Press to cycle.`}
                 >
-                  Text size
+                  {/*
+                    A control that cycles has to say where it is. This
+                    read "Text size" in all three states, so a reader who
+                    needed a larger size had no way to know whether they
+                    had already reached the largest one.
+                  */}
+                  Text size: {FONT_LABELS[fontIdx]}
                 </button>
                 <p className="ml-auto text-sm text-muted">
                   Words read along in this story:{" "}
@@ -481,9 +535,12 @@ export default function Reader() {
               What it is
             </p>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              Subtitles that light up word by word, exactly as each word is
-              spoken, on any video or audio. You just watched it work; the
-              same renderer runs on the EveryWord Fire TV app.
+              A way to give any video&apos;s existing subtitle track word
+              timings, so the word being spoken can be lit as it is spoken.
+              Point it at a film and the captions it already has, and it
+              returns the same words with a time on each. You just watched
+              it work on a real film; the same renderer runs on the
+              EveryWord Fire TV app.
             </p>
           </div>
           <div className="rounded-2xl border border-line bg-surface p-6">
@@ -492,13 +549,16 @@ export default function Reader() {
             </p>
             <p className="mt-2 text-sm leading-relaxed text-muted">
               130 million US adults read below a 6th grade level, and
-              their children are far more likely to struggle too.
-              Word-synced subtitles on ordinary TV reached an estimated
-              200 million viewers in India over two decades, and a
+              their children are far more likely to struggle too. In
+              India, word-synced subtitles on ordinary television reached
+              an estimated 200 million viewers over two decades, and a
               five-year study measured 32 points more children becoming
-              good readers. No TV platform has ever shipped it. Amazon
-              already proved the mechanic for books with Immersion
-              Reading; this is Immersion Reading for television.
+              good readers. It worked because nobody signed up for it:
+              the reading practice rode programmes they had already
+              chosen. Amazon proved the same mechanic for books with
+              Immersion Reading. No television platform has shipped it
+              for video, because until the captions can carry a word,
+              there is nothing to light.
             </p>
           </div>
           <div className="rounded-2xl border border-line bg-surface p-6">
@@ -506,13 +566,16 @@ export default function Reader() {
               How it works
             </p>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              Amazon Transcribe times every word. Our open caption engine
-              breaks the words into readable 42-character lines at clauses
-              and real pauses, and tiles tiny gaps so the highlight never
-              flickers. The renderer lights the word being spoken; your
-              eyes follow it whether you mean to or not. That is the whole
-              trick, and it is measured: median 30 ms from voice to
-              highlight, never early.
+              The subtitle file supplies the words. Amazon Transcribe
+              supplies the timings. The recogniser is never asked what
+              the words are, so one that hears &ldquo;their&rdquo; for
+              &ldquo;there&rdquo; cannot put the wrong spelling in front
+              of a child: zero word error by construction. The line
+              breaks stay the subtitle author&apos;s, because a human
+              chose them. Then the renderer lights the word being spoken
+              and your eyes follow it whether you mean to or not. That is
+              the whole trick, and it is measured: median 30 ms from
+              voice to highlight, never early.
             </p>
           </div>
         </section>

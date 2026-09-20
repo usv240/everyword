@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -129,6 +130,20 @@ function StoryCard({story, wordsRead, preferred, onPress}: StoryCardProps) {
         story.durationSec,
       )}`}
       style={[styles.card, focused && styles.cardFocused]}>
+      {/*
+        A still from the film, so the shelf is not five identical grey
+        rectangles. On a television the card is the only thing a viewer
+        has to choose from, and artwork is how they choose.
+      */}
+      {story.poster ? (
+        <Image source={story.poster} style={styles.cardArt} resizeMode="cover" />
+      ) : (
+        <View style={styles.cardArtBlank}>
+          <Text style={styles.cardArtLetter}>
+            {story.title.replace(/^The /, '').charAt(0)}
+          </Text>
+        </View>
+      )}
       <Text style={[styles.cardTitle, focused && {color: COLORS.ink}]}>
         {story.title}
       </Text>
@@ -137,7 +152,11 @@ function StoryCard({story, wordsRead, preferred, onPress}: StoryCardProps) {
       </Text>
       <View style={styles.cardFooter}>
         <Text style={styles.cardSource}>
-          {story.source === 'polly' ? 'Polly speech marks' : 'Transcribe'}
+          {story.source === 'aligned'
+            ? 'Its own subtitles'
+            : story.source === 'polly'
+              ? 'Polly speech marks'
+              : 'Transcribe'}
         </Text>
         {wordsRead > 0 && (
           <Text style={[styles.cardProgress, done && {color: COLORS.highlight}]}>
@@ -299,8 +318,8 @@ export default function App() {
 
         <Text style={styles.libraryHeading}>Choose a story</Text>
         <Text style={styles.libraryHint}>
-          Five public-domain fables. Press left and right on the remote, then
-          select.
+          A film with the subtitles it already had, and five public-domain
+          fables. Press left and right on the remote, then select.
         </Text>
 
         <ScrollView
@@ -574,6 +593,23 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.raised,
     transform: [{scale: 1.05}],
   },
+  cardArt: {
+    width: '100%',
+    height: 104,
+    borderRadius: 8,
+    marginBottom: 14,
+    backgroundColor: '#000',
+  },
+  cardArtBlank: {
+    width: '100%',
+    height: 104,
+    borderRadius: 8,
+    marginBottom: 14,
+    backgroundColor: COLORS.bg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardArtLetter: {color: COLORS.muted, fontSize: 40, fontWeight: '700'},
   cardTitle: {color: COLORS.muted, fontSize: 24, fontWeight: '700'},
   cardMeta: {color: COLORS.muted, fontSize: 16, marginTop: 10},
   cardFooter: {
