@@ -1,0 +1,211 @@
+1
+00:00:00,000 --> 00:00:02,904
+Hi everyone, I am Ujwal.
+
+2
+00:00:03,366 --> 00:00:05,199
+Same language subtitling.
+
+3
+00:00:05,199 --> 00:00:08,793
+Captions in the language you are already hearing,
+
+4
+00:00:08,793 --> 00:00:12,606
+highlighted word by word, on ordinary entertainment.
+
+5
+00:00:13,466 --> 00:00:16,546
+Twenty years on Indian national television,
+
+6
+00:00:16,546 --> 00:00:18,552
+two hundred million viewers.
+
+7
+00:00:18,552 --> 00:00:22,421
+Thirty-two percentage points more children became good
+
+8
+00:00:22,421 --> 00:00:22,994
+readers.
+
+9
+00:00:23,799 --> 00:00:28,259
+Amazon already ships this for books, as Immersion Reading.
+
+10
+00:00:28,259 --> 00:00:32,335
+No television platform has ever shipped it for video.
+
+11
+00:00:32,335 --> 00:00:34,335
+EveryWord is that product.
+
+12
+00:00:35,566 --> 00:00:39,065
+Real story, real captions from our pipeline.
+
+13
+00:00:39,065 --> 00:00:41,768
+Every word lights as it is spoken,
+
+14
+00:00:41,768 --> 00:00:44,710
+so watching becomes reading practice.
+
+15
+00:00:48,499 --> 00:00:51,559
+And this counts the words the reader followed.
+
+16
+00:00:51,559 --> 00:00:52,823
+Not minutes played.
+
+17
+00:00:52,823 --> 00:00:56,083
+It is the only number here that measures reading.
+
+18
+00:00:56,532 --> 00:00:59,100
+One button to hear a line again.
+
+19
+00:00:59,766 --> 00:01:02,494
+And here it is running on a Fire TV,
+
+20
+00:01:02,494 --> 00:01:06,662
+sideloaded as an app and driven entirely by the remote.
+
+21
+00:01:06,662 --> 00:01:09,390
+Five stories, chosen with the D-pad.
+
+22
+00:01:10,266 --> 00:01:14,206
+Same renderer as the browser, rebuilt for ten feet away.
+
+23
+00:01:14,206 --> 00:01:17,725
+A child watching television gets reading practice,
+
+24
+00:01:17,725 --> 00:01:19,554
+and nobody signed them up.
+
+25
+00:01:21,299 --> 00:01:25,391
+The television reports what was read to our own server,
+
+26
+00:01:25,391 --> 00:01:28,888
+so an assistant can answer how far a child got.
+
+27
+00:01:28,888 --> 00:01:30,971
+That number came off the TV.
+
+28
+00:01:32,232 --> 00:01:33,204
+Two ways in.
+
+29
+00:01:33,204 --> 00:01:36,850
+A human recording timed by Amazon Transcribe,
+
+30
+00:01:36,850 --> 00:01:40,010
+or any text read aloud by Amazon Polly,
+
+31
+00:01:40,010 --> 00:01:43,008
+which reports when it said each word.
+
+32
+00:01:43,399 --> 00:01:46,143
+Those captions cannot contain a wrong word,
+
+33
+00:01:46,143 --> 00:01:49,525
+because the words were known before they were spoken.
+
+34
+00:01:49,525 --> 00:01:51,631
+Any book can become a read-along.
+
+35
+00:01:52,466 --> 00:01:56,058
+We measured our part against gold word alignments,
+
+36
+00:01:56,058 --> 00:01:58,070
+on speech we did not record.
+
+37
+00:01:58,070 --> 00:02:01,878
+The highlight lands within thirty milliseconds of the
+
+38
+00:02:01,878 --> 00:02:02,740
+spoken word.
+
+39
+00:02:02,740 --> 00:02:03,890
+About one frame.
+
+40
+00:02:04,232 --> 00:02:06,644
+And it never lights a word early.
+
+41
+00:02:06,644 --> 00:02:09,568
+Zero out of seven hundred and sixty-six.
+
+42
+00:02:09,568 --> 00:02:13,443
+A highlight that runs ahead teaches a child the wrong
+
+43
+00:02:13,443 --> 00:02:13,808
+word.
+
+44
+00:02:14,632 --> 00:02:18,449
+It is for children, so here is everything it keeps.
+
+45
+00:02:18,449 --> 00:02:21,892
+Five fields, and no microphone anywhere in it.
+
+46
+00:02:21,892 --> 00:02:26,008
+A product that cannot listen cannot leak what it heard.
+
+47
+00:02:27,266 --> 00:02:31,729
+A hundred and thirty million American adults read below a
+
+48
+00:02:31,729 --> 00:02:33,138
+sixth grade level.
+
+49
+00:02:33,138 --> 00:02:37,445
+This technique costs four tenths of a cent per learner.
+
+50
+00:02:37,445 --> 00:02:41,830
+The renderer nobody had shipped is on npm, MIT licensed.
+
+51
+00:02:41,830 --> 00:02:42,613
+EveryWord.
+
+52
+00:02:42,613 --> 00:02:44,570
+Watching becomes reading.
+
+53
+00:02:45,032 --> 00:02:46,208
+Thank you.

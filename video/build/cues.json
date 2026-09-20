@@ -1,0 +1,124 @@
+{
+ "duration": 166.717,
+ "beats": [
+  {
+   "key": "hello",
+   "at": 0.0,
+   "seconds": 2.904,
+   "source": "web",
+   "say": "Hi everyone, I am Ujwal."
+  },
+  {
+   "key": "idea",
+   "at": 3.366,
+   "seconds": 9.24,
+   "source": "web",
+   "say": "Same language subtitling. Captions in the language you are already hearing, highlighted word by word, on ordinary entertainment."
+  },
+  {
+   "key": "evidence",
+   "at": 13.466,
+   "seconds": 9.528,
+   "source": "web",
+   "say": "Twenty years on Indian national television, two hundred million viewers. Thirty-two percentage points more children became good readers."
+  },
+  {
+   "key": "gap",
+   "at": 23.799,
+   "seconds": 10.536,
+   "source": "web",
+   "say": "Amazon already ships this for books, as Immersion Reading. No television platform has ever shipped it for video. EveryWord is that product."
+  },
+  {
+   "key": "play",
+   "at": 35.566,
+   "seconds": 9.144,
+   "source": "web",
+   "say": "Real story, real captions from our pipeline. Every word lights as it is spoken, so watching becomes reading practice."
+  },
+  {
+   "key": "meter",
+   "at": 48.499,
+   "seconds": 7.584,
+   "source": "web",
+   "say": "And this counts the words the reader followed. Not minutes played. It is the only number here that measures reading."
+  },
+  {
+   "key": "again",
+   "at": 56.532,
+   "seconds": 2.568,
+   "source": "web",
+   "say": "One button to hear a line again."
+  },
+  {
+   "key": "tv-library",
+   "at": 59.766,
+   "seconds": 9.624,
+   "source": "tv",
+   "say": "And here it is running on a Fire TV, sideloaded as an app and driven entirely by the remote. Five stories, chosen with the D-pad."
+  },
+  {
+   "key": "tv-read",
+   "at": 70.266,
+   "seconds": 9.288,
+   "source": "tv",
+   "say": "Same renderer as the browser, rebuilt for ten feet away. A child watching television gets reading practice, and nobody signed them up."
+  },
+  {
+   "key": "tv-progress",
+   "at": 81.299,
+   "seconds": 9.672,
+   "source": "tv",
+   "say": "The television reports what was read to our own server, so an assistant can answer how far a child got. That number came off the TV."
+  },
+  {
+   "key": "pipeline",
+   "at": 92.232,
+   "seconds": 10.776,
+   "source": "web",
+   "say": "Two ways in. A human recording timed by Amazon Transcribe, or any text read aloud by Amazon Polly, which reports when it said each word."
+  },
+  {
+   "key": "polly",
+   "at": 103.399,
+   "seconds": 8.232,
+   "source": "web",
+   "say": "Those captions cannot contain a wrong word, because the words were known before they were spoken. Any book can become a read-along."
+  },
+  {
+   "key": "measured",
+   "at": 112.466,
+   "seconds": 11.424,
+   "source": "web",
+   "say": "We measured our part against gold word alignments, on speech we did not record. The highlight lands within thirty milliseconds of the spoken word. About one frame."
+  },
+  {
+   "key": "zero",
+   "at": 124.232,
+   "seconds": 9.576,
+   "source": "web",
+   "say": "And it never lights a word early. Zero out of seven hundred and sixty-six. A highlight that runs ahead teaches a child the wrong word."
+  },
+  {
+   "key": "privacy",
+   "at": 134.632,
+   "seconds": 11.376,
+   "source": "web",
+   "say": "It is for children, so here is everything it keeps. Five fields, and no microphone anywhere in it. A product that cannot listen cannot leak what it heard."
+  },
+  {
+   "key": "close",
+   "at": 147.266,
+   "seconds": 17.304,
+   "source": "web",
+   "say": "A hundred and thirty million American adults read below a sixth grade level. This technique costs four tenths of a cent per learner. The renderer nobody had shipped is on npm, MIT licensed. EveryWord. Watching becomes reading."
+  },
+  {
+   "key": "thanks",
+   "at": 165.032,
+   "seconds": 1.176,
+   "source": "web",
+   "say": "Thank you."
+  }
+ ]
+}

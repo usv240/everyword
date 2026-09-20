@@ -1,0 +1,19 @@
+{
+ "video": 39.2,
+ "width": 1920,
+ "height": 1080,
+ "beats": [
+  {
+   "key": "tv-library",
+   "at": 2.0
+  },
+  {
+   "key": "tv-read",
+   "at": 12.641
+  },
+  {
+   "key": "tv-progress",
+   "at": 27.281
+  }
+ ]
+}
