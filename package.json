@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "test": "vitest run && npm --prefix tv test",
+    "postinstall": "npm --prefix tv install --no-audit --no-fund",
     "verify:live": "node scripts/mcp-conform.mjs",
     "typecheck": "tsc -b packages/captions-core packages/karaoke-captions-react apps/pipeline apps/mcp",
     "pipeline": "npm run pipeline -w @everyword/pipeline",

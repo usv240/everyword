@@ -225,3 +225,37 @@ describe("the keyboard hint on the reader", () => {
     expect(page).toMatch(/closest\(\s*"button,/);
   });
 });
+
+/*
+  The published figure counts tests that the documented command has to be
+  able to reach.
+
+  A clean clone ran `npm install` and `npm test`, watched vitest go green
+  on 132, and then fell over on a missing jest: the Fire TV app keeps its
+  own node_modules outside the workspaces, and nothing installed it. So
+  the suite on this project's primary track had never run for anybody who
+  did not already have the repository working, while the README counted
+  those tests in its headline.
+
+  That is the same shape as a guard that skips instead of failing. The
+  green came from the part that ran.
+*/
+describe("the documented command can reach the number it claims", () => {
+  const pkg = JSON.parse(
+    fs.readFileSync(path.join(repo, "package.json"), "utf8"),
+  ) as { scripts: Record<string, string> };
+
+  it("runs the Fire TV suite from npm test", () => {
+    expect(pkg.scripts.test).toContain("--prefix tv");
+  });
+
+  it("installs the Fire TV app's own dependencies from npm install", () => {
+    const install = [pkg.scripts.postinstall, pkg.scripts.prepare]
+      .filter(Boolean)
+      .join(" ");
+    expect(
+      install,
+      "nothing installs tv/, so a clean clone cannot run the suite the README counts",
+    ).toContain("tv");
+  });
+});

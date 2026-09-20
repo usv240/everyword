@@ -37,12 +37,20 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 
 ```
 npm install
-npm test                 # 144 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
+npm test                 # 146 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
 npm run web:dev          # the reader on localhost:3000
 
 # generate captions for new content (needs AWS credentials):
 npm run pipeline -- --input <url|file> --name my-story --title "My Story" --attribution "..."
 ```
+
+The Fire TV app keeps its own `node_modules` instead of joining the
+workspaces, because Metro and Gradle both resolve from the app directory
+and hoisting breaks them. `npm install` therefore installs it too, in a
+`postinstall` step. Without that step `npm test` runs the caption engine
+and the MCP server, reports a healthy green, and never reaches the app
+on this project's primary track. It did exactly that until someone tried
+a clean clone.
 
 ## Every number here is a test
 
