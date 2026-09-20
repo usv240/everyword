@@ -48,6 +48,19 @@
    "captions": "two-pots.captions.json",
    "words": 298,
    "durationSec": 108
+  },
+  {
+   "slug": "sintel",
+   "title": "Sintel",
+   "attribution": "Blender Foundation, CC BY 3.0. Subtitles as shipped with the film.",
+   "media": "sintel.mp4",
+   "captions": "sintel.captions.json",
+   "kind": "video",
+   "words": 75,
+   "durationSec": 114,
+   "source": "aligned",
+   "sourceSubtitles": "sintel.source.srt",
+   "anchoredRate": 0.987
   }
  ]
 }

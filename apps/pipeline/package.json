@@ -8,7 +8,8 @@
   "scripts": {
     "pipeline": "tsx src/transcribe.ts",
     "test": "vitest run",
-    "polly": "tsx src/polly.ts"
+    "polly": "tsx src/polly.ts",
+    "upgrade": "tsx src/upgrade.ts"
   },
   "dependencies": {
     "@aws-sdk/client-polly": "^3.1133.0",

@@ -21,7 +21,8 @@
     "mcp": "npm run dev -w @everyword/mcp",
     "build:packages": "tsc -b packages/captions-core packages/karaoke-captions-react",
     "pretest": "npm run build:packages",
-    "test:tv": "npm --prefix tv test"
+    "test:tv": "npm --prefix tv test",
+    "upgrade": "npm run upgrade -w @everyword/pipeline"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
