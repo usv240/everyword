@@ -29,7 +29,13 @@ interface ManifestItem {
   captions: string;
   words: number;
   durationSec: number;
-  source?: "polly" | "transcribe";
+  source?: "polly" | "transcribe" | "aligned";
+  /** "video" plays a picture. Anything else is audio with text. */
+  kind?: "video" | "audio";
+  /** For an upgraded track: the subtitle file the video already had. */
+  sourceSubtitles?: string;
+  /** For an upgraded track: how much of it anchored to recognised speech. */
+  anchoredRate?: number;
 }
 
 const FONT_SIZES = ["1.6rem", "2.1rem", "2.7rem"];
@@ -100,7 +106,7 @@ export default function Reader() {
   const [fontIdx, setFontIdx] = useState(1);
   const [wordsRead, setWordsRead] = useState(0);
   const [duration, setDuration] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLVideoElement>(null);
   const rafRef = useRef(0);
   const [themeMode, cycleTheme] = useTheme();
 
@@ -190,6 +196,15 @@ export default function Reader() {
   const onWordsRead = useCallback((n: number) => {
     setWordsRead((prev) => prev + n);
   }, []);
+
+  // A title with a picture. The manifest says so, because the
+
+  // pipeline that produced it knows and the player should not be
+
+  // guessing from a file extension.
+
+  const isVideo = item?.kind === "video";
+
 
   const btn =
     "rounded-lg border border-line bg-surface px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:border-primary disabled:opacity-40";
@@ -340,16 +355,50 @@ export default function Reader() {
                 </p>
               </div>
 
-              <div
-                className="mt-8 flex min-h-[9rem] items-center justify-center text-balance text-center"
-                style={{
-                  fontFamily: "var(--font-reading)",
-                  fontSize: FONT_SIZES[fontIdx],
-                  fontWeight: 500,
-                }}
-              >
-                <KaraokeCaptions doc={doc} time={time} onWordsRead={onWordsRead} />
-              </div>
+              {/*
+                With a picture, the captions belong on the picture.
+                That is where a viewer already looks for subtitles, and
+                the entire premise is that this happens during watching
+                rather than instead of it. Putting them in a panel below
+                would make it a reading exercise with a video attached,
+                which is the thing this product is not.
+              */}
+              {isVideo ? (
+                <figure className="relative mt-6 overflow-hidden rounded-xl bg-black">
+                  <video
+                    ref={audioRef}
+                    src={`/content/${item.media}`}
+                    className="block h-auto w-full"
+                    preload="auto"
+                    playsInline
+                    onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+                    onEnded={() => setPlaying(false)}
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-x-0 bottom-0 flex min-h-[4.5rem] items-end justify-center px-4 pb-4 text-balance text-center sm:pb-6"
+                    style={{
+                      fontFamily: "var(--font-reading)",
+                      fontSize: FONT_SIZES[fontIdx],
+                      fontWeight: 600,
+                    }}
+                  >
+                    <span className="rounded-lg bg-black/70 px-3 py-1.5 leading-snug text-white">
+                      <KaraokeCaptions doc={doc} time={time} onWordsRead={onWordsRead} />
+                    </span>
+                  </div>
+                </figure>
+              ) : (
+                <div
+                  className="mt-8 flex min-h-[9rem] items-center justify-center text-balance text-center"
+                  style={{
+                    fontFamily: "var(--font-reading)",
+                    fontSize: FONT_SIZES[fontIdx],
+                    fontWeight: 500,
+                  }}
+                >
+                  <KaraokeCaptions doc={doc} time={time} onWordsRead={onWordsRead} />
+                </div>
+              )}
 
               <input
                 type="range"
@@ -394,13 +443,24 @@ export default function Reader() {
                 </p>
               </div>
 
-              <audio
-                ref={audioRef}
-                src={`/content/${item.media}`}
-                preload="auto"
-                onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-                onEnded={() => setPlaying(false)}
-              />
+              {/*
+                The audio-only titles keep the same element, hidden, so
+                there is exactly one <video> mounted and exactly one
+                clock. <video> plays an audio file perfectly well, and
+                two elements would mean two code paths for play, seek,
+                rate and position, plus a drift bug between them.
+              */}
+              {!isVideo && (
+                <video
+                  ref={audioRef}
+                  src={`/content/${item.media}`}
+                  preload="auto"
+                  playsInline
+                  className="hidden"
+                  onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+                  onEnded={() => setPlaying(false)}
+                />
+              )}
             </section>
 
             <p className="mt-6 text-xs leading-relaxed text-muted">

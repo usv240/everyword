@@ -326,6 +326,93 @@ export default function App() {
     );
   }
 
+  /*
+    A film gets the whole screen.
+
+    The first version put the picture inside the same bordered card the
+    audio titles use, under a title, an attribution and above a progress
+    row, four buttons and a footnote. On a 1080p television that left the
+    video a strip about two hundred pixels tall, so a 2.35:1 film was
+    letterboxed down to a third of the width with black on either side,
+    and the captions, sized for a page of text, covered what was left of
+    it. The thing the product exists to show was the smallest element on
+    screen.
+
+    So: black, picture edge to edge, captions where a viewer already
+    looks for subtitles, and the controls on a scrim underneath. This is
+    how every television video app is laid out, for the same reason.
+  */
+  if (story.video) {
+    return (
+      <View style={styles.videoScreen}>
+        <Video
+          ref={videoRef}
+          source={story.media}
+          paused={paused}
+          rate={slow ? 0.8 : 1}
+          progressUpdateInterval={100}
+          onProgress={p => setTime(p.currentTime)}
+          onLoad={l => setDuration(l.duration)}
+          onEnd={() => closeStory(true)}
+          style={StyleSheet.absoluteFill}
+          resizeMode="contain"
+          playInBackground={false}
+        />
+
+        <View style={styles.videoTop} pointerEvents="none">
+          <Text style={styles.videoTitle}>{story.title}</Text>
+          <Text style={styles.meta}>
+            Words read along: <Text style={styles.metaStrong}>{wordsRead}</Text> of{' '}
+            {story.words}
+          </Text>
+        </View>
+
+        <View style={styles.videoBottom}>
+          <View style={styles.videoCaptionBand} pointerEvents="none">
+            <KaraokeCaptionsNative
+              doc={story.captions}
+              time={time}
+              textStyle={styles.captionOverPicture}
+              highlightColor={COLORS.highlight}
+              highlightInk={COLORS.highlightInk}
+              doneInk={COLORS.ink}
+              upcomingInk={COLORS.muted}
+              onWordsRead={onWordsRead}
+            />
+          </View>
+
+          <View style={styles.videoControls}>
+            <Text style={styles.meta}>{formatTime(time)}</Text>
+            <View style={styles.progressTrack}>
+              <View
+                style={[
+                  styles.progressFill,
+                  {width: `${duration > 0 ? Math.min(100, (time / duration) * 100) : 0}%`},
+                ]}
+              />
+            </View>
+            <Text style={styles.meta}>{formatTime(duration)}</Text>
+          </View>
+
+          <View style={styles.videoButtonRow}>
+            <TvButton
+              label={paused ? 'Play' : 'Pause'}
+              onPress={() => setPaused(p => !p)}
+              preferred
+              primary
+            />
+            <TvButton label="Read that line again" onPress={replayLine} />
+            <TvButton
+              label={slow ? 'Normal speed' : 'Slow down'}
+              onPress={() => setSlow(s => !s)}
+            />
+            <TvButton label="Back to stories" onPress={() => closeStory(false)} />
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
@@ -343,18 +430,56 @@ export default function App() {
         <Text style={styles.title}>{story.title}</Text>
         <Text style={styles.attribution}>{story.attribution}</Text>
 
-        <View style={styles.captionArea}>
-          <KaraokeCaptionsNative
-            doc={story.captions}
-            time={time}
-            textStyle={styles.captionText}
-            highlightColor={COLORS.highlight}
-            highlightInk={COLORS.highlightInk}
-            doneInk={COLORS.ink}
-            upcomingInk={COLORS.muted}
-            onWordsRead={onWordsRead}
-          />
-        </View>
+        {story.video ? (
+          /*
+            With a picture, the captions go on the picture.
+            That is where anyone already looks for subtitles, and the
+            whole premise is that this happens during watching rather
+            than instead of it. A panel of text beside a video would be
+            a reading exercise with a film attached, which is the thing
+            this product is not.
+          */
+          <View style={styles.stage}>
+            <Video
+              ref={videoRef}
+              source={story.media}
+              paused={paused}
+              rate={slow ? 0.8 : 1}
+              progressUpdateInterval={100}
+              onProgress={p => setTime(p.currentTime)}
+              onLoad={l => setDuration(l.duration)}
+              onEnd={() => closeStory(true)}
+              style={styles.picture}
+              resizeMode="contain"
+              playInBackground={false}
+            />
+            <View style={styles.captionBand} pointerEvents="none">
+              <KaraokeCaptionsNative
+                doc={story.captions}
+                time={time}
+                textStyle={styles.captionOverPicture}
+                highlightColor={COLORS.highlight}
+                highlightInk={COLORS.highlightInk}
+                doneInk={COLORS.ink}
+                upcomingInk={COLORS.muted}
+                onWordsRead={onWordsRead}
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={styles.captionArea}>
+            <KaraokeCaptionsNative
+              doc={story.captions}
+              time={time}
+              textStyle={styles.captionText}
+              highlightColor={COLORS.highlight}
+              highlightInk={COLORS.highlightInk}
+              doneInk={COLORS.ink}
+              upcomingInk={COLORS.muted}
+              onWordsRead={onWordsRead}
+            />
+          </View>
+        )}
 
         <View style={styles.progressRow}>
           <Text style={styles.meta}>{formatTime(time)}</Text>
@@ -390,19 +515,21 @@ export default function App() {
         </Text>
       </View>
 
-      <Video
-        ref={videoRef}
-        source={story.media}
-        paused={paused}
-        rate={slow ? 0.8 : 1}
-        progressUpdateInterval={100}
-        onProgress={p => setTime(p.currentTime)}
-        onLoad={l => setDuration(l.duration)}
-        onEnd={() => closeStory(true)}
-        style={styles.hiddenPlayer}
-        audioOutput="speaker"
-        playInBackground={false}
-      />
+      {!story.video && (
+        <Video
+          ref={videoRef}
+          source={story.media}
+          paused={paused}
+          rate={slow ? 0.8 : 1}
+          progressUpdateInterval={100}
+          onProgress={p => setTime(p.currentTime)}
+          onLoad={l => setDuration(l.duration)}
+          onEnd={() => closeStory(true)}
+          style={styles.hiddenPlayer}
+          audioOutput="speaker"
+          playInBackground={false}
+        />
+      )}
     </View>
   );
 }
@@ -468,6 +595,63 @@ const styles = StyleSheet.create({
   },
   title: {color: COLORS.ink, fontSize: 26, fontWeight: '600'},
   attribution: {color: COLORS.muted, fontSize: 14, marginTop: 6},
+  videoScreen: {flex: 1, backgroundColor: '#000'},
+  videoTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    // TV-safe margins. A television overscans, and anything in the outer
+    // five percent of the frame may simply not be on the screen.
+    paddingHorizontal: '5%',
+    paddingVertical: '3%',
+    backgroundColor: 'rgba(20,22,28,0.55)',
+  },
+  videoTitle: {color: COLORS.ink, fontSize: 24, fontWeight: '700'},
+  videoBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: '5%',
+    paddingBottom: '3%',
+    backgroundColor: 'rgba(20,22,28,0.72)',
+  },
+  videoCaptionBand: {paddingTop: 18, paddingBottom: 10, alignItems: 'center'},
+  videoControls: {flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4},
+  videoButtonRow: {flexDirection: 'row', gap: 14, marginTop: 14},
+  stage: {
+    flex: 1,
+    marginTop: 14,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#000',
+    justifyContent: 'center',
+  },
+  picture: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  captionBand: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 40,
+    paddingBottom: 26,
+    alignItems: 'center',
+  },
+  captionOverPicture: {
+    // Sized for ten feet away, and small enough that a full line fits
+    // across the band without wrapping to three rows over the picture.
+    fontSize: 34,
+    fontWeight: '700',
+    lineHeight: 48,
+    color: COLORS.ink,
+    textAlign: 'center',
+  },
   captionArea: {
     flex: 1,
     justifyContent: 'center',

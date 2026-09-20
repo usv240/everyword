@@ -31,12 +31,33 @@ interface Entry {
   title: string;
   attribution: string;
   /** How the word timings were produced. Shown, because it differs. */
-  source: 'polly' | 'transcribe';
+  source: 'polly' | 'transcribe' | 'aligned';
+  /** A title with a picture, rather than audio with text. */
+  video?: boolean;
   captions: CaptionDoc;
   media: ReturnType<typeof require>;
 }
 
 const ENTRIES: Entry[] = [
+  {
+    // The one that is the point of the product.
+    //
+    // A real film, playing on a television, with the subtitles it
+    // already shipped with, lit one word at a time. Sintel is
+    // distributed by the Blender Foundation as an MKV carrying English
+    // SubRip inside it; those cues are the filmmakers', and EveryWord
+    // only gave them word timings. Nothing here was authored by us,
+    // which is the whole argument: this works on content that already
+    // exists, so it does not need a library somebody had to make.
+    slug: 'sintel',
+    title: 'Sintel',
+    attribution:
+      "Blender Foundation, CC BY 3.0. The English subtitles the film already shipped with, upgraded to word level by EveryWord.",
+    source: 'aligned',
+    video: true,
+    captions: require('../assets/sintel.captions.json') as CaptionDoc,
+    media: require('../assets/sintel.mp4'),
+  },
   {
     slug: 'crow-and-pitcher',
     title: 'The Crow and the Pitcher',
