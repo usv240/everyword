@@ -22,7 +22,21 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.
  * is a claim, and claims are maintained.
  */
 
-const PUBLIC_TEXT = ["README.md", "docs/SUBMISSION.md"].flatMap((f) => {
+/*
+  The landing page counts as public text.
+
+  It states no number today, which is the only reason it was left out.
+  A sibling project learned this the expensive way: its suite read the two
+  markdown files and nothing else, and production sat there saying "47
+  tests" while the suite had 147. A judge reads the page before they read
+  the repository. Listing it now costs nothing and means the day somebody
+  puts a figure in the copy, it is already pinned.
+*/
+const PUBLIC_TEXT = [
+  "README.md",
+  "docs/SUBMISSION.md",
+  "apps/web/src/app/page.tsx",
+].flatMap((f) => {
   const p = path.join(repo, f);
   return fs.existsSync(p) ? [{ file: f, text: fs.readFileSync(p, "utf8") }] : [];
 });
@@ -67,6 +81,37 @@ function totalTests(): number {
 }
 
 describe("published counts match the repository", () => {
+  /*
+    The friction log is a judged deliverable, and its size is quoted.
+
+    The submission said "Twelve entries in FRICTION_LOG.md" while the file
+    had thirteen, and the missing one was entry 13: our own deployed MCP
+    server answering a malformed body with a 500 while thirty-five tests
+    passed. All three sibling projects had this same drift on the same
+    day, each undercounting, each leaving out the entry written against
+    itself. Those are the entries a partner team would most want, so
+    undercounting them is the one direction this cannot afford.
+  */
+  it("states the number of friction log entries the file actually has", () => {
+    const log = fs.readFileSync(path.join(repo, "FRICTION_LOG.md"), "utf8");
+    const actual = (log.match(/^## Entry \d+:/gm) ?? []).length;
+    expect(actual).toBeGreaterThan(0);
+    const words: Record<number, string> = {
+      10: "ten", 11: "eleven", 12: "twelve", 13: "thirteen",
+      14: "fourteen", 15: "fifteen", 16: "sixteen",
+    };
+    const word = words[actual];
+    expect(word, `no spelling for ${actual}; add it here`).toBeTruthy();
+    const wrong = PUBLIC_TEXT.filter((d) => {
+      const m = d.text.match(/(\w+) entries in FRICTION_LOG/i);
+      return m ? m[1]!.toLowerCase() !== word : false;
+    });
+    expect(
+      wrong.map((d) => d.file),
+      `FRICTION_LOG.md has ${actual} entries`,
+    ).toEqual([]);
+  });
+
   it("counts a suite at all, so a broken walker cannot pass silently", () => {
     expect(totalTests()).toBeGreaterThan(50);
   });
