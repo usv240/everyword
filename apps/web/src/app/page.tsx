@@ -8,6 +8,8 @@ import { HeroDemo } from "../components/HeroDemo";
 import { Developers } from "../components/Developers";
 import { FireTv } from "../components/FireTv";
 import { McpProof } from "../components/McpProof";
+import { Privacy } from "../components/Privacy";
+import { Faq } from "../components/Faq";
 import { InfoButton } from "../components/InfoButton";
 
 /**
@@ -530,6 +532,28 @@ export default function Reader() {
           </p>
           <div className="mt-6">
             <McpProof />
+          </div>
+        </section>
+
+        <section id="privacy" aria-labelledby="ew-privacy-heading" className="mt-16 scroll-mt-8">
+          <h2 id="ew-privacy-heading" className="text-2xl font-semibold tracking-tight text-ink">
+            What EveryWord knows about your child
+          </h2>
+          <p className="mt-3 max-w-[680px] leading-relaxed text-muted">
+            Five fields, and no microphone. This is the section a parent
+            reads first, so it is the short one.
+          </p>
+          <div className="mt-6">
+            <Privacy />
+          </div>
+        </section>
+
+        <section id="faq" aria-labelledby="ew-faq-heading" className="mt-16 scroll-mt-8">
+          <h2 id="ew-faq-heading" className="text-2xl font-semibold tracking-tight text-ink">
+            The questions a parent asks
+          </h2>
+          <div className="mt-6">
+            <Faq />
           </div>
         </section>
 
