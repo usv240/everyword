@@ -9,11 +9,13 @@ difference between the two go unnoticed.
 
 Frame size
 ----------
-1920x1080, which is also what `record_tv.py` captures. The two cameras
-meet at the same size so neither is scaled when they are cut together.
+3840x2160, the size the Fire TV footage from Appstore Quality Central is
+composited to (record_qc.py), so neither camera is scaled at the cut.
 Playwright records the CSS viewport, so the viewport *is* the frame:
 asking for a larger `record_video_size` pads with grey rather than
 upscaling, which is why those two numbers are the same constant here.
+The page is laid out as it would be at 1920x1080 and zoomed by SCALE, so
+the type is drawn at 4K rather than scaled up to it.
 
 What is drawn over the page
 ---------------------------
@@ -56,8 +58,8 @@ SITE = "https://d34emfdcezeszz.cloudfront.net"
 
 # The frame. Must equal the viewport: Playwright records the viewport and
 # pads anything larger with grey.
-WIDTH, HEIGHT = 1920, 1080
-SCALE = 1
+WIDTH, HEIGHT = 3840, 2160
+SCALE = 2
 
 # The page, enlarged for a video rather than for a desk.
 #
@@ -69,12 +71,12 @@ SCALE = 1
 # Not more than this: the two Fire TV beats are native 1920x1080 device
 # footage and are not scaled at all, so the web beats should not drift so
 # far in apparent size that the cuts between them jar.
-PAGE_ZOOM = 1.35
+PAGE_ZOOM = 1.35 * SCALE
 URL_BAR_HEIGHT = 56 * SCALE
 
 # Where a scrolled-to element should come to rest: below the address bar,
 # and high enough that the burned-in captions do not cover it.
-REST_Y = URL_BAR_HEIGHT + 150
+REST_Y = URL_BAR_HEIGHT + 150 * SCALE
 
 
 NATIVE_SCROLL_OFF_JS = """
@@ -176,6 +178,37 @@ URL_BAR_JS = (r"""
 """.replace("__SCALE__", str(SCALE)))
 
 
+# The clapperboard. Playwright's picture starts a constant fraction of a
+# second before the recorder's clock (1.8 to 3.2 s on this machine, no
+# drift, different every day), so the take shows a square in the corner
+# for a moment before the first beat, finds it again in the file, and
+# shifts every mark by the difference. White, because this site is dark.
+CLAP_MS = 400
+CLAP_JS = (
+    "var k=document.createElement('div');k.id='__clap';"
+    "k.style.cssText='position:fixed;left:0;top:0;width:" + str(160 * SCALE) + "px;height:" + str(160 * SCALE) + "px;"
+    "z-index:2147483647;background:#fff';document.documentElement.appendChild(k);"
+)
+
+
+def find_clap(path: Path) -> float:
+    """The second at which the corner first goes white in the file."""
+    rate = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0",
+         "-show_entries", "stream=r_frame_rate", "-of", "csv=p=0", str(path)],
+        check=True, capture_output=True, text=True).stdout.strip()
+    num, den = (int(x) for x in rate.split("/"))
+    fps = num / den
+    raw = subprocess.run(
+        ["ffmpeg", "-v", "error", "-t", "60", "-i", str(path),
+         "-vf", f"crop={150 * SCALE}:{150 * SCALE}:0:0,scale=1:1", "-f", "rawvideo", "-pix_fmt", "gray", "-"],
+        check=True, capture_output=True).stdout
+    for k, level in enumerate(raw):
+        if level > 200:
+            return k / fps
+    raise SystemExit("no clapperboard in the first minute of the take; the marks cannot be aligned")
+
+
 def run(args: list[str]) -> None:
     proc = subprocess.run(args, capture_output=True, text=True)
     if proc.returncode != 0:
@@ -257,7 +290,7 @@ class Recorder:
             if box is None:
                 raise SystemExit(f"{selector!r} is not on the page")
             delta = box["y"] - rest
-            if abs(delta) < 12:
+            if abs(delta) < 12 * SCALE:
                 return
             page.mouse.wheel(0, delta)
             page.wait_for_timeout(240)
@@ -299,6 +332,9 @@ MEASURED_BOX = "text=Measured, not promised"
 EARLY_ZERO = "text=766 matched words"
 PRIVACY = "#privacy"
 UPGRADE = "text=What the film shipped"
+TIMED = "text=What EveryWord made from"
+WHY = "text=Why it exists"
+WHY_TEXT = "div:has(> p:text-is('Why it exists')) > p.mt-2"
 CARDS = "text=CHOOSE A STORY"
 
 
@@ -308,10 +344,36 @@ def landing_hold(r: Recorder):
 
 
 def landing_evidence(r: Recorder):
-    r.scroll_to(EVIDENCE)
+    # The "Why it exists" card: two decades, 200 million viewers, the 32
+    # points, and the sentence about nobody signing up, all in one shot
+    # that stays put for both research beats, so the numbers are on
+    # screen while they are spoken. The cited list sits below it.
+    r.scroll_to(WHY, rest=URL_BAR_HEIGHT + 200 * SCALE)
     yield
-    r.on_phrase("Thirty-two")
-    r.point(EVIDENCE)
+    r.on_phrase("two hundred million")
+    r.point(WHY_TEXT, dy=-60 * SCALE)
+    r.on_phrase("thirty-two")
+    r.point(WHY_TEXT, dy=10 * SCALE)
+    r.hold_beat()
+
+
+def landing_evidence_hold(r: Recorder):
+    yield
+    r.point(WHY_TEXT, dy=110 * SCALE)
+    r.hold_beat()
+
+
+def landing_pipeline(r: Recorder):
+    # The library's three source labels and the paragraph under them:
+    # "Three ways in, one caption format".
+    r.scroll_to(CARDS, rest=URL_BAR_HEIGHT + 40 * SCALE)
+    yield
+    r.on_phrase("Transcribe adds")
+    r.point("text=Film's own subtitles, upgraded")
+    r.on_phrase("Polly narrates")
+    r.point("text=Polly speech marks")
+    r.on_phrase("same word-level")
+    r.point("text=Three ways in", dx=-200 * SCALE)
     r.hold_beat()
 
 
@@ -354,10 +416,12 @@ def landing_measure(r: Recorder):
     # and left the measurement box as a small grey rectangle in the top
     # third while story cards filled the shot, so the narration talked
     # about accuracy over a picture of a library.
-    r.scroll_to(MEASURED_BOX, rest=URL_BAR_HEIGHT + 90)
+    r.scroll_to(MEASURED_BOX, rest=URL_BAR_HEIGHT + 90 * SCALE)
     yield
     r.on_phrase("thirty milliseconds")
     r.point(MEASURE)
+    r.on_phrase("learning reader")
+    r.point(EARLY_ZERO)
     r.hold_beat()
 
 
@@ -372,13 +436,23 @@ def landing_upgrade(r: Recorder):
     # The before-and-after panel. Rest the two columns in frame together:
     # the whole point is that a viewer sees one line in both forms at
     # once, so a shot of either column alone says nothing.
-    r.scroll_to(UPGRADE, rest=URL_BAR_HEIGHT + 60)
+    r.scroll_to("#ew-upgrade-heading", rest=URL_BAR_HEIGHT + 60 * SCALE)
     yield
     r.hold_beat()
 
 
+def landing_upgrade_point(r: Recorder):
+    # Same shot; the cursor names each side as the line names it.
+    r.scroll_to(UPGRADE, rest=URL_BAR_HEIGHT + 60 * SCALE)
+    yield
+    r.point(UPGRADE)
+    r.on_phrase("Transcribe only")
+    r.point(TIMED)
+    r.hold_beat()
+
+
 def landing_privacy(r: Recorder):
-    r.scroll_to(PRIVACY, rest=URL_BAR_HEIGHT + 60)
+    r.scroll_to(PRIVACY, rest=URL_BAR_HEIGHT + 60 * SCALE)
     yield
     r.hold_beat()
 
@@ -412,6 +486,9 @@ ACTIONS = {
     "landing_measure": landing_measure,
     "landing_zero": landing_zero,
     "landing_upgrade": landing_upgrade,
+    "landing_upgrade_point": landing_upgrade_point,
+    "landing_pipeline": landing_pipeline,
+    "landing_evidence_hold": landing_evidence_hold,
     "landing_privacy": landing_privacy,
     "reader_close": reader_close,
     "hold": hold,
@@ -469,14 +546,23 @@ def main() -> int:
         page.wait_for_selector(HERO, timeout=60_000)
         page.wait_for_timeout(1200)
         page.mouse.move(WIDTH * 0.5, HEIGHT * 0.55)
+        page.evaluate(CLAP_JS)
+        clap_at = time.monotonic()
+        page.wait_for_timeout(CLAP_MS)
+        page.evaluate("document.getElementById('__clap').remove()")
+        page.wait_for_timeout(400)
 
         r = Recorder(page, time.monotonic(), narration)
+        clap_clock = clap_at - r.start  # before the clock began, so negative
         for beat in web:
             steps = ACTIONS[beat.action](r)
             next(steps, None)
             r.mark(beat)
             for _ in steps:
                 pass
+        # Playwright drops the last second or two of a recording when the
+        # context closes; this tail is what it drops, not the last beat.
+        page.wait_for_timeout(3000)
 
         total = time.monotonic() - r.start
         video = page.video
@@ -494,12 +580,23 @@ def main() -> int:
          "-an", str(dest)])
     assert_full_frame(dest)
 
+    # Marks were taken on the clock; the file runs on its own time. The
+    # clap is the one event seen by both.
+    offset = find_clap(dest) - clap_clock
+    if not 0.0 <= offset <= 60.0:
+        raise SystemExit(f"the picture is offset {offset:.2f}s from the clock, which is not credible")
+    for m in r.marks:
+        m["at"] = round(m["at"] + offset, 3)
+    length = float(subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(dest)],
+        check=True, capture_output=True, text=True).stdout.strip())
+
     (OUT / "web-timings.json").write_text(
-        json.dumps({"video": round(total, 3), "width": WIDTH, "height": HEIGHT,
-                    "beats": r.marks}, indent=1),
+        json.dumps({"video": round(length, 3), "width": WIDTH, "height": HEIGHT,
+                    "clockOffset": round(offset, 3), "beats": r.marks}, indent=1),
         encoding="utf8")
     print(f"\nwrote {dest.name} and web-timings.json")
-    print(f"{len(r.marks)} web beats over {total:.1f}s")
+    print(f"{len(r.marks)} web beats over {total:.1f}s; picture runs {offset:.2f}s ahead of the clock")
     return 0
 
 

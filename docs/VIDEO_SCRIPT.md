@@ -5,227 +5,88 @@ pipeline reads: the exact line spoken, which camera shoots it, and how
 long it holds. This document is the argument for why those beats are in
 that order. If the two disagree, the code is right and this is stale.
 
-**Target 2:46. Hard ceiling 3:00.** `python video/beats.py` prints the
-estimate and exits non-zero if the plan is already over. The estimate has
-run about five seconds under the finished cut, so leave headroom.
+**Target 2:37. Hard ceiling 3:00.** `python video/beats.py` prints the
+estimate and exits non-zero if the plan is already over. Judges are not
+required to watch past three minutes, so the strongest material leads
+and the headroom is left alone.
 
-## What this video has to do
+## The five ideas a judge should leave with
 
-Answer the obvious objection, which a good judge will have within twenty
-seconds: *this idea already exists*.
+1. Subtitles know the line, not the word being spoken.
+2. EveryWord adds word timing without changing a word the subtitle author wrote.
+3. Here it is, working on a Fire TV.
+4. Same-language highlighting on ordinary television has strong evidence of improving literacy.
+5. EveryWord makes that mechanism reusable on video that already exists.
 
-It does. Same Language Subtitling has been running on Indian television
-since 1996 and Amazon ships the same mechanic for books as Immersion
-Reading. The video does not pretend otherwise; it names both. What it
-argues instead is narrower and true:
-
-1. The technique is proven, and it worked **because nobody chose it**.
-   The practice rode programmes people were already watching.
-2. Nobody has shipped it for video, for a concrete reason: every
-   subtitle file in the world is line level, so there is nothing to
-   light.
-3. EveryWord closes exactly that gap, on content that already exists,
-   and proves it on a film nobody here made.
-
-A reading app does not inherit the Indian result. Upgrading the captions
-on what a family was watching anyway does. That is the whole pitch, and
-the **transfers** beat is where it lands, so nothing may be cut before
-it.
+Everything else in the project (MCP, Bedrock, npm, LibriSpeech, privacy)
+is proof for those five, and gets a sentence, not a section. The README
+proves everything; the video's job is to make a judge want to open it.
 
 | Criterion | Where it lands | The beat |
 |---|---|---|
-| Quality of the idea | 0:00 to 0:20 | Every video has subtitles. None have words. |
-| Design | 0:20 to 0:45 | A real film, its own subtitles, lighting up. |
-| Tech implementation | 0:45 to 1:05 | The same line before and after, from files you can open. |
-| Fire TV track | 1:05 to 1:40 | Running on the device, driven by the remote. |
-| Potential impact | 1:40 to 2:10 | 200 million viewers, 32 points, and why it transfers. |
-
-## Never cut
-
-The Fire TV footage (a track requirement), the film playing with words
-lighting up (the product), the before-and-after panel (the evidence),
-and the **transfers** beat (the argument). Everything else is negotiable.
-
-## Before you record
-
-```
-npm test                              # 153 tests
-npm run web:dev                       # or use the live site
-node scripts/mcp-conform.mjs          # 19 of 19, live
-```
-
-**The Fire TV footage is the one thing you cannot fake.** Get it first, on
-its own, before you record anything else:
-
-1. Developer Console, Tools and Services, Appstore Quality Central
-2. Virtual Devices, Get Started, accept the terms
-3. Upload `everyword-tv-v0.3.1.apk`. This is the build that carries the
-   film: it is 67.6 MB because Sintel is inside it, where v0.2.0 was
-   41.7 MB and contained no video at all. If the file you are uploading
-   is under 50 MB it is the wrong one, and the footage will show the old
-   audio-only reader.
-4. Launch it, open Sintel from the shelf, and screen record 20 seconds of
-   the film playing with its own subtitles lighting up word by word.
-   That shot is the submission. A fable reading aloud does not replace
-   it, because the claim is about video nobody made for us.
-
-If that farm is not reachable on your account, fall back to the Android
-Virtual Device footage and say what it is, in one clause, out loud. Do not
-let a judge discover it from the documentation.
-
-Tabs, in order:
-
-1. https://d34emfdcezeszz.cloudfront.net
-2. Your Fire TV recording, ready to cut to
-3. A terminal in the repo root
-
----
-
-## 0:00 to 0:25 The idea
-
-**Point at:** the landing page hero, already looping, words lighting up.
-
-> **"Same Language Subtitling: captions in the language you are already hearing, highlighted word by word, on ordinary entertainment."**
-
-> **"Twenty years on Indian national television. Two hundred million viewers. In a five-year study, thirty-two percentage points more children became good readers."**
-
-**Point at:** the highlight sweeping across the line.
-
-> **"Amazon already ships this for books, as Immersion Reading. No television platform has ever shipped it for video."**
-
-Pause. Then:
-
-> **"EveryWord is that product."**
-
----
-
-## 0:25 to 0:55 Watch it work
-
-**Navigate to:** scroll to the player. **Press play on camera.**
-
-**Point at:** the words as they light.
-
-> **"Real story, real captions from our pipeline. Every word lights as it is spoken, so watching becomes reading practice."**
-
-**Point at:** the words-read meter.
-
-> **"And this counts words the reader followed. Not minutes played. The only number here that measures reading."**
-
-**Click:** read that line again.
-
-> **"One button to hear a line again."**
-
----
-
-## 0:55 to 1:20 On the television
-
-**Cut to:** the Fire TV recording. Full screen.
-
-> **"On Fire TV, sideloaded as an APK, driven by the remote. Same renderer, ten-foot layout."**
-
-**Point at:** the D-pad navigation, then the highlight on the TV.
-
-> **"This belongs in the living room. A child watching a cartoon gets reading practice and nobody signed them up for anything."**
-
----
-
-## 1:20 to 1:45 How any book becomes a read-along
-
-**Navigate to:** the terminal, or the story list showing both source types.
-
-**Point at:** a story marked Transcribe, then one marked Polly.
-
-> **"Two ways in: a human recording timed by Amazon Transcribe, or any public domain text read aloud by Amazon Polly, which reports when it said each word."**
-
-> **"Those captions cannot contain a wrong word, because the words were known before they were spoken. Which means any book ever written can become a read-along."**
-
----
-
-## 1:45 to 2:10 The measurement
-
-**Navigate to:** the measured claim on the landing page, or docs/EVAL.md.
-
-> **"We measured our part against gold word alignments, on speech we did not record."**
-
-**Point at:** the 30 ms figure.
-
-> **"The highlight lands within thirty milliseconds of the spoken word. About one frame of video."**
-
-**Point at:** the zero.
-
-> **"And it never lights a word early. Zero out of seven hundred and sixty-six. A highlight that runs ahead teaches a child the wrong word."**
-
-> **"Again on the split LibriSpeech calls hard. Same thirty milliseconds. Same zero."**
-
----
-
-## Cut from this video on purpose
-
-The MCP server and the `explain_word` refusal used to sit here. They are
-Alexa+ material, and this is the Fire TV video. Spending twenty-five
-seconds on a second track pushed the whole thing past three minutes and
-made the video about two things instead of one.
-
-Both are in the README and the submission, where a judge who cares will
-find them, and the conformance probe proves the claim without a camera:
-
-```
-node scripts/mcp-conform.mjs
-```
-
-## 2:10 to 2:30 Close
-
-**Cut back to:** the words lighting up. Let it play under the last lines.
-
-> **"A hundred and thirty million American adults read below a sixth grade level. This technique costs four tenths of a cent per learner."**
-
-> **"The renderer nobody had shipped is on npm tonight, MIT licensed."**
-
-**Last frame:** a word lighting up.
-
-> **"EveryWord. Watching becomes reading."**
-
----
-
-## If you are over three minutes
-
-Cut in this order:
-
-2. The read-that-line-again click at 0:25
-3. The test-other sentence at 1:45
-
-Never cut: the Fire TV footage, the words lighting up, or the zero. The
-first is a track requirement, the second is the product, and the third is
-the only claim that would make a teacher trust it.
-
-## Upload checklist
-
-- Under three minutes. Check the real duration, not your estimate.
-- YouTube or Vimeo, **public**, not unlisted.
-- English.
-- No third-party music or footage you do not have rights to.
-- Title and description name the Fire TV track.
-- Paste the link into the Devpost submission and into `docs/SUBMISSION.md`,
-  which currently says "add when published".
-
-## Every number spoken here, and where it comes from
-
-Live or committed as of recording. If anything changes before you shoot,
-re-check it rather than trusting this table.
-
-| Spoken | Source |
-|---|---|
-| 30 ms median, zero of 766 early | `apps/eval/results/librispeech.json` |
-| Same on test-other, zero of 761 | `apps/eval/results/librispeech-test-other.json` |
-| 19 of 19 spec checks | `node scripts/mcp-conform.mjs` |
-| Six MCP tools | `apps/mcp/src/mcp.ts` |
-| 200 million viewers, 32 points, $0.004 | UNESCO, cited in `docs/EVIDENCE.md` |
-| 130 million adults below sixth grade | Gallup for the Barbara Bush Foundation, in `docs/EVIDENCE.md` |
-| National broadcast policy since 2019 | `docs/EVIDENCE.md`, with citation |
-
-## Things not to say
-
-Do not say EveryWord has taught anyone to read. The thirty-two point
-figure belongs to Indian television, not to this software, and the
-submission is explicit about that line. Say the technique is proven and
-the renderer is ours, and let the judge draw the rest.
+| Quality of the idea | 0:00 to 0:07 | Subtitles show what was said, not which word is being said. |
+| Fire TV track and Design | 0:07 to 0:43 | Sintel lighting up on an Amazon-hosted Fire TV, a fable picked with the remote, the count on the card. |
+| Tech implementation | 0:43 to 1:17 | Who decides the words and who decides the timing; two pipelines, one caption format. |
+| Potential impact | 1:17 to 1:46 | Two decades on Indian television, 32 points, and why that transfers to existing video. |
+| Tech implementation | 1:46 to 2:07 | Measured against gold alignments: 30 ms median, none early beyond 150 ms. |
+| Design, for a parent | 2:07 to 2:16 | Five fields, no microphone. |
+| Potential impact | 2:16 to 2:37 | The video they already chose becomes reading practice. Then black. |
+
+## The beats
+
+| # | Camera | Shows | Narration |
+|---|---|---|---|
+| 1 | Web | The site's before-and-after of one Sintel line | Subtitles show you what someone said. They don't show you which word they're saying right now. |
+| 2 | Fire TV | Sintel playing, the words lighting one at a time, the whole console in frame | EveryWord does. This is a Fire TV, Amazon's hosted device, playing Sintel with the subtitles its makers shipped. EveryWord added the time of each word, and the film became reading practice. |
+| 3 | Fire TV | The library on the remote; a fable opens and lights as it is read | Pick a story with the remote, and each word lights as it's spoken. |
+| 4 | Fire TV | Back on the library, the words-read count on the card | The television also reports the words played to our MCP server, so an assistant can answer "how far did my child get today?" from playback activity the TV itself recorded. |
+| 5 | Web | The two files the site serves, one line before and after | Amazon Transcribe never decides which words appear. The subtitle author did. Transcribe only says when to light them, so even if it mishears a word, it can't change what a child reads. |
+| 6 | Web | The library's three source labels and "Three ways in, one caption format" | The demo is a film and five fables, but the system isn't tied to them. Give it a video with subtitles, and Amazon Transcribe adds the timing. Give it public-domain text, and Amazon Polly narrates and times it. Both produce the same word-level caption format. |
+| 7 | Web | The "Why it exists" card, its numbers on screen while they are spoken | Karaoke-style subtitles ran on Indian national television for two decades, reaching an estimated two hundred million viewers. In a five-year study, thirty-two percentage points more children became good readers. |
+| 8 | Web | The same card | It worked because nobody had to choose it: the practice rode programmes people already watched. EveryWord makes the idea programmable: upgrade the subtitles video already has, instead of producing special reading content. |
+| 9 | Web | "Measured, not promised", the 30 ms and the zero | Against gold word alignments on speech we didn't record, the median timing error is thirty milliseconds, and in seven hundred and sixty-six words, not one lit more than a hundred and fifty milliseconds early. For a learning reader, lighting the next word too early creates the wrong word-to-sound match. |
+| 10 | Web | What EveryWord knows about your child | And because it's designed for children, it keeps only five fields of reading-session data. There is no microphone. |
+| 11 | Fire TV | Sintel lighting up again, then black | EveryWord doesn't ask anyone to open a reading app or change what they watch. It turns the video they already chose into reading practice. And because the caption engine and renderer are open source, other developers can bring the same experience to their own content. EveryWord. Watching becomes reading. |
+
+## Wording that was changed on purpose
+
+The script went through three outside review rounds. The changes that
+matter for honesty:
+
+- Beat 4 says **the words played**, not "what was read". The television
+  records the words the playback cursor passed; it cannot know what a
+  child took in, and the privacy section says the same.
+- Beat 9 says **not one lit more than a hundred and fifty milliseconds
+  early**, which is the measurement. An earlier draft said "never lights
+  a word early", which the data does not support as stated.
+- The $0.004 per learner figure is out of the narration. It is the cost
+  of the Indian television programme, not of EveryWord, and it stays in
+  docs/EVIDENCE.md where the attribution is beside it.
+- The 130 million American adults are out of the close. The video is
+  about children up to that point, and the close should not change who
+  it is for in its last twenty seconds.
+- The fables are not described as "read by LibriVox volunteers". One
+  is; four are narrated by Amazon Polly from Project Gutenberg text.
+- Beat 6 claims only what the pipeline does. No catalogue is implied.
+
+## The footage
+
+The Fire TV beats are the release APK (v0.3.2) running on an
+Amazon-hosted Fire TV, a FOS 14 3P TV in Appstore Quality Central's Live
+Device Interaction, driven with the console's remote. Nothing is
+cropped: every television frame is the whole console page under an
+address bar showing its real `developer.amazon.com` address, with the
+device's name, the on-screen remote and the stream inside it, so a
+viewer can see where the footage came from. Recorded 2026-10-03 at
+twice device scale (3200x1800) and scaled 1.13x to fill the 4K frame.
+The take claps a green square before the first beat and after the last,
+and every mark is placed through the line between them, because
+Chrome's recording of that page runs well behind the clock.
+
+The web beats are the deployed site in a real browser at 3840x2160, with
+an address bar drawn over the page so the live URL is on screen from
+the first frame.
+
+`video/README.md` has the pipeline. The device bug the take found,
+Back quitting the app instead of returning to the library, is fixed in
+v0.3.2 and recorded in `FRICTION_LOG.md`.

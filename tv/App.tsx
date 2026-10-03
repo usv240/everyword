@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  BackHandler,
   Image,
   Pressable,
   ScrollView,
@@ -276,9 +277,6 @@ export default function App() {
         case 'fastForward':
           seekBy(SKIP_SECONDS);
           break;
-        case 'menu':
-          closeStory(false);
-          break;
         default:
           break;
       }
@@ -286,6 +284,29 @@ export default function App() {
     [seekBy, closeStory],
   );
   useTVEventHandler(onTvEvent);
+
+  /**
+   * The remote's Back button closes the story, not the app.
+   *
+   * On Fire OS, Back is KEYCODE_BACK, which React Native delivers as
+   * hardwareBackPress rather than as a TV event, and an app that does
+   * not answer it is finished by the system. v0.3.1 handled the 'menu'
+   * TV event, which Apple TV sends and Fire TV never does, so pressing
+   * Back during a story quit to the home screen with the words read
+   * unreported. Found on an Amazon-hosted Fire TV in Appstore Quality
+   * Central. On the library, Back still leaves the app, which is what
+   * every Fire TV app does there.
+   */
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (!state.current.story) {
+        return false;
+      }
+      closeStory(false);
+      return true;
+    });
+    return () => sub.remove();
+  }, [closeStory]);
 
   const onWordsRead = useCallback((n: number) => {
     setWordsRead(prev => prev + n);

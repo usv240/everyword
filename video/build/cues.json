@@ -1,124 +1,82 @@
 {
- "duration": 166.717,
+ "duration": 165.542,
  "beats": [
   {
-   "key": "hello",
-   "at": 0.0,
-   "seconds": 2.904,
-   "source": "web",
-   "say": "Hi everyone, I am Ujwal."
-  },
-  {
-   "key": "idea",
-   "at": 3.366,
-   "seconds": 9.24,
-   "source": "web",
-   "say": "Same language subtitling. Captions in the language you are already hearing, highlighted word by word, on ordinary entertainment."
-  },
-  {
-   "key": "evidence",
-   "at": 13.466,
-   "seconds": 9.528,
-   "source": "web",
-   "say": "Twenty years on Indian national television, two hundred million viewers. Thirty-two percentage points more children became good readers."
-  },
-  {
    "key": "gap",
-   "at": 23.799,
-   "seconds": 10.536,
+   "at": 0.3,
+   "seconds": 6.096,
    "source": "web",
-   "say": "Amazon already ships this for books, as Immersion Reading. No television platform has ever shipped it for video. EveryWord is that product."
+   "say": "Subtitles show you what someone said. They don't show you which word they're saying right now."
   },
   {
-   "key": "play",
-   "at": 35.566,
-   "seconds": 9.144,
-   "source": "web",
-   "say": "Real story, real captions from our pipeline. Every word lights as it is spoken, so watching becomes reading practice."
-  },
-  {
-   "key": "meter",
-   "at": 48.499,
-   "seconds": 7.584,
-   "source": "web",
-   "say": "And this counts the words the reader followed. Not minutes played. It is the only number here that measures reading."
-  },
-  {
-   "key": "again",
-   "at": 56.532,
-   "seconds": 2.568,
-   "source": "web",
-   "say": "One button to hear a line again."
-  },
-  {
-   "key": "tv-library",
-   "at": 59.766,
-   "seconds": 9.624,
+   "key": "tv-watch",
+   "at": 7.167,
+   "seconds": 14.904,
    "source": "tv",
-   "say": "And here it is running on a Fire TV, sideloaded as an app and driven entirely by the remote. Five stories, chosen with the D-pad."
+   "say": "EveryWord does. This is a Fire TV, Amazon's hosted device, playing Sintel with the subtitles its makers shipped. EveryWord added the time of each word, and the film became reading practice."
   },
   {
    "key": "tv-read",
-   "at": 70.266,
-   "seconds": 9.288,
+   "at": 23.133,
+   "seconds": 4.68,
    "source": "tv",
-   "say": "Same renderer as the browser, rebuilt for ten feet away. A child watching television gets reading practice, and nobody signed them up."
+   "say": "Pick a story with the remote, and each word lights as it's spoken."
   },
   {
    "key": "tv-progress",
-   "at": 81.299,
-   "seconds": 9.672,
+   "at": 33.133,
+   "seconds": 12.768,
    "source": "tv",
-   "say": "The television reports what was read to our own server, so an assistant can answer how far a child got. That number came off the TV."
+   "say": "The television also reports the words played to our MCP server, so an assistant can answer \"how far did my child get today?\" from playback activity the TV itself recorded."
+  },
+  {
+   "key": "safety",
+   "at": 47.033,
+   "seconds": 13.488,
+   "source": "web",
+   "say": "Amazon Transcribe never decides which words appear. The subtitle author did. Transcribe only says when to light them, so even if it mishears a word, it can't change what a child reads."
   },
   {
    "key": "pipeline",
-   "at": 92.232,
-   "seconds": 10.776,
+   "at": 61.267,
+   "seconds": 18.744,
    "source": "web",
-   "say": "Two ways in. A human recording timed by Amazon Transcribe, or any text read aloud by Amazon Polly, which reports when it said each word."
+   "say": "The demo is a film and five fables, but the system isn't tied to them. Give it a video with subtitles, and Amazon Transcribe adds the timing. Give it public-domain text, and Amazon Polly narrates and times it. Both produce the same word-level caption format."
   },
   {
-   "key": "polly",
-   "at": 103.399,
-   "seconds": 8.232,
+   "key": "evidence",
+   "at": 80.9,
+   "seconds": 14.76,
    "source": "web",
-   "say": "Those captions cannot contain a wrong word, because the words were known before they were spoken. Any book can become a read-along."
+   "say": "Karaoke-style subtitles ran on Indian national television for two decades, reaching an estimated two hundred million viewers. In a five-year study, thirty-two percentage points more children became good readers."
+  },
+  {
+   "key": "transfers",
+   "at": 96.3,
+   "seconds": 15.96,
+   "source": "web",
+   "say": "It worked because nobody had to choose it: the practice rode programmes people already watched. EveryWord makes the idea programmable: upgrade the subtitles video already has, instead of producing special reading content."
   },
   {
    "key": "measured",
-   "at": 112.466,
-   "seconds": 11.424,
+   "at": 113.167,
+   "seconds": 20.16,
    "source": "web",
-   "say": "We measured our part against gold word alignments, on speech we did not record. The highlight lands within thirty milliseconds of the spoken word. About one frame."
-  },
-  {
-   "key": "zero",
-   "at": 124.232,
-   "seconds": 9.576,
-   "source": "web",
-   "say": "And it never lights a word early. Zero out of seven hundred and sixty-six. A highlight that runs ahead teaches a child the wrong word."
+   "say": "Against gold word alignments on speech we didn't record, the median timing error is thirty milliseconds, and in seven hundred and sixty-six words, not one lit more than a hundred and fifty milliseconds early. For a learning reader, lighting the next word too early creates the wrong word-to-sound match."
   },
   {
    "key": "privacy",
-   "at": 134.632,
-   "seconds": 11.376,
+   "at": 134.067,
+   "seconds": 7.32,
    "source": "web",
-   "say": "It is for children, so here is everything it keeps. Five fields, and no microphone anywhere in it. A product that cannot listen cannot leak what it heard."
+   "say": "And because it's designed for children, it keeps only five fields of reading-session data. There is no microphone."
   },
   {
-   "key": "close",
-   "at": 147.266,
-   "seconds": 17.304,
-   "source": "web",
-   "say": "A hundred and thirty million American adults read below a sixth grade level. This technique costs four tenths of a cent per learner. The renderer nobody had shipped is on npm, MIT licensed. EveryWord. Watching becomes reading."
-  },
-  {
-   "key": "thanks",
-   "at": 165.032,
-   "seconds": 1.176,
-   "source": "web",
-   "say": "Thank you."
+   "key": "tv-close",
+   "at": 142.633,
+   "seconds": 20.808,
+   "source": "tv",
+   "say": "EveryWord doesn't ask anyone to open a reading app or change what they watch. It turns the video they already chose into reading practice. And because the caption engine and renderer are open source, other developers can bring the same experience to their own content. EveryWord. Watching becomes reading."
   }
  ]
 }

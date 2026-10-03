@@ -81,203 +81,142 @@ class Beat:
 
 BEATS: list[Beat] = [
     Beat(
-        key="hello",
-        action="landing_hold",
-        pause_before=0.0,
-        say="Hi everyone, I am Ujwal.",
-        note="A person before an interface, with the live address already on screen.",
-    ),
-    Beat(
         key="gap",
-        action="landing_hold",
-        pause_before=0.4,
-        say=(
-            "Every video already has subtitles, and every one of them is "
-            "line level. They can tell you what was said. None can tell you "
-            "which word is being spoken right now."
-        ),
-        note=(
-            "The gap, stated before the product. This is the sentence the "
-            "whole submission rests on, and it is checkable by anyone who "
-            "has ever opened a subtitle file."
-        ),
-    ),
-    Beat(
-        key="why-that-matters",
-        action="landing_hero",
-        pause_before=0.4,
-        say=(
-            "Which means no subtitle track on earth can teach anybody to "
-            "read. There is nothing to light."
-        ),
-        note="The consequence. Short, because it should land hard.",
-    ),
-    Beat(
-        key="watch",
-        action="reader_play",
-        pause_before=0.5,
-        min_hold=12.0,
-        say=(
-            "This is Sintel, from the Blender Foundation. It has shipped "
-            "with English subtitles inside the file since twenty ten. Those "
-            "cues are the filmmakers'. EveryWord added the word timings."
-        ),
-        note=(
-            "The product, on a real film nobody here made. Held long enough "
-            "to watch the highlight travel a full line, because this shot is "
-            "the entire argument."
-        ),
-    ),
-    Beat(
-        key="proof",
-        action="landing_upgrade",
-        pause_before=0.5,
-        say=(
-            "Here is one line before and after, from the two files this "
-            "site serves. Same words, same line breaks. Only the timing is "
-            "new."
-        ),
-        note=(
-            "The claim made checkable. A judge can open both files. This is "
-            "the beat that turns an assertion into evidence."
-        ),
-    ),
-    Beat(
-        key="safety",
         action="landing_upgrade",
         pause_before=0.3,
         say=(
-            "The words come from the subtitle author. Amazon Transcribe "
-            "supplies only the timings, and is never asked what the words "
-            "are. So a recogniser that mishears cannot put a wrong spelling "
-            "in front of a child."
+            "Subtitles show you what someone said. "
+            "They don't show you which word they're saying right now."
         ),
         note=(
-            "Why the split is a safety property and not an implementation "
-            "detail. The thing that makes it shippable to children."
+            "The problem in one contrast, over the site's before-and-after: "
+            "the subtitle file the film shipped, a line at a time, beside the "
+            "same words with a time on each."
         ),
     ),
     Beat(
-        key="tv-library",
-        action="tv_library",
-        pause_before=0.6,
-        min_hold=9.0,
+        key="tv-watch",
+        action="tv_watch",
+        pause_before=0.4,
+        min_hold=15.0,
         say=(
-            "And here it is running on a Fire TV, sideloaded as an app and "
-            "driven entirely by the remote."
+            "EveryWord does. This is a Fire TV, Amazon's hosted device, "
+            "playing Sintel with the subtitles its makers shipped. "
+            "EveryWord added the time of each word, and the film became reading practice."
         ),
         note=(
-            "The track requirement. Device footage, shown early because the "
-            "rule says show it running."
+            "The product on the track's device inside ten seconds: the release "
+            "APK on Appstore Quality Central's hosted Fire TV, with the console, "
+            "its address and the on-screen remote in frame."
         ),
     ),
     Beat(
         key="tv-read",
         action="tv_read",
-        pause_before=0.4,
-        min_hold=11.0,
-        say=(
-            "The same film, the same subtitles, on the screen a family "
-            "already watches. Nobody signed up for a reading lesson."
-        ),
-        note=(
-            "The thesis in one shot, and the line that connects the demo to "
-            "the research that follows."
-        ),
+        pause_before=0.3,
+        min_hold=10.0,
+        say="Pick a story with the remote, and each word lights as it's spoken.",
+        note="The interaction: the focus travels the library on the remote and a fable reads.",
     ),
     Beat(
         key="tv-progress",
         action="tv_progress",
+        pause_before=0.3,
+        say=(
+            "The television also reports the words played to our MCP server, "
+            "so an assistant can answer \"how far did my child get today?\" "
+            "from playback activity the TV itself recorded."
+        ),
+        note=(
+            "One sentence for the Alexa+ surface. 'Words played' is what the TV "
+            "measures: the words the playback cursor passed, not comprehension."
+        ),
+    ),
+    Beat(
+        key="safety",
+        action="landing_upgrade_point",
         pause_before=0.4,
         say=(
-            "The television reports what was actually read to our own MCP "
-            "server, so an assistant can answer how far a child got. That "
-            "number came off the TV."
+            "Amazon Transcribe never decides which words appear. The subtitle author did. "
+            "Transcribe only says when to light them, so even if it mishears a word, "
+            "it can't change what a child reads."
         ),
-        note="Where the Fire TV track and the Alexa plus track become one product.",
+        note="The trust statement, over the two files the site serves.",
+    ),
+    Beat(
+        key="pipeline",
+        action="landing_pipeline",
+        pause_before=0.4,
+        say=(
+            "The demo is a film and five fables, but the system isn't tied to them. "
+            "Give it a video with subtitles, and Amazon Transcribe adds the timing. "
+            "Give it public-domain text, and Amazon Polly narrates and times it. "
+            "Both produce the same word-level caption format."
+        ),
+        note=(
+            "The infrastructure moment, claiming only what the pipeline does: "
+            "two ways in, one format, one renderer."
+        ),
     ),
     Beat(
         key="evidence",
         action="landing_evidence",
         pause_before=0.5,
+        min_hold=15.0,
         say=(
-            "This ran on Indian national television for twenty years, "
-            "reaching two hundred million viewers. Thirty-two percentage "
-            "points more children became good readers."
+            "Karaoke-style subtitles ran on Indian national television for two decades, "
+            "reaching an estimated two hundred million viewers. "
+            "In a five-year study, thirty-two percentage points more children became good readers."
         ),
-        note="The strongest fact in the project, and it is nobody's here.",
+        note="The strongest fact in the project, held so the 32 points registers.",
     ),
     Beat(
         key="transfers",
-        action="landing_evidence",
-        pause_before=0.3,
+        action="landing_evidence_hold",
+        pause_before=0.6,
         say=(
-            "It worked because nobody chose it. The practice rode programmes "
-            "people already watched. A reading app cannot do that. Upgrading "
-            "captions that already exist can."
+            "It worked because nobody had to choose it: "
+            "the practice rode programmes people already watched. "
+            "EveryWord makes the idea programmable: upgrade the subtitles video already has, "
+            "instead of producing special reading content."
         ),
-        note=(
-            "The most important beat in the video. It is the answer to the "
-            "obvious objection, which is that this idea already exists: the "
-            "idea exists, the mechanism has never been available for video, "
-            "and a reading app does not inherit the result."
-        ),
+        note="Why the research makes EveryWord valuable, not just interesting.",
     ),
     Beat(
         key="measured",
         action="landing_measure",
         pause_before=0.5,
         say=(
-            "The renderer is measured against gold alignments on speech we "
-            "did not record. Thirty milliseconds from voice to highlight."
+            "Against gold word alignments on speech we didn't record, "
+            "the median timing error is thirty milliseconds, and in seven hundred and sixty-six words, "
+            "not one lit more than a hundred and fifty milliseconds early. "
+            "For a learning reader, lighting the next word too early creates the wrong word-to-sound match."
         ),
-        note="Tech implementation, measured against something we did not author.",
-    ),
-    Beat(
-        key="zero",
-        action="landing_zero",
-        pause_before=0.3,
-        say=(
-            "And it never lights a word early. Zero out of seven hundred and "
-            "sixty-six. A highlight that runs ahead teaches a child the wrong "
-            "word."
-        ),
-        note="The number a teacher would care about.",
+        note="Tech implementation, measured against something we did not author, with its human consequence.",
     ),
     Beat(
         key="privacy",
         action="landing_privacy",
-        pause_before=0.5,
+        pause_before=0.4,
         say=(
-            "It is for children, so here is everything it keeps. Five "
-            "fields, and no microphone anywhere in it."
+            "And because it's designed for children, it keeps only five fields "
+            "of reading-session data. There is no microphone."
         ),
         note="The question a parent asks first, answered structurally.",
     ),
     Beat(
-        key="close",
-        action="reader_close",
+        key="tv-close",
+        action="tv_close",
         pause_before=0.5,
-        min_hold=10.0,
+        min_hold=14.0,
         say=(
-            "A hundred and thirty million American adults read below a sixth "
-            "grade level. This costs four tenths of a cent per learner, and "
-            "it now works on video that already exists. The renderer and the "
-            "aligner are on npm, MIT licensed. EveryWord. Watching becomes "
-            "reading."
+            "EveryWord doesn't ask anyone to open a reading app or change what they watch. "
+            "It turns the video they already chose into reading practice. "
+            "And because the caption engine and renderer are open source, "
+            "other developers can bring the same experience to their own content. "
+            "EveryWord. Watching becomes reading."
         ),
-        note=(
-            "Scale, cost, the thing that changed, and what anyone can pick up "
-            "tomorrow. Held on words lighting up, never on a logo."
-        ),
-    ),
-    Beat(
-        key="thanks",
-        action="hold",
-        pause_before=0.4,
-        min_hold=2.2,
-        say="Thank you.",
-        note="Its own beat. Crowded onto the closing line it gets swallowed.",
+        note="Back on the television, words lighting, then black. Nothing after the line.",
     ),
 ]
 

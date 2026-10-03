@@ -17,7 +17,7 @@
  */
 
 export const APK_URL =
-  "https://github.com/usv240/everyword/releases/download/v0.2.0/everyword-tv-v0.2.0.apk";
+  "https://github.com/usv240/everyword/releases/download/v0.3.2/everyword-tv-v0.3.2.apk";
 
 const soft = (token: string) => `color-mix(in srgb, var(${token}) 14%, transparent)`;
 const PENDING = "#9a6700";
@@ -34,7 +34,7 @@ const STEPS: { title: string; body: string; code?: string }[] = [
   {
     title: "Install EveryWord from a computer on the same network",
     body: "Download the APK below, then:",
-    code: "adb connect 192.168.1.20\nadb install everyword-tv-v0.2.0.apk",
+    code: "adb connect 192.168.1.20\nadb install everyword-tv-v0.3.2.apk",
   },
   {
     title: "Open it from the Fire TV home screen",
@@ -46,6 +46,7 @@ const STATUS: { what: string; done: boolean }[] = [
   { what: "Built for Fire OS as a multi-architecture APK, published", done: true },
   { what: "Whole library on the TV, D-pad and remote media keys, progress reported to the MCP server", done: true },
   { what: "Run on an Android TV virtual device, Amazon's documented emulator path", done: true },
+  { what: "Installed, run and filmed on an Amazon-hosted Fire TV (Appstore Quality Central, FOS 14 3P TV)", done: true },
   { what: "Run on physical Fire TV hardware", done: false },
 ];
 

@@ -1,19 +1,37 @@
 {
- "video": 39.2,
- "width": 1920,
- "height": 1080,
+ "video": 164.16,
+ "width": 3840,
+ "height": 2160,
+ "device": "Appstore Quality Central hosted Fire TV (FOS 14 3P TV), release APK v0.3.2",
+ "framing": "the whole console page under an address bar showing its URL",
+ "alignment": "two claps, before the first beat and after the last",
+ "claps": {
+  "clock": [
+   0.0,
+   112.719
+  ],
+  "file": [
+   36.6,
+   149.48
+  ],
+  "rate": 1.0014
+ },
  "beats": [
   {
-   "key": "tv-library",
-   "at": 2.0
+   "key": "tv-watch",
+   "at": 58.773
   },
   {
    "key": "tv-read",
-   "at": 12.641
+   "at": 77.236
   },
   {
    "key": "tv-progress",
-   "at": 27.281
+   "at": 92.148
+  },
+  {
+   "key": "tv-close",
+   "at": 125.586
   }
  ]
 }

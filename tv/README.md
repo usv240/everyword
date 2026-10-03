@@ -37,11 +37,11 @@ The published APK is multi-architecture and self-contained:
 
 ```
 adb connect <your-fire-tv-ip>:5555
-adb install everyword-tv-v0.3.1.apk
+adb install everyword-tv-v0.3.2.apk
 ```
 
-Download it from the [v0.3.1
-release](https://github.com/usv240/everyword/releases/tag/v0.3.1).
+Download it from the [v0.3.2
+release](https://github.com/usv240/everyword/releases/tag/v0.3.2).
 
 ## Build it yourself
 

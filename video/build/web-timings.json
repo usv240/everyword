@@ -1,63 +1,36 @@
 {
- "video": 135.485,
- "width": 1920,
- "height": 1080,
+ "video": 128.12,
+ "width": 3840,
+ "height": 2160,
+ "clockOffset": 18.843,
  "beats": [
   {
-   "key": "hello",
-   "at": 0.0
-  },
-  {
-   "key": "idea",
-   "at": 2.922
-  },
-  {
-   "key": "evidence",
-   "at": 12.875
-  },
-  {
    "key": "gap",
-   "at": 23.188
+   "at": 19.343
   },
   {
-   "key": "play",
-   "at": 35.844
-  },
-  {
-   "key": "meter",
-   "at": 48.86
-  },
-  {
-   "key": "again",
-   "at": 56.844
+   "key": "safety",
+   "at": 26.078
   },
   {
    "key": "pipeline",
-   "at": 59.844
+   "at": 40.312
   },
   {
-   "key": "polly",
-   "at": 71.125
+   "key": "evidence",
+   "at": 59.812
+  },
+  {
+   "key": "transfers",
+   "at": 75.078
   },
   {
    "key": "measured",
-   "at": 79.954
-  },
-  {
-   "key": "zero",
-   "at": 91.875
+   "at": 92.0
   },
   {
    "key": "privacy",
-   "at": 102.047
-  },
-  {
-   "key": "close",
-   "at": 115.469
-  },
-  {
-   "key": "thanks",
-   "at": 133.282
+   "at": 112.984
   }
  ]
 }

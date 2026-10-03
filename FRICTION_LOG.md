@@ -156,4 +156,15 @@ Format per entry: task attempted, steps taken, expected vs actual, severity (low
 - Suggestion: npm workspaces have no way to say "this directory is a package, install it, but do not hoist it". Yarn 1 had `nohoist` and npm has no equivalent, which is why every React Native monorepo ends up with a detached app directory and an install step nobody remembers. A per-workspace `hoist: false` would remove the class. Separately, `npm ci` at a root whose own scripts reference a directory it did not install could reasonably say so.
 - Why it is in this log: this is the second entry running where the tooling was green and the artefact was wrong, and both were found by leaving the process. Entry 14 needed a rebuild, this one needed a clone. Nothing inside the repository could have reported either.
 
+## Entry 16: the remote's Back button quit the app, because Fire TV sends it as a hardware key and the app listened for a TV event (2026-10-03, ours not theirs)
+
+- Task: re-shoot the Fire TV footage on an Amazon-hosted Fire TV (Appstore Quality Central, Live Device Interaction, a FOS 14 3P TV), with the console in frame, for the track rule that asks for a Fire TV device or Amazon's simulator.
+- Steps: upload `everyword-tv-v0.3.1.apk` from the console's Dashboard, launch it, open a story, press Back on the console's on-screen remote.
+- Expected: the library, with the words played reported to the MCP server, which is what `README.md` claims for Back and what the app did on the Android TV virtual device.
+- Actual: the app quit to the device's setup screen. The words played were reported by the unmount effect, so no data was lost, but a child pressing Back on a real remote would have been dropped out of the app.
+- Root cause: v0.3.1 handled Back in `useTVEventHandler` as the `menu` event. Apple TV sends that; Fire OS sends `KEYCODE_BACK`, which React Native delivers as `hardwareBackPress`, and an app that does not answer that event is finished by the system. The Android TV virtual device never showed it because the emulator's Back was tested through the on-screen "Back to stories" button, not the key.
+- Severity: high for the product, because Back is the key a child presses first, and it is the second entry here where a generic Android TV image hid a Fire OS difference (`docs/FIRE_TV_TARGET.md` said this could happen; now it has).
+- Workaround: a `BackHandler` subscription that closes the story and returns true while one is open, and returns false on the library so Back leaves the app the way every Fire TV app does. Released as v0.3.2 and verified on the hosted device before the footage was shot.
+- Why it is in this log: the hosted Fire TV found in minutes what the emulator could not find in weeks, and it cost nothing but a sign-in. Had the footage been shot on the emulator again, the bug would have shipped in the submission with a README sentence claiming the opposite.
+
 <!-- Add new entries above this line as they happen. -->

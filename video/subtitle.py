@@ -148,9 +148,17 @@ def main() -> int:
         "OutlineColour=&H33000000,BorderStyle=3,Outline=1,Shadow=0,"
         "MarginV=34,Alignment=2"
     )
+    # The last line is the product's name and its sentence, and nothing
+    # follows it: a fade to black over the final second, rather than a
+    # frozen page or a logo.
+    total = float(subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+         "-of", "csv=p=0", str(OUT / "everyword-demo.mp4")],
+        check=True, capture_output=True, text=True).stdout.strip())
+    fade = f"fade=t=out:st={total - 1.0:.3f}:d=1.0"
     proc = subprocess.run(
         ["ffmpeg", "-y", "-i", "everyword-demo.mp4",
-         "-vf", f"subtitles=subs.srt:force_style='{style}'",
+         "-vf", f"subtitles=subs.srt:force_style='{style}',{fade}",
          "-c:v", "libx264", "-crf", "19", "-preset", "medium",
          "-tune", "stillimage",
          "-pix_fmt", "yuv420p", "-c:a", "copy", burned.name],
