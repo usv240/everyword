@@ -85,7 +85,7 @@ class EveryWordStack extends Stack {
     // over Streamable HTTP, the same Fastify app that runs locally.
     const mcp = new NodejsFunction(this, "McpServer", {
       entry: path.join(here, "../../apps/mcp/src/lambda.ts"),
-      runtime: Runtime.NODEJS_20_X,
+      runtime: Runtime.NODEJS_22_X,
       memorySize: 512,
       timeout: Duration.seconds(30),
       environment: {
@@ -107,7 +107,7 @@ class EveryWordStack extends Stack {
       },
       bundling: {
         format: OutputFormat.ESM,
-        target: "node20",
+        target: "node22",
         externalModules: ["@aws-sdk/*"],
         // Some transitive dependencies still use require() inside ESM output.
         banner:

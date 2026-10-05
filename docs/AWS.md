@@ -41,13 +41,13 @@ Documented-integrations record for the AWS Builder mini challenge. Every service
 - What for: hosting the EveryWord MCP server, which is the Alexa+ surface. The same Fastify app that runs locally, wrapped with `@fastify/aws-lambda` behind a function URL. Live at https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp
 - The design choice worth naming: the Lambda does not bundle a copy of the catalogue. It loads the manifest and the caption documents over CloudFront from the same content directory the web reader and the Fire TV app serve. There is exactly one catalogue, so an agent cannot report a story the reader does not have, or a word count the karaoke cursor disagrees with.
 - CORS exposes `MCP-Session-Id`, without which a browser-based MCP client cannot read the session header off the initialize response.
-- 512MB, 30s, Node 20, bundled by esbuild as ESM.
+- 512MB, 30s, Node 22, bundled by esbuild as ESM.
 
 ## Amazon Bedrock (explain_word)
 
 - Where: `apps/mcp/src/explain.ts`, exposed as the `explain_word` MCP tool
 - What for: explaining a word a reader is stuck on, in one short sentence at a reading level below the word itself. This is the one place in EveryWord where a model touches what a reader sees, and it is fenced accordingly.
-- The fences: the word must appear in the story's caption document before any model is called, so a typo gets "that word is not in this story" rather than a confident definition of something else. The sentence the word appeared in is supplied as context, because "pitcher" in a fable about a crow is not the one in a baseball game. Three Claude models are tried in order (`us.anthropic.claude-sonnet-4-5-20250929-v1:0`, Claude 3.5 Sonnet v2, Claude 3.5 Haiku); a rambling answer fails the rung, not the ladder. If every rung fails, the tool returns the reader's own sentence and says plainly that no explanation is available: less helpful than a definition, impossible to be wrong.
+- The fences: the word must appear in the story's caption document before any model is called, so a typo gets "that word is not in this story" rather than a confident definition of something else. The sentence the word appeared in is supplied as context, because "pitcher" in a fable about a crow is not the one in a baseball game. Three Claude models are tried in order (`us.anthropic.claude-sonnet-4-6`, Claude Sonnet 4.5, Claude Haiku 4.5, all three invoked on 2026-10-05; the earlier rungs, Claude 3.5 Sonnet v2 and 3.5 Haiku, had reached end of life on Bedrock and were replaced that day); a rambling answer fails the rung, not the ladder. If every rung fails, the tool returns the reader's own sentence and says plainly that no explanation is available: less helpful than a definition, impossible to be wrong.
 - Verified live: "pitcher" in The Crow and the Pitcher produced "A pitcher is a container with a handle used for pouring drinks like water or juice." from Sonnet 4.5, and "helicopter" was refused before any model was called.
 - The karaoke timing path never touches a model. That boundary does not move because this feature exists.
 
