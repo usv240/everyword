@@ -150,7 +150,7 @@ Amazon Transcribe (word-level timings, in both the caption pipeline and the eval
 
 ## Links
 
-- Demo video (under 3 minutes): YouTube link, add when published. Shot list with pre-flight commands: docs/VIDEO_SCRIPT.md
+- Demo video (2:46, under 3 minutes): https://youtu.be/gmvua5x1E5E. Beats and how it was filmed: docs/VIDEO_SCRIPT.md
 - Live reader: https://d34emfdcezeszz.cloudfront.net
 - Fire TV APK: https://github.com/usv240/everyword/releases/tag/v0.3.2 (the demo video's television footage is this release on an Amazon-hosted Fire TV)
 - MCP server (Alexa+ surface), live: https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp

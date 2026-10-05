@@ -18,6 +18,7 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 
 ## Live
 
+- Demo video (2:46): https://youtu.be/gmvua5x1E5E
 - Reader: https://d34emfdcezeszz.cloudfront.net (real content, press Play)
 - Fire TV APK: https://github.com/usv240/everyword/releases/tag/v0.3.2 (self-contained, sideloads to a Fire TV device with `adb install`; installed, run and filmed on an Amazon-hosted Fire TV through Appstore Quality Central). Target platform, test environment and its limits: [docs/FIRE_TV_TARGET.md](docs/FIRE_TV_TARGET.md)
 - MCP server (the Alexa+ surface): `https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/mcp` (Model Context Protocol 2025-11-25 over Streamable HTTP, live)
