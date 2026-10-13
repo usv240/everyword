@@ -26,7 +26,10 @@ const CONTENT_DIR = join(__dirname, "..", "..", "web", "public", "content");
  * No command-line check catches it, which is exactly why it keeps
  * happening and why it is pinned here instead.
  */
-describe("CORS is owned by one layer", () => {
+// The first test here builds the whole server, which loads the catalogue
+// and can take seconds on a busy machine. Five seconds failed once under a
+// parallel run while the same test took 0.4 s on its own.
+describe("CORS is owned by one layer", { timeout: 30_000 }, () => {
   const saved = process.env.AWS_LAMBDA_FUNCTION_NAME;
   afterEach(() => {
     if (saved === undefined) delete process.env.AWS_LAMBDA_FUNCTION_NAME;

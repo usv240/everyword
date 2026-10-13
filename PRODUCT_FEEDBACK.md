@@ -5,7 +5,7 @@ Draft of the hackathon submission's product-feedback answer, maintained as we bu
 ## React Native for TV (react-native-tvos) and the Fire TV toolchain
 
 - Used for: the EveryWord TV app: D-pad-driven karaoke reader sharing the renderer package with the web app.
-- Worked well: the template ships genuinely TV-ready (LEANBACK_LAUNCHER present, focus engine works with plain Pressable); the shared-package model held once Metro was configured; the app ran on the Android TV emulator on first successful build.
+- Worked well: the template ships genuinely TV-ready (LEANBACK_LAUNCHER present, focus engine works with plain Pressable); the shared-package model held once Metro was configured; the app ran on the Android TV emulator on first successful build, and the same release APK ran on Amazon's hosted Fire TV unchanged.
 - Needs work: the Windows path is rough for exactly the people a hackathon invites. Three separate failures cost most of a day: ninja MAX_PATH under a normal-length project folder, Metro versus subst-drive file identity, and monorepo duplicate React (FRICTION_LOG.md entries 3 to 5, each with the workaround).
 - Onboarding: one command scaffolds a working TV project; the gap is a Windows caveats page.
 - Build again: yes, with the friction log taped to the monitor.
@@ -24,6 +24,14 @@ Draft of the hackathon submission's product-feedback answer, maintained as we bu
 - Worked well: bootstrap-then-deploy worked first try; origin access control and the index-rewrite function pattern are clean.
 - Needs work: nothing significant at this scale.
 - Build again: yes.
+
+## Appstore Quality Central (Live Device Interaction)
+
+- Used for: running, testing and filming the release APK on a Fire TV that Amazon hosts (a FOS 14 3P TV), with no device of our own. It is where the demo video's television footage comes from.
+- Worked well: it is a real Fire TV in a browser, and it found a real bug the emulator could not. On Fire OS the remote's Back key arrives as a hardware back press, not the TV event our app listened for, so Back quit the app instead of returning to the library. Fixed in v0.3.2 and verified on the same hosted device (FRICTION_LOG.md entry 16). The dashboard's upload box and ADB shell were enough to install and launch a sideloaded APK.
+- Needs work: the device's first-run setup ignores the on-screen remote, so an app has to be launched from the ADB shell; the stream stops updating unless a key is pressed every few seconds; and nothing can be scripted, so footage cannot come from the same pipeline as the rest of a video. A way to drive a hosted device over ADB from a build machine would close all three.
+- Onboarding: once devices were available, a few minutes from upload to running app.
+- Build again: yes. For a team without a Fire TV it is the difference between testing on Fire OS and assuming it.
 
 ## Hugging Face datasets-server (evaluation infrastructure, third-party)
 
@@ -71,7 +79,7 @@ Draft of the hackathon submission's product-feedback answer, maintained as we bu
 - Onboarding: `pip install strands-agents` and a `BedrockModel` was the whole setup.
 - Build again: yes.
 
-## Still to record
+## Not covered
 
-- Amazon Appstore submission flow, once attempted.
-- Fire OS behaviour on physical hardware, once a Fire TV device is available. See docs/FIRE_TV_TARGET.md for what our Android Virtual Device testing does and does not establish.
+- The Amazon Appstore submission flow: EveryWord ships as a sideloadable APK and was not submitted to the Appstore.
+- A physical Fire TV device: the app ran on Amazon's hosted Fire TV in Appstore Quality Central rather than one in a living room. docs/FIRE_TV_TARGET.md says what each environment establishes and what it does not.
