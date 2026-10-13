@@ -682,7 +682,8 @@ export default function Reader() {
               chose them. Then the renderer lights the word being spoken
               and your eyes follow it whether you mean to or not. That is
               the whole trick, and it is measured: median 30 ms from
-              voice to highlight, never early.
+              voice to highlight, and not one word in 766 lit more than
+              150 ms early.
             </p>
           </div>
         </section>
