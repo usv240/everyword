@@ -34,6 +34,22 @@ Built for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, plu
 - `apps/web`: the reader. Real public-domain content (an Aesop fable read by LibriVox volunteers) with real generated captions: play, read-that-line-again, slow mode with pitch preservation, reading-optimized Lexend type, adjustable size, light and dark themes, and a words-read-along meter.
 - `tv/`: the Fire TV app (react-native-tvos), targeting **Fire OS** and sideloadable to any Fire TV device as an APK. Same karaoke renderer, same real content, 10-foot UI with D-pad focus. The **whole five-story library** is bundled, chosen from a D-pad row whose word counts are computed from the caption documents rather than written beside them. The remote's real media keys work (play/pause, five-second rewind and fast-forward, Back to the library), which the first version ignored entirely. It is also **a client of this project's own MCP server**: when a story ends or is left, the app reports the words the cursor actually passed through `record_reading_session`, over the same public endpoint and the same transport Alexa+ uses, with no shared secret. That is what makes `get_reading_progress` a reading number rather than a number an assistant wrote to itself. Reporting failures are silent by design; the reader works with the network unplugged. No physical Fire TV was available, so it was tested on an Android Virtual Device during the build and then, for the demo video, installed and run on an **Amazon-hosted Fire TV** (Appstore Quality Central, Live Device Interaction, a FOS 14 3P TV), which found a Fire OS bug the emulator could not: the remote's Back key quit the app (fixed in v0.3.2, friction log entry 16). See docs/screenshots/tv-hosted-fire-tv.png and [docs/FIRE_TV_TARGET.md](docs/FIRE_TV_TARGET.md), which states exactly what each environment does and does not prove. Lives outside the npm workspaces on purpose; metro.config.js documents the monorepo wiring.
 
+## Your own API key
+
+The server is open: name a reader and use it, no key, which is how the
+television reports. For readers of your own, take a free key with no
+account:
+
+```
+curl -X POST https://bgvgejdhfhlu2inavg23d5dkj40eggxt.lambda-url.us-east-1.on.aws/v1/keys
+```
+
+Send it as `Authorization: Bearer <key>` on every request to `/mcp`, or
+paste the `mcpClientConfig` the response carries into any MCP client.
+Readers you name with it are reachable by nobody without it. Nothing
+about the key is stored: the space is derived from its hash on every
+request. The site's Alexa+ section issues one and proves it, live.
+
 ## Run it
 
 ```
