@@ -132,7 +132,7 @@ class EveryWordStack extends Stack {
       cors: {
         allowedOrigins: ["*"],
         allowedMethods: [HttpMethod.ALL],
-        allowedHeaders: ["*"],
+        allowedHeaders: ["*", "authorization"],
         // MCP clients must be able to read the session id off the response.
         exposedHeaders: ["MCP-Session-Id"],
       },
