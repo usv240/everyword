@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { callerFrom, storageName } from "./keys";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { describe, resolveStory, storyLines, type Story } from "./library";
 import { completedSlugs, summarize, type ProgressStore } from "./progress";
@@ -252,7 +253,18 @@ export function registerMcp(
   const callTool = async (
     name: string,
     args: Record<string, unknown>,
+    space: string | null = null,
   ): Promise<Record<string, unknown>> => {
+    // A reader's name as the caller used it, and where their sessions
+    // live: a keyed caller's readers are stored under its space.
+    const reader = (raw: unknown): string => {
+      const id = typeof raw === "string" ? raw.trim() : "";
+      if (id.includes(":")) {
+        throw Object.assign(new Error("readerId may not contain a colon"), { code: -32602 });
+      }
+      return id;
+    };
+    const where = (id: string) => storageName(id, space);
     switch (name) {
       case "list_library": {
         return textContent({
@@ -262,7 +274,7 @@ export function registerMcp(
       }
 
       case "recommend_story": {
-        const readerId = typeof args.readerId === "string" ? args.readerId : undefined;
+        const readerId = reader(args.readerId) || undefined;
         const excludeCompleted = args.excludeCompleted !== false;
         const maxMinutes =
           typeof args.maxMinutes === "number" ? args.maxMinutes : undefined;
@@ -273,7 +285,7 @@ export function registerMcp(
 
         const done =
           readerId && excludeCompleted
-            ? completedSlugs(await deps.progress.list(readerId))
+            ? completedSlugs(await deps.progress.list(where(readerId)))
             : new Set<string>();
 
         const applied: string[] = [];
@@ -319,11 +331,11 @@ export function registerMcp(
       }
 
       case "get_reading_progress": {
-        const readerId = typeof args.readerId === "string" ? args.readerId : "";
+        const readerId = reader(args.readerId);
         if (!readerId) {
           throw Object.assign(new Error("readerId is required"), { code: -32602 });
         }
-        const summary = summarize(await deps.progress.list(readerId), readerId);
+        const summary = summarize(await deps.progress.list(where(readerId)), readerId);
         const trend =
           summary.wordsPreviousWeek === 0
             ? summary.wordsThisWeek > 0
@@ -334,13 +346,14 @@ export function registerMcp(
               : `down ${summary.wordsPreviousWeek - summary.wordsThisWeek} words on last week`;
         return textContent({
           ...summary,
+          ...(space ? { space: "your key's own" } : {}),
           trend,
           note: "Words read means words the karaoke cursor passed while the reader was present, not minutes of playback.",
         });
       }
 
       case "record_reading_session": {
-        const readerId = typeof args.readerId === "string" ? args.readerId : "";
+        const readerId = reader(args.readerId);
         const wordsFollowed =
           typeof args.wordsFollowed === "number" ? Math.floor(args.wordsFollowed) : -1;
         if (!readerId || wordsFollowed < 0) {
@@ -353,7 +366,7 @@ export function registerMcp(
         // A session cannot claim more words than the story contains.
         const capped = Math.min(wordsFollowed, story.words);
         const session = {
-          readerId,
+          readerId: where(readerId),
           slug: story.slug,
           wordsFollowed: capped,
           completed: args.completed === true,
@@ -363,6 +376,8 @@ export function registerMcp(
         return textContent({
           recorded: true,
           ...session,
+          readerId,
+          ...(space ? { space: "your key's own" } : {}),
           cappedToStoryLength: capped !== wordsFollowed,
           storyWords: story.words,
         });
@@ -392,6 +407,17 @@ export function registerMcp(
 
   app.post("/mcp", async (req, reply) => {
     if (!checkOrigin(req, reply)) return;
+
+    // An API key is optional. No header is the open server; a malformed
+    // one is refused rather than silently treated as open, so a caller
+    // who meant to be private never writes into the shared space.
+    const caller = callerFrom(req.headers.authorization);
+    if ("error" in caller) {
+      return reply
+        .code(401)
+        .header("WWW-Authenticate", 'Bearer realm="everyword"')
+        .send(rpcError(null, -32001, caller.error));
+    }
 
     const parsed = req.body as { json?: unknown; parseError?: string } | undefined;
     if (parsed?.parseError) {
@@ -470,7 +496,7 @@ export function registerMcp(
             ? (params.arguments as Record<string, unknown>)
             : {};
         try {
-          const result = await callTool(name, args);
+          const result = await callTool(name, args, caller.space);
           return reply.send(rpcResult(msg.id, result));
         } catch (err) {
           const code = (err as { code?: number }).code ?? -32603;

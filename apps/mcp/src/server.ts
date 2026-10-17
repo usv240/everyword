@@ -4,12 +4,14 @@ import { loadLibrary, type Story } from "./library";
 import { registerMcp } from "./mcp";
 import { MemoryProgressStore, type ProgressStore } from "./progress";
 import { MODEL_LADDER } from "./explain";
+import { issueKey, issuedKeyBody } from "./keys";
 
 /**
  * The EveryWord MCP server.
  *
  * POST/GET/DELETE /mcp   Model Context Protocol, spec 2025-11-25,
  *                        Streamable HTTP. This is the Alexa+ surface.
+ * POST /v1/keys          a free API key, no account: readers of your own
  * GET /healthz           liveness
  */
 
@@ -136,6 +138,8 @@ export function buildServer(
       rationale: "Two independent routes into the same caption format, so a story can be produced whichever input the content has.",
     },
   }));
+
+  app.post("/v1/keys", async (_req, reply) => reply.code(201).send(issuedKeyBody(issueKey())));
 
   registerMcp(app, { library, progress, explain: opts.explain ?? {} });
 

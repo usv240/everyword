@@ -8,6 +8,7 @@ import { HeroDemo } from "../components/HeroDemo";
 import { Developers } from "../components/Developers";
 import { FireTv } from "../components/FireTv";
 import { McpProof } from "../components/McpProof";
+import { ApiKey } from "../components/ApiKey";
 import { Privacy } from "../components/Privacy";
 import { UpgradeProof } from "../components/UpgradeProof";
 import { Faq } from "../components/Faq";
@@ -780,6 +781,9 @@ export default function Reader() {
           </p>
           <div className="mt-6">
             <McpProof />
+          </div>
+          <div className="mt-6">
+            <ApiKey />
           </div>
         </section>
 
