@@ -457,6 +457,30 @@ def landing_privacy(r: Recorder):
     r.hold_beat()
 
 
+OWN_KEY_CARD = "text=Your own key"
+KEY_BTN = "#alexa button:has-text('Get an API key')"
+PROVE = "#alexa button:has-text('Prove it is yours')"
+NO_KEY_ROW = "#alexa td:has-text('asked with no key')"
+
+
+def landing_own_key(r: Recorder):
+    # October re-cut. The key panel sits under the live MCP session: a key
+    # issued, words recorded for "judges" with it, and the same reader
+    # asked with no key, against the deployed server.
+    # Both presses start on the first sentence: the assembler keeps a web
+    # beat only for its line plus 0.7 s, and on the first take the table
+    # that proves the point arrived with a second to spare.
+    r.scroll_to(OWN_KEY_CARD, rest=URL_BAR_HEIGHT + 90 * SCALE)
+    yield
+    r.click(KEY_BTN)
+    r.page.wait_for_selector(PROVE, timeout=30_000)
+    r.scroll_to(PROVE, rest=URL_BAR_HEIGHT + 260 * SCALE)
+    r.click(PROVE)
+    r.page.wait_for_selector(NO_KEY_ROW, timeout=30_000)
+    r.point(NO_KEY_ROW)
+    r.hold_beat()
+
+
 def reader_close(r: Recorder):
     r.scroll_to(CARDS, rest=URL_BAR_HEIGHT + 40)
     # Play again so the closing lines run over words actually lighting up
@@ -490,6 +514,7 @@ ACTIONS = {
     "landing_pipeline": landing_pipeline,
     "landing_evidence_hold": landing_evidence_hold,
     "landing_privacy": landing_privacy,
+    "landing_own_key": landing_own_key,
     "reader_close": reader_close,
     "hold": hold,
 }
@@ -527,7 +552,7 @@ def main() -> int:
         stale.unlink()
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(args=["--force-color-profile=srgb",
+        browser = pw.chromium.launch(channel="chrome", args=["--force-color-profile=srgb",
                                            "--autoplay-policy=no-user-gesture-required"])
         context = browser.new_context(
             viewport={"width": WIDTH, "height": HEIGHT},

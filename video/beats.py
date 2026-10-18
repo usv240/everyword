@@ -205,6 +205,21 @@ BEATS: list[Beat] = [
         note="The question a parent asks first, answered structurally.",
     ),
     Beat(
+        key="own-key",
+        action="landing_own_key",
+        pause_before=0.4,
+        min_hold=11.0,
+        say=(
+            "And the server is open to build on. Anyone can take a free API key, "
+            "and the readers they name with it are theirs alone."
+        ),
+        note=(
+            "Added 2026-10-17. The live key panel under the MCP session: a key "
+            "issued, words recorded for a reader with it, the same reader asked "
+            "with no key. Something a judge can press themselves."
+        ),
+    ),
+    Beat(
         key="tv-close",
         action="tv_close",
         pause_before=0.5,
