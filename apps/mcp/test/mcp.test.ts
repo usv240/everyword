@@ -78,7 +78,7 @@ describe("EveryWord MCP (Streamable HTTP, 2025-11-25)", () => {
     expect(body.result.protocolVersion).toBe(MCP_PROTOCOL_VERSION);
     expect(body.result.serverInfo.name).toBe("everyword-mcp");
     expect(body.result.capabilities.tools).toBeDefined();
-    expect(res.headers["mcp-session-id"]).toMatch(/[0-9a-f-]{36}/);
+    expect(res.headers["mcp-session-id"]).toMatch(/^[0-9a-f]{16}\.[0-9a-f]{24}$/);
   });
 
   it("rejects non-initialize requests without a session", async () => {

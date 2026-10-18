@@ -54,7 +54,7 @@ request. The site's Alexa+ section issues one and proves it, live.
 
 ```
 npm install
-npm test                 # 157 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
+npm test                 # 159 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
 npm run web:dev          # the reader on localhost:3000
 
 # generate captions for new content (needs AWS credentials):
