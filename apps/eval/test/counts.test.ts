@@ -127,7 +127,7 @@ describe("published counts match the repository", () => {
     expect(actual).toBeGreaterThan(0);
     const words: Record<number, string> = {
       10: "ten", 11: "eleven", 12: "twelve", 13: "thirteen",
-      14: "fourteen", 15: "fifteen", 16: "sixteen",
+      14: "fourteen", 15: "fifteen", 16: "sixteen", 17: "seventeen",
     };
     const word = words[actual];
     expect(word, `no spelling for ${actual}; add it here`).toBeTruthy();

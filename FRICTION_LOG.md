@@ -167,4 +167,14 @@ Format per entry: task attempted, steps taken, expected vs actual, severity (low
 - Workaround: a `BackHandler` subscription that closes the story and returns true while one is open, and returns false on the library so Back leaves the app the way every Fire TV app does. Released as v0.3.2 and verified on the hosted device before the footage was shot.
 - Why it is in this log: the hosted Fire TV found in minutes what the emulator could not find in weeks, and it cost nothing but a sign-in. Had the footage been shot on the emulator again, the bug would have shipped in the submission with a README sentence claiming the opposite.
 
+## Entry 17: the AgentCore CLI's own CDK app brings a jest test that our vitest run collects and fails on (2026-10-19)
+
+- Task: host EveryWord's Strands agent on Amazon Bedrock AgentCore Runtime as `everywordreading_reading`, inside the existing TypeScript monorepo, and keep `npm test` green.
+- Steps: scaffold `apps/agentcore` with `npx -y @aws/agentcore`, then `deploy --yes` and `invoke --prompt`, both of which worked first time; then run the repository's suite.
+- Expected: the deploy tooling stays out of the product's tests, or says it brings tests of its own.
+- Actual: the scaffold vends a CDK project at `apps/agentcore/agentcore/cdk` with `jest.config.js` and `test/cdk.test.ts`. vitest's default include collected that file and the run failed, and our count guard, which walks every `test` directory, counted its declarations as ours. Nothing in the generated README mentions the test or the runner it expects.
+- Severity: low once found, and it lands in the one place a hackathon project cannot afford: a green suite that turns red the moment an AWS tool is added.
+- Workaround: `apps/agentcore/**` excluded in `vitest.config.ts` and in the count guard's walk, with a comment saying whose test it is.
+- Suggestion: detect a parent `package.json` with a test runner and either skip the vended test or print one line saying it exists and which runner it needs. A `--no-tests` flag would also do.
+
 <!-- Add new entries above this line as they happen. -->
