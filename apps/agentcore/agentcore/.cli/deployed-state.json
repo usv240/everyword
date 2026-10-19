@@ -1,0 +1,17 @@
+{
+  "targets": {
+    "default": {
+      "resources": {
+        "runtimes": {
+          "reading": {
+            "runtimeId": "everywordreading_reading-kUsizRCQ1s",
+            "runtimeArn": "arn:aws:bedrock-agentcore:us-east-1:957325809861:runtime/everywordreading_reading-kUsizRCQ1s",
+            "roleArn": "arn:aws:iam::957325809861:role/AgentCore-everywordreadin-ApplicationAgentReadingRu-zVIQsXJRTqNi"
+          }
+        },
+        "stackName": "AgentCore-everywordreading-default",
+        "deployHash": "b564a489730f7361"
+      }
+    }
+  }
+}

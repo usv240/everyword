@@ -90,7 +90,7 @@ function totalTests(): number {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        if (["node_modules", "dist", "cdk.out", "build", ".next"].includes(entry.name)) continue;
+        if (["node_modules", "dist", "cdk.out", "build", ".next", "agentcore"].includes(entry.name)) continue;
         walk(full);
       } else if (/\.test\.ts$/.test(entry.name) && full.includes(`${path.sep}test${path.sep}`)) {
         const text = fs.readFileSync(full, "utf8");
