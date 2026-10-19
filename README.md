@@ -54,7 +54,7 @@ request. The site's Alexa+ section issues one and proves it, live.
 
 ```
 npm install
-npm test                 # 160 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
+npm test                 # 161 tests: caption engine, MCP server, the Fire TV app, every public claim, and every documented API
 npm run web:dev          # the reader on localhost:3000
 
 # generate captions for new content (needs AWS credentials):
@@ -93,6 +93,22 @@ It has already paid for itself. Its first run against the deployed Lambdas found
 ## Content licensing
 
 Every item in the reader lists its provenance; see CONTENT_LICENSES.md. Launch content is public domain (LibriVox recordings of Aesop).
+
+## Built with
+
+Every tool this project uses, and the file that uses it.
+
+| Tool | What it does here | Where |
+|---|---|---|
+| Fire TV (Fire OS) | the React Native television app, driven by the D-pad | [`tv`](tv) |
+| MCP server, spec 2025-11-25, Streamable HTTP | the Alexa+ surface: six tools, signed sessions, conformance-probed live | [`apps/mcp/src/mcp.ts`](apps/mcp/src/mcp.ts) |
+| Agent Skill | tells an agent how to use the six tools; a test checks it names every tool | [`skills/everyword/SKILL.md`](skills/everyword/SKILL.md) |
+| Amazon Bedrock (Claude) | explains a word a reader is stuck on, in the sentence it appeared in | [`apps/mcp/src/explain.ts`](apps/mcp/src/explain.ts) |
+| Strands Agents SDK | the Reading Check-in agent, from the MCP tools only | [`apps/agent/reading_check_in.py`](apps/agent/reading_check_in.py) |
+| Amazon Bedrock AgentCore Runtime | hosts the Reading Check-in agent as an invocable endpoint | [`apps/agentcore`](apps/agentcore) |
+| Amazon Polly | narration for stories without their own audio | [`apps/mcp/src/library.ts`](apps/mcp/src/library.ts) |
+| Amazon Transcribe | word timings for word-by-word captions | [`apps/pipeline/src/transcribe.ts`](apps/pipeline/src/transcribe.ts) |
+| Amazon DynamoDB, AWS Lambda, Amazon S3, Amazon CloudFront, AWS CDK | reading progress, the service, the site, one deploy | [`infra/bin/app.ts`](infra/bin/app.ts) |
 
 ## License
 

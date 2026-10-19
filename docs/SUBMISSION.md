@@ -162,3 +162,7 @@ Amazon Transcribe (word-level timings, in both the caption pipeline and the eval
 - Repository (MIT): https://github.com/usv240/everyword
 - Evaluation: https://github.com/usv240/everyword/blob/main/docs/EVAL.md
 - Caption format spec: https://github.com/usv240/everyword/blob/main/docs/FORMAT.md
+
+## Built with
+
+Fire TV (Fire OS); MCP server, spec 2025-11-25, Streamable HTTP; Agent Skill; Amazon Bedrock (Claude); Strands Agents SDK; Amazon Bedrock AgentCore Runtime; Amazon Polly; Amazon Transcribe; Amazon DynamoDB, AWS Lambda, Amazon S3, Amazon CloudFront, AWS CDK. Each, with the file that uses it, is in the README's Built with table.

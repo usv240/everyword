@@ -83,3 +83,33 @@ Draft of the hackathon submission's product-feedback answer, maintained as we bu
 
 - The Amazon Appstore submission flow: EveryWord ships as a sideloadable APK and was not submitted to the Appstore.
 - A physical Fire TV device: the app ran on Amazon's hosted Fire TV in Appstore Quality Central rather than one in a living room. docs/FIRE_TV_TARGET.md says what each environment establishes and what it does not.
+
+## Amazon Bedrock AgentCore Runtime
+
+**Used for:** hosting our Strands agent as an invocable endpoint with its own IAM role and traces (`apps/agentcore`), so Alexa+, a scheduled job or another agent can call it. It reaches the product only through our MCP server.
+
+**What worked well:** `npx @aws/agentcore deploy` turned an existing Strands agent into a hosted endpoint in about four minutes, first time, and `invoke` returned the agent's own JSON.
+
+**What needs work:** the scaffold's default model profile was not one this account could invoke, so the model is pinned by hand. In a TypeScript repository the vended CDK project's own jest test is picked up by vitest and fails until excluded.
+
+**Onboarding:** no global install; deploy and invoke both worked on Windows on the first run.
+
+**Would we build with it again:** yes. It is the shortest path from a local agent to something Alexa+ or a schedule can call.
+
+## Agent Skills
+
+**Used for:** `skills/everyword/SKILL.md`, which tells an agent what the product is, which MCP tools to call in what order, and what it must never say. A test checks it names every tool on the server.
+
+**What worked well:** plain markdown an agent reads directly, so the product's rules travel with its tools.
+
+**What needs work:** we found no public way to load a skill into Alexa+ ourselves and watch it run, so ours is checked against the MCP server by a test rather than end to end in Alexa+.
+
+**Would we build with it again:** yes.
+
+## Amazon DynamoDB
+
+**Used for:** reading progress the television reports, per reader, on demand capacity.
+
+**What worked well:** a single-partition query serves a reader's whole history, and the table is created and wired by the same CDK stack as the function.
+
+**Would we build with it again:** yes.
