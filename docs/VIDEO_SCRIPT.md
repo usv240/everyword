@@ -5,7 +5,7 @@ pipeline reads: the exact line spoken, which camera shoots it, and how
 long it holds. This document is the argument for why those beats are in
 that order. If the two disagree, the code is right and this is stale.
 
-**Built 2026-10-03, re-cut 2026-10-17 with the own-key beat: 2:56.3, 3840x2160. Published: https://youtu.be/RZcOL8Tm8mI** Target was 2:37; hard ceiling 3:00. `python video/beats.py` prints the
+**Built 2026-10-03, re-cut 2026-10-17 with the own-key beat: 2:56.3, 3840x2160. Published: https://youtu.be/eCmaiAEgPWk** Target was 2:37; hard ceiling 3:00. `python video/beats.py` prints the
 estimate and exits non-zero if the plan is already over. Judges are not
 required to watch past three minutes, so the strongest material leads
 and the headroom is left alone.
