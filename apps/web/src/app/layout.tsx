@@ -26,7 +26,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const themeScript = `(function(){try{var t=localStorage.getItem("ew-theme");if(t==="dark"||t==="light"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}})();`;
+const themeScript = `(function(){try{var t=localStorage.getItem("ew-theme");document.documentElement.setAttribute("data-theme",t==="dark"?"dark":"light");}catch(e){}})();`;
 
 export default function RootLayout({
   children,

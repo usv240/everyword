@@ -89,8 +89,8 @@ function Key({ children }: { children: string }) {
  * keep a second copy in state and reconcile it in an effect, which cost
  * an extra render on every load and allowed the button's label to
  * disagree with the page it labels. useSyncExternalStore reads the copy
- * that is actually true, and the server snapshot is "system" because
- * that is what the prerendered HTML says before the script runs.
+ * that is actually true. Light is the default whatever the system says;
+ * dark is a choice, remembered.
  */
 function useTheme(): [string, () => void] {
   const subscribe = useCallback((onChange: () => void) => {
@@ -104,18 +104,15 @@ function useTheme(): [string, () => void] {
 
   const mode = useSyncExternalStore(
     subscribe,
-    () => document.documentElement.getAttribute("data-theme") ?? "system",
-    () => "system",
+    () => (document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light"),
+    () => "light",
   );
 
   const cycle = useCallback(() => {
-    const next = mode === "system" ? "light" : mode === "light" ? "dark" : "system";
-    const root = document.documentElement;
-    if (next === "system") root.removeAttribute("data-theme");
-    else root.setAttribute("data-theme", next);
+    const next = mode === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
     try {
-      if (next === "system") localStorage.removeItem("ew-theme");
-      else localStorage.setItem("ew-theme", next);
+      localStorage.setItem("ew-theme", next);
     } catch {
       /* Storage unavailable. The choice still applies for this visit. */
     }
