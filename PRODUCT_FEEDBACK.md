@@ -113,3 +113,8 @@ Draft of the hackathon submission's product-feedback answer, maintained as we bu
 **What worked well:** a single-partition query serves a reader's whole history, and the table is created and wired by the same CDK stack as the function.
 
 **Would we build with it again:** yes.
+
+## Not used, and why
+
+- Kiro and Kiro Crew: not used. The build ran in one coding agent from the first commit; a second workspace mid-window would have added nothing a judge can see. Every AWS integration here is a service the product calls at run time.
+- SageMaker: not used. Captions are timed by Transcribe and Polly's speech marks; nothing trains a model.
