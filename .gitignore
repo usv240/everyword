@@ -10,3 +10,5 @@ coverage/
 out/
 cdk.out/
 cdk.out.sess/
+__pycache__/
+video/build/

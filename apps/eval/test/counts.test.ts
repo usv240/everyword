@@ -34,7 +34,6 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.
 */
 const PUBLIC_TEXT = [
   "README.md",
-  "docs/SUBMISSION.md",
   "apps/web/src/app/page.tsx",
   // The shooting script counts too. It told whoever records the video to
   // expect "92 passing" long after the suite had grown past it, which is
@@ -282,7 +281,6 @@ describe("the documented command can reach the number it claims", () => {
 describe("the Fire TV release the documents send people to", () => {
   const DOCS = [
     "README.md",
-    "docs/SUBMISSION.md",
     "docs/VIDEO_SCRIPT.md",
     "docs/FIRE_TV_TARGET.md",
     "tv/README.md",

@@ -58,7 +58,6 @@ const hard = JSON.parse(
 
 const PUBLIC_TEXT = [
   "README.md",
-  "docs/SUBMISSION.md",
   "docs/EVIDENCE.md",
   "docs/EVAL.md",
   "docs/DESIGN.md",
